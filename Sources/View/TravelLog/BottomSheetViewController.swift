@@ -3,13 +3,13 @@ import SnapKit
 
 class BottomSheetViewController: UIViewController {
     
-        let DatePicker: UIDatePicker = {
-            let datePicker = UIDatePicker()
-            datePicker.datePickerMode = .date
-            datePicker.preferredDatePickerStyle = .inline
-            datePicker.locale = Locale(identifier: "ko_KR")
-            return datePicker
-        }()
+    let DatePicker: UIDatePicker = {
+        let datePicker = UIDatePicker()
+        datePicker.datePickerMode = .date
+        datePicker.preferredDatePickerStyle = .inline
+        datePicker.locale = Locale(identifier: "ko_KR")
+        return datePicker
+    }()
     
     
     let doneButton: UIButton = {
@@ -20,11 +20,11 @@ class BottomSheetViewController: UIViewController {
         button.titleLabel?.font =  UIFont(name: "Pretendard-SemiBold", size: 16.0)
         button.layer.cornerRadius = 16.0 // 원하는 라운드 값으로 설정
         button.layer.masksToBounds = true // 라운드 적용을 위해 마스크 사용
-        button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        button.addTarget(BottomSheetViewController.self, action: #selector(doneButtonTapped), for: .touchUpInside)
         return button
     }()
     
-
+    
     private let dimmedView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.7)

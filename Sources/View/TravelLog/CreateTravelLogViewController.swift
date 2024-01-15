@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-class TravelLogViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class CreateTravelLogViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     let titleLabel: UILabel = {
         let label = UILabel()
@@ -152,7 +152,7 @@ class TravelLogViewController: UIViewController, UITextFieldDelegate, UIImagePic
         setupUI()
                
         // fromDatePicker 버튼이 클릭되었을 때 Bottom Sheet를 표시하는 액션 추가
-               fromDatePicker.addTarget(self, action: #selector(showBottomSheet), for: .touchUpInside)
+        fromDatePicker.addTarget(self, action: #selector(showBottomSheet), for: .touchUpInside)
           
     }
     
