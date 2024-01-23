@@ -11,7 +11,6 @@ import UIKit
 
 // 2개의 components가 들어가는 라인 뷰
 // 버튼 : 설명~ 식의 스타일
-
 class TwoComponentLineView: UIView{
     
     let label = {

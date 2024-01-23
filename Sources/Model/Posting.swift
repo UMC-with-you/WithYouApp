@@ -21,3 +21,4 @@ extension Posting {
         return startDate + "~" + endDate.dropFirst(4)
     }
 }
+

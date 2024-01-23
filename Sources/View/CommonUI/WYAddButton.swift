@@ -11,6 +11,7 @@ import  UIKit
 enum SizeOption : Int{
     case big = 50
     case small = 27
+
 }
 
 class WYAddButton: UIButton {
@@ -22,7 +23,7 @@ class WYAddButton: UIButton {
         view.tintColor = .white
         return view
     }()
-    
+
     init(_ size : SizeOption = .big){
         super.init(frame:CGRect.zero)
         self.size = size
@@ -39,12 +40,12 @@ class WYAddButton: UIButton {
         self.backgroundColor = UIColor(named:"MainColorDark")
         
         self.addSubview(image)
-        
+
         self.snp.makeConstraints{
             $0.width.equalTo(size.rawValue)
             $0.height.equalTo(size.rawValue)
         }
-        
+
         image.snp.makeConstraints{
             $0.width.equalTo(size == .big ? size.rawValue/2 : size.rawValue - 7)
             $0.height.equalTo(size == .big ? size.rawValue/2 : size.rawValue - 7)

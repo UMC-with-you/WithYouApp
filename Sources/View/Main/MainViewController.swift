@@ -52,11 +52,11 @@ class MainViewController: UIViewController {
         label.textAlignment = .center
         return label
     }()
+
     let mascout = {
         let img = UIImageView(image: UIImage(named: "Mascout"))
         return img
     }()
-    
     
     var isLogEmpty : BehaviorSubject<Bool> = BehaviorSubject(value: false)
     
@@ -75,7 +75,6 @@ class MainViewController: UIViewController {
             logs.append(log)
         }
         // 2. if logs.count != 0 ? 여행중인지 아닌지 판단 후 표시 / default는 여행 중 아님
-        //
         
         setViews()
         setConst()
@@ -178,7 +177,6 @@ class MainViewController: UIViewController {
         logs.forEach{
             logView.addSubview($0)
         }
-        
     }
     
     private func setConst(){
@@ -246,10 +244,10 @@ extension MainViewController{
     // log 만드는 옵션
     func popUpLogOption(){
         let modalVC = NewLogSheetView()
-        
         //모달 사이즈 설정
         let smallDetentId = UISheetPresentationController.Detent.Identifier("small")
         let smallDetent = UISheetPresentationController.Detent.custom(identifier: smallDetentId) { context in
+
             return UIScreen.main.bounds.height / 3.5
         }
         
@@ -260,7 +258,7 @@ extension MainViewController{
         }
       
         _ =  modalVC.commander.subscribe(onCompleted: {
-            let newLogVC = TravelLogViewController()
+            let newLogVC = CreateTravelLogViewController()
             self.navigationController?.pushViewController(newLogVC, animated: true)
         })
 

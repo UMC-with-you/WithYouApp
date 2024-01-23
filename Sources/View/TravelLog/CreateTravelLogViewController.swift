@@ -1,8 +1,13 @@
-
 import UIKit
 import SnapKit
 
-class CreateTravelLogViewController: UIViewController {
+<<<<<<<< HEAD:Sources/View/TravelLog/TravelLogViewController.swift
+class TravelLogViewController: UIViewController {
+    
+========
+class CreateTravelLogViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+
+>>>>>>>> e2d44bffc0a451cdd7b341b4df035dced4626f3d:Sources/View/TravelLog/CreateTravelLogViewController.swift
     let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "여행 제목"
@@ -156,8 +161,13 @@ class CreateTravelLogViewController: UIViewController {
         
         // fromDatePicker 버튼이 클릭되었을 때 Bottom Sheet를 표시하는 액션 추가
         fromDatePicker.addTarget(self, action: #selector(showBottomSheet), for: .touchUpInside)
-
+<<<<<<<< HEAD:Sources/View/TravelLog/TravelLogViewController.swift
         toDatePicker.addTarget(self, action: #selector(showBottomSheet), for: .touchUpInside)
+        
+        //동적으로 요구사항 충족시 버튼 색 바꾸게 만들어야한
+========
+          
+>>>>>>>> e2d44bffc0a451cdd7b341b4df035dced4626f3d:Sources/View/TravelLog/CreateTravelLogViewController.swift
     }
     
     func setupUI() {
@@ -289,7 +299,7 @@ class CreateTravelLogViewController: UIViewController {
 
 
 // 도경 : Delegate 관련 extension으로 빼고 함수 정렬
-extension CreateTravelLogViewController : UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension TravelLogViewController : UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     // MARK: - UITextFieldDelegate
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {

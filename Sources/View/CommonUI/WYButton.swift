@@ -1,7 +1,6 @@
 import UIKit
 
 
-
 class WYButton : UIButton{
     
     init(_ text : String){
@@ -18,3 +17,4 @@ class WYButton : UIButton{
     }
 
 }
+
