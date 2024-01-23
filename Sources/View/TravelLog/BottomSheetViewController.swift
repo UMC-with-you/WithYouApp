@@ -82,6 +82,7 @@ class BottomSheetViewController: UIViewController {
             dimmedView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             dimmedView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+        
         bottomSheetView.translatesAutoresizingMaskIntoConstraints = false
         let topConstant = view.safeAreaInsets.bottom + view.safeAreaLayoutGuide.layoutFrame.height
         bottomSheetViewTopConstraint = bottomSheetView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topConstant)
@@ -92,6 +93,7 @@ class BottomSheetViewController: UIViewController {
             bottomSheetViewTopConstraint,
         ])
         bottomSheetView.addSubview(DatePicker)
+        
         DatePicker.snp.makeConstraints { make in
             make.centerX.equalTo(view.center)
             make.width.equalToSuperview().multipliedBy(0.9)
@@ -104,6 +106,7 @@ class BottomSheetViewController: UIViewController {
         }
         
     }
+    
     private func showBottomSheet() {
         let safeAreaHeight: CGFloat = view.safeAreaLayoutGuide.layoutFrame.height
         let bottomPadding: CGFloat = view.safeAreaInsets.bottom
@@ -117,6 +120,7 @@ class BottomSheetViewController: UIViewController {
             self.view.layoutIfNeeded()
         }, completion: nil)
     }
+    
     private func hideBottomSheetAndGoBack() {
         let safeAreaHeight = view.safeAreaLayoutGuide.layoutFrame.height
         let bottomPadding = view.safeAreaInsets.bottom

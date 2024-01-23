@@ -11,6 +11,14 @@ import Foundation
 struct Posting : Codable, Identifiable {
     var id: Int
     var text : String
-    var date : Date
+    var startDate : String
+    var endDate : String
     var media : URL
 }
+
+extension Posting {
+    func getTravelPeriod() -> String{
+        return startDate + "~" + endDate.dropFirst(4)
+    }
+}
+
