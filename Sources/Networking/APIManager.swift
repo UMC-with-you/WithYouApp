@@ -6,8 +6,9 @@
 //  Copyright © 2024 withyou.org. All rights reserved.
 //
 
-import Foundation
 import Alamofire
+import Foundation
+import UIKit
 
 
 class APIManager{
@@ -25,5 +26,17 @@ class APIManager{
                     print(error)
                 }
             }
+    }
+    
+    // Get Image
+    func getImage(_ url : URL, _ completion: @escaping (Data) -> Void ){
+        AF.request(url).responseData { response in
+            switch response.result {
+            case .success(let result):
+                completion(result)
+            case .failure(let error):
+                print("Error \(error)")
+            }
+        }
     }
  }

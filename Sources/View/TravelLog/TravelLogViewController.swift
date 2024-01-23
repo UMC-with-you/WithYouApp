@@ -1,28 +1,28 @@
 import UIKit
 import SnapKit
 
-class TravelLogViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-
+class TravelLogViewController: UIViewController {
+    
     let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "여행 제목"
-        label.font = UIFont(name: "Pretendard-SemiBold", size: 20.0)
+        label.font = WithYouFontFamily.Pretendard.semiBold.font(size: 20)
         label.textAlignment = .left
-        label.textColor = UIColor(named: "MainColor")
+        label.textColor = WithYouAsset.mainColorDark.color
         return label
     }()
     
     let titleTextField: UITextField = {
         let textField = UITextField()
         textField.borderStyle = .roundedRect
-        textField.font = UIFont(name: "Pretendard-Regular", size: 16.0)
+        textField.font = WithYouFontFamily.Pretendard.regular.font(size: 16)
         return textField
     }()
     
     let characterCountLabel: UILabel = {
         let label = UILabel()
         label.text = "0/20"
-        label.font = UIFont(name: "Pretendard-Regular", size: 12.0)
+        label.font = WithYouFontFamily.Pretendard.regular.font(size: 12)
         label.textAlignment = .right
         return label
     }()
@@ -30,58 +30,62 @@ class TravelLogViewController: UIViewController, UITextFieldDelegate, UIImagePic
     let travelPeriodLabel: UILabel = {
         let label = UILabel()
         label.text = "여행 기간"
-        label.font = UIFont(name: "Pretendard-SemiBold", size: 20.0)
+        label.font = WithYouFontFamily.Pretendard.semiBold.font(size: 20)
         label.textAlignment = .left
-        label.textColor = UIColor(named: "MainColor")
+        label.textColor = WithYouAsset.mainColorDark.color
         return label
     }()
     
     let fromDateLabel: UILabel = {
         let label = UILabel()
         label.text = "From"
+        label.font = WithYouFontFamily.Pretendard.regular.font(size: 13)
+        label.textColor = WithYouAsset.subColor.color
         return label
     }()
     
-//    let fromDatePicker: UIDatePicker = {
-//        let datePicker = UIDatePicker()
-//        datePicker.datePickerMode = .date
-//        datePicker.locale = Locale(identifier: "ko_KR")
-//        return datePicker
-//    }()
-
-    
     let fromDatePicker: UIButton = {
         let button = UIButton()
-        // 현재 날짜를 가져와서 포맷팅
-                let currentDate = Date()
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "yyyy.MM.dd" // 날짜 포맷을 필요에 맞게 설정
-
-                // 포맷팅된 날짜를 버튼의 타이틀로 설정
-                button.setTitle(dateFormatter.string(from: currentDate), for: .normal)
-        button.setTitleColor(.gray, for: .normal)
+        // 포맷팅된 날짜를 버튼의 타이틀로 설정
+        button.setTitle(dateController.getDate(Date()), for: .normal)
+        button.titleLabel?.font = WithYouFontFamily.Pretendard.medium.font(size: 18)
+        button.setTitleColor(WithYouAsset.subColor.color, for: .normal)
         return button
     }()
+    
+    let calendarIcon = UIImageView(image: UIImage(named: "CalendarIcon"))
     
     let toDateLabel: UILabel = {
         let label = UILabel()
         label.text = "To"
+        label.font = WithYouFontFamily.Pretendard.regular.font(size: 13)
+        label.textColor = WithYouAsset.subColor.color
         return label
     }()
     
-    let toDatePicker: UIDatePicker = {
-        let datePicker = UIDatePicker()
-        datePicker.datePickerMode = .date
-        datePicker.locale = Locale(identifier: "ko_KR")
-        return datePicker
+    let toDatePicker = {
+        let button = UIButton()
+        button.setTitle(dateController.getDate(Date().advanced(by:3)), for: .normal)
+        button.titleLabel?.font = WithYouFontFamily.Pretendard.medium.font(size: 18)
+        button.setTitleColor(WithYouAsset.subColor.color, for: .normal)
+        return button
     }()
-
+    
+    //도경: 앱 디자인과 유사하게 바꾸기 위해 구조 변경함
+    let datePickerContainer = {
+        let container = UIView()
+        container.layer.cornerRadius = 5
+        container.layer.borderWidth = 1
+        container.layer.borderColor = WithYouAsset.subColor.color.cgColor
+        return container
+    }()
+    
     let bannerLabel: UILabel = {
         let label = UILabel()
         label.text = "배너 사진"
-        label.font = UIFont(name: "Pretendard-SemiBold", size: 20.0)
+        label.font = WithYouFontFamily.Pretendard.semiBold.font(size: 20)
         label.textAlignment = .left
-        label.textColor = UIColor(named: "MainColor")
+        label.textColor = WithYouAsset.mainColorDark.color
         return label
     }()
     
@@ -90,11 +94,11 @@ class TravelLogViewController: UIViewController, UITextFieldDelegate, UIImagePic
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.borderWidth = 1.0
-        imageView.layer.borderColor = UIColor(named: "SubColor")?.cgColor
+        imageView.layer.borderColor = WithYouAsset.subColor.color.cgColor
         imageView.layer.cornerRadius = 5.0 // 원하는 라운드 값으로 수정
         return imageView
     }()
-
+    
     let selectImageButton: UIButton = {
         let button = UIButton()
         
@@ -113,10 +117,10 @@ class TravelLogViewController: UIViewController, UITextFieldDelegate, UIImagePic
             button.addTarget(self, action: #selector(selectImage), for: .touchUpInside)
         }
         button.backgroundColor = .clear
-
+        
         return button
     }()
-
+    
     let cancleImageButton: UIButton = {
         let button = UIButton()
         button.isHidden = true
@@ -128,54 +132,57 @@ class TravelLogViewController: UIViewController, UITextFieldDelegate, UIImagePic
     }()
     
     let createTripButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("여행 만들기", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor(named: "SubColor")
-        button.titleLabel?.font =  UIFont(name: "Pretendard-SemiBold", size: 16.0)
-        button.layer.cornerRadius = 16.0 // 원하는 라운드 값으로 설정
-        button.layer.masksToBounds = true // 라운드 적용을 위해 마스크 사용
+        let button = WYButton("여행 만들기")
         button.addTarget(self, action: #selector(createTripButtonTapped), for: .touchUpInside)
         return button
     }()
     
-
+    // Navigation시 Tabbar 없이 전체화면으로
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        hidesBottomBarWhenPushed = true
+    }
     
-    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
-        
         titleTextField.delegate = self
         
         setupUI()
-               
+        setConst()
+        
         // fromDatePicker 버튼이 클릭되었을 때 Bottom Sheet를 표시하는 액션 추가
-               fromDatePicker.addTarget(self, action: #selector(showBottomSheet), for: .touchUpInside)
-          
+        fromDatePicker.addTarget(self, action: #selector(showBottomSheet), for: .touchUpInside)
+        toDatePicker.addTarget(self, action: #selector(showBottomSheet), for: .touchUpInside)
+        
+        //동적으로 요구사항 충족시 버튼 색 바꾸게 만들어야한
     }
     
     func setupUI() {
-        view.backgroundColor = UIColor(named: "BackgroundColor")
+        view.backgroundColor = .white
         view.addSubview(titleLabel)
         view.addSubview(titleTextField)
         view.addSubview(characterCountLabel)
         view.addSubview(travelPeriodLabel)
-        view.addSubview(fromDateLabel)
-        view.addSubview(fromDatePicker)
-        view.addSubview(toDateLabel)
-        view.addSubview(toDatePicker)
+        view.addSubview(datePickerContainer)
+        [fromDateLabel,fromDatePicker,toDateLabel,toDatePicker,calendarIcon].forEach{
+            datePickerContainer.addSubview($0)
+        }
         view.addSubview(bannerLabel)
         view.addSubview(bannerImageView)
         view.addSubview(selectImageButton)
         view.addSubview(cancleImageButton)
         view.addSubview(createTripButton)
-        
+    }
+    
+    func setConst(){
         titleLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.width.equalToSuperview().multipliedBy(0.9)
-            make.top.equalToSuperview().offset(50)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
         }
         
         titleTextField.snp.makeConstraints { make in
@@ -195,29 +202,42 @@ class TravelLogViewController: UIViewController, UITextFieldDelegate, UIImagePic
             make.width.equalToSuperview().multipliedBy(0.9)
             make.top.equalTo(characterCountLabel.snp.bottom).offset(5)
         }
-       
-        fromDateLabel.snp.makeConstraints { make in
-            make.top.equalTo(travelPeriodLabel.snp.bottom).offset(5)
-            make.centerX.equalToSuperview().offset(-70)
+        
+        datePickerContainer.snp.makeConstraints{
+            $0.top.equalTo(travelPeriodLabel.snp.bottom).offset(15)
+            $0.width.equalTo(titleTextField)
+            $0.height.equalTo(titleTextField.snp.height)
+            $0.centerX.equalToSuperview()
         }
         
-        fromDatePicker.snp.makeConstraints { make in
-            make.top.equalTo(fromDateLabel.snp.bottom).offset(5)
-            make.centerX.equalTo(fromDateLabel)
+        calendarIcon.snp.makeConstraints{
+            $0.leading.equalToSuperview().offset(10)
+            $0.width.height.equalTo(30)
+            $0.centerY.equalToSuperview()
         }
         
-        toDateLabel.snp.makeConstraints { make in
-            make.top.equalTo(travelPeriodLabel.snp.bottom).offset(5)
-            make.centerX.equalToSuperview().offset(70)
+        fromDateLabel.snp.makeConstraints{
+            $0.top.equalToSuperview().offset(5)
+            $0.leading.equalTo(calendarIcon.snp.trailing).offset(20)
+        }
+        fromDatePicker.snp.makeConstraints{
+            $0.top.equalTo(fromDateLabel.snp.bottom)
+            $0.leading.equalTo(fromDateLabel)
+            $0.height.equalTo(15)
         }
         
-        toDatePicker.snp.makeConstraints { make in
-            make.top.equalTo(toDateLabel.snp.bottom).offset(5)
-            make.centerX.equalTo(toDateLabel)
+        toDateLabel.snp.makeConstraints{
+            $0.top.equalToSuperview().offset(5)
+            $0.trailing.equalToSuperview().offset(-110)
+        }
+        toDatePicker.snp.makeConstraints{
+            $0.top.equalTo(toDateLabel.snp.bottom)
+            $0.leading.equalTo(toDateLabel)
+            $0.height.equalTo(15)
         }
         
         bannerLabel.snp.makeConstraints { make in
-            make.top.equalTo(toDatePicker.snp.bottom).offset(20)
+            make.top.equalTo(datePickerContainer.snp.bottom).offset(20)
             make.width.equalToSuperview().multipliedBy(0.9)
             make.centerX.equalToSuperview()
         }
@@ -240,12 +260,37 @@ class TravelLogViewController: UIViewController, UITextFieldDelegate, UIImagePic
         
         createTripButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview().offset(-50)
+            make.bottom.equalToSuperview().offset(-30)
             make.width.equalToSuperview().multipliedBy(0.9)
             make.height.equalTo(createTripButton.snp.width).multipliedBy(0.11)
         }
     }
     
+    // MARK: - Functions
+    // 캘린더 bottom sheet
+    @objc func showBottomSheet() {
+        let bottomSheetVC = BottomSheetViewController()
+        // 1
+        bottomSheetVC.modalPresentationStyle = .overFullScreen
+        // 2
+        self.present(bottomSheetVC, animated: false, completion: nil)
+    }
+    
+    @objc func createTripButtonTapped() {
+        if let tripTitle = titleTextField.text, !tripTitle.isEmpty {
+            print("여행 제목: \(tripTitle)")
+            
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+        } else {
+            print("텍스트 필드에 여행 제목을 입력하세요.")
+        }
+    }
+}
+
+
+// 도경 : Delegate 관련 extension으로 빼고 함수 정렬
+extension TravelLogViewController : UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     // MARK: - UITextFieldDelegate
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
@@ -260,71 +305,46 @@ class TravelLogViewController: UIViewController, UITextFieldDelegate, UIImagePic
         }
     }
     
-    @objc func createTripButtonTapped() {
-        if let tripTitle = titleTextField.text, !tripTitle.isEmpty {
-            print("여행 제목: \(tripTitle)")
-            
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy-MM-dd"
-            
-//            let fromDate = dateFormatter.string(from: fromDatePicker.date)
-//            let toDate = dateFormatter.string(from: toDatePicker.date)
-//
-//            print("From: \(fromDate), To: \(toDate)")
-        } else {
-            print("텍스트 필드에 여행 제목을 입력하세요.")
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        // 텍스트 필드가 편집을 시작할 때 호출되는 메서드
+        textField.layer.cornerRadius = 8.0 // 둥근 테두리 반지름 설정
+        textField.layer.borderWidth = 1.0 // 테두리 두께 설정
+        textField.layer.borderColor = WithYouAsset.mainColorDark.color.cgColor
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        // Process of closing the Keyboard when the line feed button is pressed.
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    // MARK: - UIImagePickerDelegate
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let selectedImage = info[.originalImage] as? UIImage {
+            bannerImageView.image = selectedImage
+            selectImageButton.isHidden = true
+            cancleImageButton.isHidden = false
         }
+        picker.dismiss(animated: true, completion: nil)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: nil)
     }
     
     // 이미지 선택 버튼의 액션 메서드
-        @objc func selectImage() {
-            let imagePicker = UIImagePickerController()
-            imagePicker.delegate = self
-            imagePicker.sourceType = .photoLibrary
-            present(imagePicker, animated: true, completion: nil)
-        }
-
-        // UIImagePickerControllerDelegate 메서드
-        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-            if let selectedImage = info[.originalImage] as? UIImage {
-                bannerImageView.image = selectedImage
-                selectImageButton.isHidden = true
-                cancleImageButton.isHidden = false
-            }
-            picker.dismiss(animated: true, completion: nil)
-        }
-
-        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-            picker.dismiss(animated: true, completion: nil)
-        }
+    @objc func selectImage() {
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        imagePicker.sourceType = .photoLibrary
+        present(imagePicker, animated: true, completion: nil)
+    }
     
     // 이미지 취소 버튼의 액션 메서드
-    
     @objc func cancleImage() {
         bannerImageView.image = UIImage()
         cancleImageButton.isHidden = true
         selectImageButton.isHidden = false
     }
-    // MARK: - UITextFieldDelegate
 
-        func textFieldDidBeginEditing(_ textField: UITextField) {
-            // 텍스트 필드가 편집을 시작할 때 호출되는 메서드
-            textField.layer.cornerRadius = 8.0 // 둥근 테두리 반지름 설정
-            textField.layer.borderWidth = 1.0 // 테두리 두께 설정
-            textField.layer.borderColor = UIColor(named: "MainColor")?.cgColor // 테두리 색상 설정
-        }
-
-        func textFieldDidEndEditing(_ textField: UITextField) {
-            // 텍스트 필드의 편집이 종료될 때 호출되는 메서드
-            print("End Editing")
-            
-        }
-    
-    @objc func showBottomSheet() {
-        let bottomSheetVC = BottomSheetViewController()
-            // 1
-            bottomSheetVC.modalPresentationStyle = .overFullScreen
-            // 2
-            self.present(bottomSheetVC, animated: false, completion: nil)
-        }
 }

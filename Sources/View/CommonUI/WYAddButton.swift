@@ -10,11 +10,18 @@ import  UIKit
 
 enum SizeOption : Int{
     case big = 50
-    case small = 25
+    case small = 27
 }
 
 class WYAddButton: UIButton {
     var size : SizeOption = .big
+    
+    let image = {
+        let img = UIImage(systemName: "plus")
+        let view = UIImageView(image: img)
+        view.tintColor = .white
+        return view
+    }()
     
     init(_ size : SizeOption = .big){
         super.init(frame:CGRect.zero)
@@ -31,9 +38,17 @@ class WYAddButton: UIButton {
         self.layer.cornerRadius = CGFloat(size.rawValue/2)
         self.backgroundColor = UIColor(named:"MainColorDark")
         
+        self.addSubview(image)
+        
         self.snp.makeConstraints{
             $0.width.equalTo(size.rawValue)
             $0.height.equalTo(size.rawValue)
+        }
+        
+        image.snp.makeConstraints{
+            $0.width.equalTo(size == .big ? size.rawValue/2 : size.rawValue - 7)
+            $0.height.equalTo(size == .big ? size.rawValue/2 : size.rawValue - 7)
+            $0.center.equalToSuperview()
         }
     }
     
