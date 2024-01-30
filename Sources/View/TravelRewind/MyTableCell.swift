@@ -6,13 +6,6 @@ class MyTableCell: UITableViewCell {
     
     var image: UIImage? { didSet { bind() } }
     
-    //    lazy var titleLabel: UILabel = {
-    //        let label = UILabel()
-    //        label.font = UIFont(name: "Pretendard-SemiBold", size: 14.0)
-    //        label.textColor = UIColor(named: "MainColorDark")
-    //        label.textAlignment = .center
-    //        return label
-    //    }()
     
     lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
@@ -52,8 +45,8 @@ class MyTableCell: UITableViewCell {
             make.width.equalTo(profileImageView.snp.height)
         }
         textField.snp.makeConstraints { make in
-            make.leading.equalTo(profileImageView.snp.trailing)
-            make.top.equalToSuperview()
+            make.leading.equalTo(profileImageView.snp.trailing).offset(5)
+            make.centerY.equalTo(profileImageView)
             make.width.equalToSuperview().offset(profileImageView.frame.width)
         }
         

@@ -1,6 +1,6 @@
 import UIKit
 
-class MyCell: UICollectionViewCell {
+class MemberCell: UICollectionViewCell {
 
     static var id: String { NSStringFromClass(Self.self).components(separatedBy: ".").last ?? "" }
 

@@ -6,12 +6,17 @@ class TravelRewindViewController: UIViewController{
     var dataSource: [String] = []
     var sourceImage: [UIImage?] = []
     private func setupDataSource() {
-        for i in 0...3 {
+        for i in 0...8 {
             dataSource += ["test\(i)"]
             sourceImage += [UIImage(named: "testProfile")]
         }
     }
     
+    lazy var moodPopup: MoodPopupViewController = {
+        let popup = MoodPopupViewController()
+        popup.modalPresentationStyle = .overFullScreen
+        return popup
+    }()
     
     let dayLabel: UILabel = {
         let label = UILabel()
@@ -160,6 +165,11 @@ class TravelRewindViewController: UIViewController{
         return label
     }()
     
+    let mainView: UIScrollView = {
+        let view = UIScrollView()
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupDataSource()
@@ -170,21 +180,27 @@ class TravelRewindViewController: UIViewController{
     
     func setupUI() {
         
-        view.backgroundColor = UIColor(named: "BackgroundColor")
-        view.addSubview(dayLabel)
-        view.addSubview(titleLabel)
-        view.addSubview(todaysMoodLabel)
-        view.addSubview(moodImageView)
-        view.addSubview(selectImageButton)
-        view.addSubview(question1Label)
-        view.addSubview(collectionView)
-        view.addSubview(question2Label)
-        view.addSubview(question2TextField)
-        view.addSubview(question3Label)
-        view.addSubview(question3TextField)
-        view.addSubview(question4Tag)
-        view.addSubview(question4Label)
-        view.addSubview(tableView)
+        view.addSubview(mainView)
+        
+        mainView.backgroundColor = UIColor(named: "BackgroundColor")
+        mainView.addSubview(dayLabel)
+        mainView.addSubview(titleLabel)
+        mainView.addSubview(todaysMoodLabel)
+        mainView.addSubview(moodImageView)
+        mainView.addSubview(selectImageButton)
+        mainView.addSubview(question1Label)
+        mainView.addSubview(collectionView)
+        mainView.addSubview(question2Label)
+        mainView.addSubview(question2TextField)
+        mainView.addSubview(question3Label)
+        mainView.addSubview(question3TextField)
+        mainView.addSubview(question4Tag)
+        mainView.addSubview(question4Label)
+        mainView.addSubview(tableView)
+        
+        mainView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
         
         dayLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
@@ -208,7 +224,7 @@ class TravelRewindViewController: UIViewController{
         moodImageView.snp.makeConstraints { make in
             make.centerX.equalTo(todaysMoodLabel)
             make.top.equalTo(todaysMoodLabel.snp.bottom).offset(8)
-            make.width.equalTo(todaysMoodLabel.snp.width).multipliedBy(0.7)
+            make.width.equalTo(todaysMoodLabel.snp.width).multipliedBy(0.75)
             make.height.equalTo(moodImageView.snp.width)
         }
         selectImageButton.snp.makeConstraints { make in
@@ -262,8 +278,10 @@ class TravelRewindViewController: UIViewController{
             make.top.equalTo(question4Label.snp.bottom)
             make.centerX.equalToSuperview()
             make.width.equalTo(dayLabel)
-            make.height.equalTo(200)
+            make.height.equalTo(dataSource.count*50)
         }
+        
+        
     }
     
     private func setupDelegate() {
@@ -274,59 +292,58 @@ class TravelRewindViewController: UIViewController{
     }
     
     private func registerCell() {
-        collectionView.register(MyCell.self, forCellWithReuseIdentifier: MyCell.id)
-        tableView.register(MyTableCell.self, forHeaderFooterViewReuseIdentifier: MyTableCell.id)
+        collectionView.register(MemberCell.self, forCellWithReuseIdentifier: MemberCell.id)
+        tableView.register(MyTableCell.self, forCellReuseIdentifier: MyTableCell.id)
     }
     
     func addUnderline(to label: UILabel, thickness: CGFloat, color: UIColor) {
         let underline = UILabel()
         underline.backgroundColor = color
-        view.addSubview(underline)
+        mainView.addSubview(underline)
         
         underline.snp.makeConstraints { make in
             make.leading.trailing.bottom.equalTo(label)
             make.height.equalTo(thickness)
         }
         
-        view.bringSubviewToFront(label)
+        mainView.bringSubviewToFront(label)
     }
     
     // 이미지 선택 버튼의 액션 메서드
     @objc func selectImage() {
         print("tapped button")
-        
-        let popupVC = MoodPopupViewController()
-        popupVC.modalPresentationStyle = .overFullScreen
-        present(popupVC, animated: true, completion: nil)
+        moodPopup.delegate = self
+        present(moodPopup, animated: true, completion: nil)
         
     }
     
 }
 
 extension TravelRewindViewController: UICollectionViewDelegate, UICollectionViewDataSource {
-
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return dataSource.count
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyCell.id, for: indexPath)
-        if let cell = cell as? MyCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MemberCell.id, for: indexPath)
+        if let cell = cell as? MemberCell {
             cell.model = dataSource[indexPath.item]
             cell.image = sourceImage[indexPath.item]
         }
-
+        
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         // handle item selection
-
+        
         // Example: Log the selected item's index path
         print("Selected item at indexPath: \(indexPath)")
         
     }
-
+    
+    
 }
 
 extension TravelRewindViewController: UICollectionViewDelegateFlowLayout {
@@ -335,4 +352,41 @@ extension TravelRewindViewController: UICollectionViewDelegateFlowLayout {
         let cellHeight = collectionView.bounds.height
         return CGSize(width: cellWidth, height: collectionView.frame.height) // point
     }
+    
+}
+
+extension TravelRewindViewController: UITableViewDelegate, UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return dataSource.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MyTableCell.id, for: indexPath)
+        if let cell = cell as? MyTableCell {
+            cell.image = sourceImage[indexPath.item]
+        }
+        
+        return cell
+    }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        // 여기에서 원하는 높이를 반환하세요.
+        return 50.0 // 예시로 44포인트를 반환하고 있습니다.
+    }
+}
+
+
+
+extension TravelRewindViewController: MoodPopupDelegate {
+    func didSelectMood(data: UIImage) {
+        
+        selectImageButton.setImage(data, for: .normal)
+        selectImageButton.snp.remakeConstraints { make in
+            // Set the desired size (e.g., width: 50, height: 50)
+            make.width.height.equalTo(40)
+            make.center.equalTo(moodImageView)
+        }
+    }
+    
+    
 }
