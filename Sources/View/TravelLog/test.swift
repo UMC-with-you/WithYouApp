@@ -13,7 +13,7 @@ class test {
     
     let url:String =  "http://54.150.234.75:8080/api/v1/travels"
     let parameters  = [
-        "title" : "stirng",
+        "title" : "string",
         "startDate" : "2024-01-31",
         "endDate" : "2024-01-31",
         "url" : "string"
@@ -24,15 +24,16 @@ class test {
     ]
     
     public func testAPI() {
-        AF.request(url, method: .post, parameters: parameters, headers: header).responseDecodable(of: testMode.self) { response in
+        AF.request(url, method: .post, parameters: parameters,encoder: JSONParameterEncoder.default, headers: header).responseDecodable(of: testMode.self) { response in
             switch response.result {
-            case .success(let data):
-                print("성공")
-                print(response.data ?? "empty")
-            case .failure(let error) :
-                print("실패")
-                print(response.error ?? "empty")
-            }
-        }
+                    case .success(let data):
+                        print(data.message)
+                        print(data.result)
+                        print(data.code)
+                        print(data.isSuccess)
+                    case.failure(let error):
+                        print(error)
+                    }
+                }
     }
 }

@@ -12,7 +12,7 @@ struct testMode: Codable {
     var isSuccess: Bool
     var code: String
     var message: String
-    var result: [id]
+    var result: id
 }
 
 struct id: Codable {
