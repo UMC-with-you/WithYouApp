@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct testMode: Codable {
+struct testModel: Codable {
     var isSuccess: Bool
     var code: String
     var message: String

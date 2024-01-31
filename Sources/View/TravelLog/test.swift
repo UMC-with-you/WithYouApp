@@ -9,22 +9,24 @@
 import Alamofire
 import UIKit
 
-class test {
+class travelsAPI {
     
     let url:String =  "http://54.150.234.75:8080/api/v1/travels"
-    let parameters  = [
-        "title" : "string",
-        "startDate" : "2024-01-31",
-        "endDate" : "2024-01-31",
-        "url" : "string"
-    ]
     
-    let header: HTTPHeaders = [
-        "Authorization" : "1"
-    ]
-    
-    public func testAPI() {
-        AF.request(url, method: .post, parameters: parameters,encoder: JSONParameterEncoder.default, headers: header).responseDecodable(of: testMode.self) { response in
+    public func travelsAPI() {
+        
+        let parameters  = [
+            "title" : "string",
+            "startDate" : "2024-01-31",
+            "endDate" : "2024-01-31",
+            "url" : "string"
+        ]
+        
+        let header: HTTPHeaders = [
+            "Authorization" : "1"
+        ]
+        
+        AF.request(url, method: .post, parameters: parameters,encoder: JSONParameterEncoder.default, headers: header).responseDecodable(of: testModel.self) { response in
             switch response.result {
                     case .success(let data):
                         print(data.message)

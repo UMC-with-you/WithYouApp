@@ -2,9 +2,21 @@
 import UIKit
 import SnapKit
 
-class CreateTravelLogViewController: UIViewController {
+
+enum DateType{
+    case from
+    case to
+}
+
+class CreateTravelLogViewController: UIViewController, BottomSheetDelegate{
         
-    let testClass = test()
+    let API = travelsAPI()
+    
+    
+    var fromBottomSheetVC: BottomSheetViewController?
+    var toBottomSheetVC: BottomSheetViewController?
+    var dateType: DateType = .from
+    
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -50,13 +62,18 @@ class CreateTravelLogViewController: UIViewController {
     let fromDatePicker: UIButton = {
         let button = UIButton()
         // 포맷팅된 날짜를 버튼의 타이틀로 설정
-        button.setTitle(dateController.getDate(Date()), for: .normal)
+        let currentDate = Date()
+        let dateFormatter = DateFormatter()
+
+        dateFormatter.dateFormat = "yyyy.MM.dd"
         button.titleLabel?.font = WithYouFontFamily.Pretendard.medium.font(size: 18)
         button.setTitleColor(WithYouAsset.subColor.color, for: .normal)
+        // 포맷팅된 날짜를 버튼의 타이틀로 설정
+        button.setTitle(dateFormatter.string(from: currentDate), for: .normal)
         return button
     }()
     
-    let calendarIcon = UIImageView(image: UIImage(named: "CalendarIcon"))
+    lazy var calendarIcon = UIImageView(image: UIImage(named: "CalendarIcon"))
     
     let toDateLabel: UILabel = {
         let label = UILabel()
@@ -68,7 +85,12 @@ class CreateTravelLogViewController: UIViewController {
     
     let toDatePicker = {
         let button = UIButton()
-        button.setTitle(dateController.getDate(Date().advanced(by:3)), for: .normal)
+        let currentDate = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy.MM.dd" // 날짜 포맷을 필요에 맞게 설정
+        
+        button.setTitle(dateFormatter.string(from: currentDate), for: .normal)
+       
         button.titleLabel?.font = WithYouFontFamily.Pretendard.medium.font(size: 18)
         button.setTitleColor(WithYouAsset.subColor.color, for: .normal)
         return button
@@ -158,9 +180,9 @@ class CreateTravelLogViewController: UIViewController {
         setConst()
         
         // fromDatePicker 버튼이 클릭되었을 때 Bottom Sheet를 표시하는 액션 추가
-        fromDatePicker.addTarget(self, action: #selector(showBottomSheet), for: .touchUpInside)
+        fromDatePicker.addTarget(self, action: #selector(showFromBottomSheet), for: .touchUpInside)
 
-        toDatePicker.addTarget(self, action: #selector(showBottomSheet), for: .touchUpInside)
+        toDatePicker.addTarget(self, action: #selector(showToBottomSheet), for: .touchUpInside)
     }
     
     func setupUI() {
@@ -270,18 +292,18 @@ class CreateTravelLogViewController: UIViewController {
     
     // MARK: - Functions
     // 캘린더 bottom sheet
-    @objc func showBottomSheet() {
-        let bottomSheetVC = BottomSheetViewController()
-        // 1
-        bottomSheetVC.modalPresentationStyle = .overFullScreen
-        // 2
-        self.present(bottomSheetVC, animated: false, completion: nil)
-    }
+//    @objc func showBottomSheet() {
+//        let bottomSheetVC = BottomSheetViewController()
+//        // 1
+//        bottomSheetVC.modalPresentationStyle = .overFullScreen
+//        // 2
+//        self.present(bottomSheetVC, animated: false, completion: nil)
+//    }
     
     @objc func createTripButtonTapped() {
         if let tripTitle = titleTextField.text, !tripTitle.isEmpty {
             print("여행 제목: \(tripTitle)")
-            testClass.testAPI()
+            API.travelsAPI()
             
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -349,6 +371,53 @@ extension CreateTravelLogViewController : UITextFieldDelegate, UIImagePickerCont
         cancleImageButton.isHidden = true
         selectImageButton.isHidden = false
     }
+    @objc func showFromBottomSheet() {
+        dateType = .from
+        // bottomSheetVC가 nil이거나 해제되었는지 확인하고, 그 경우에만 새로운 인스턴스를 생성합니다.
+        if fromBottomSheetVC == nil || fromBottomSheetVC?.isViewLoaded == false {
+            fromBottomSheetVC = BottomSheetViewController()
+            fromBottomSheetVC?.delegate = self // 델리게이트 설정
+        }
+
+        fromBottomSheetVC?.modalPresentationStyle = .overFullScreen
+        self.present(fromBottomSheetVC!, animated: false, completion: nil)
+    }
+    
+    @objc func showToBottomSheet() {
+        dateType = .to
+        // bottomSheetVC가 nil이거나 해제되었는지 확인하고, 그 경우에만 새로운 인스턴스를 생성합니다.
+        if toBottomSheetVC == nil || toBottomSheetVC?.isViewLoaded == false {
+            toBottomSheetVC = BottomSheetViewController()
+            toBottomSheetVC?.delegate = self // 델리게이트 설정
+        }
+
+        toBottomSheetVC?.modalPresentationStyle = .overFullScreen
+        self.present(toBottomSheetVC!, animated: false, completion: nil)
+    }
+    
+    func didPickDate(_ date: Date) {
+        // 날짜를 선택한 후에 호출되는 메서드
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy.MM.dd"
+        
+        switch dateType {
+        case .from:
+            fromDatePicker.setTitle(dateFormatter.string(from: date), for: .normal)
+            fromDateLabel.textColor = WithYouAsset.mainColorDark.color
+            fromDatePicker.setTitleColor(WithYouAsset.mainColorDark.color, for: .normal)
+        case .to:
+            toDatePicker.setTitle(dateFormatter.string(from: date), for: .normal)
+            toDateLabel.textColor = WithYouAsset.mainColorDark.color
+            toDatePicker.setTitleColor(WithYouAsset.mainColorDark.color, for: .normal)
+        }
+        
+        if fromDateLabel.textColor == WithYouAsset.mainColorDark.color && toDateLabel.textColor == WithYouAsset.mainColorDark.color {
+            datePickerContainer.layer.borderColor = WithYouAsset.mainColorDark.color.cgColor
+            calendarIcon.image = UIImage(named: "CalendarIconDark")
+            print("test")
+        }
+    }
+    
 
 }
 
