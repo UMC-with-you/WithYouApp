@@ -3,7 +3,10 @@ import UIKit
 import SnapKit
 
 class CreateTravelLogViewController: UIViewController {
-    let titleLabel: UILabel = {
+        
+    let testClass = test()
+    
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "여행 제목"
         label.font = WithYouFontFamily.Pretendard.semiBold.font(size: 20)
@@ -278,6 +281,7 @@ class CreateTravelLogViewController: UIViewController {
     @objc func createTripButtonTapped() {
         if let tripTitle = titleTextField.text, !tripTitle.isEmpty {
             print("여행 제목: \(tripTitle)")
+            testClass.testAPI()
             
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -347,3 +351,6 @@ extension CreateTravelLogViewController : UITextFieldDelegate, UIImagePickerCont
     }
 
 }
+
+
+
