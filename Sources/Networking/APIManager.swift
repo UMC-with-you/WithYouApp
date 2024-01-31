@@ -14,10 +14,12 @@ import UIKit
 class APIManager{
     public static let shared = APIManager()
     
+    let url = "http://54.150.234.75:8080/"
+
     
-    // API GET 
-    func getData<T: Decodable>(_ url: URL, parameter: Parameters, dataType : T, _ completion: @escaping (T) -> Void){
-        AF.request(url,method: .get,parameters: parameter)
+    // API GET
+    func getData<T: Decodable>(parameter: Parameters, dataType : T.Type, _ completion: @escaping (T) -> Void){
+        AF.request(url ,method: .get,parameters: parameter)
             .responseDecodable(of: T.self){ response in
                 switch response.result{
                 case .success(let result):

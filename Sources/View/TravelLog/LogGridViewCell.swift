@@ -43,7 +43,7 @@ class LogGridViewCell: UICollectionViewCell {
     }
     
     public func bind(log: Log){
-        self.title.text = log.text
+        self.title.text = log.title
         self.date.text = log.startDate + "~" + log.endDate.dropFirst(4)
     }
     

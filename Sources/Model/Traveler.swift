@@ -7,3 +7,10 @@
 //
 
 import Foundation
+
+
+struct Traveler : Identifiable{
+    var id : Int
+    var name : String
+    var profilePicture : String
+}

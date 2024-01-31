@@ -10,13 +10,15 @@ import RxGesture
 import RxSwift
 import UIKit
 
+import Alamofire
+
 class MainViewController: UIViewController {
     let header = TopHeader()
     
     let button = WYAddButton(.big)
     
     //Log가 있을 때 보여지는 뷰
-    let logView = UIView()
+    let logViewContainer = UIView()
     let eclipse = {
         let view = UIView()
         view.frame = CGRect(x: 0,y: 0,width: 5,height: 5)
@@ -38,7 +40,7 @@ class MainViewController: UIViewController {
         label.textColor = .black
         return label
     }()
-    var logs : [LogView] = []
+    var logViews : [LogView] = []
     
     //Log가 없을 때 보여지는 뷰
     let emptyLogView = UIView()
@@ -69,11 +71,17 @@ class MainViewController: UIViewController {
         view.backgroundColor = .white
         
         // 1. if logs.count == 0 ? emptyLogView : lgoView
+        /*
         for i in 0...2{
-            let posting = Posting(id: i, text: "오징어들의 파리 여행",startDate: "2024.02.13", endDate: "2024.03.01", media: URL(fileURLWithPath: "www.naver.com"))
-            let log = LogView(frame: CGRect(), posting: posting)
-            logs.append(log)
+            let log = Log(id: i, text: "오징어들의 파리 여행",startDate: "2024.02.13", endDate: "2024.03.01", media: URL(fileURLWithPath: "www.naver.com"))
+            let logView = LogView(frame: CGRect(), log: log)
+            logViews.append(logView)
         }
+         */
+        
+      
+        
+        
         // 2. if logs.count != 0 ? 여행중인지 아닌지 판단 후 표시 / default는 여행 중 아님
         
         setViews()
@@ -106,10 +114,10 @@ class MainViewController: UIViewController {
         isLogEmpty.subscribe(onNext: {
             if $0 {
                 self.emptyLogView.isHidden = false
-                self.logView.isHidden = true
+                self.logViewContainer.isHidden = true
             } else {
                 self.emptyLogView.isHidden = true
-                self.logView.isHidden = false
+                self.logViewContainer.isHidden = false
             }
         })
         .disposed(by: disposeBag)
@@ -149,7 +157,7 @@ class MainViewController: UIViewController {
             }
             .disposed(by: disposeBag)
  
-        logs.forEach{
+        logViews.forEach{
             $0.rx.tapGesture()
                 .when(.recognized)
                 .bind{ _ in
@@ -160,7 +168,7 @@ class MainViewController: UIViewController {
     }
     
     private func setViews(){
-        [header,emptyLogView,logView,button].forEach{
+        [header,emptyLogView,logViewContainer,button].forEach{
             view.addSubview($0)
         }
         
@@ -171,11 +179,11 @@ class MainViewController: UIViewController {
         
         //로그가 존재할때 보여지는 View
         [ing,upcoming,eclipse].forEach {
-            logView.addSubview($0)
+            logViewContainer.addSubview($0)
         }
         
-        logs.forEach{
-            logView.addSubview($0)
+        logViews.forEach{
+            logViewContainer.addSubview($0)
         }
     }
     
@@ -202,7 +210,7 @@ class MainViewController: UIViewController {
             $0.centerY.equalToSuperview().offset(-30)
         }
         
-        logView.snp.makeConstraints{
+        logViewContainer.snp.makeConstraints{
             $0.top.equalTo(header.snp.bottom)
             $0.width.bottom.equalToSuperview()
         }
@@ -224,7 +232,7 @@ class MainViewController: UIViewController {
             try! $0.centerX.equalTo(isUpcoming.value() ? upcoming.snp.centerX : ing.snp.centerX)
         }
         
-        logs.reversed().enumerated().forEach{ index, item in
+        logViews.reversed().enumerated().forEach{ index, item in
             item.snp.makeConstraints{
                 $0.centerX.equalToSuperview().offset(index * 20)
                 $0.centerY.equalToSuperview().offset(-50)
