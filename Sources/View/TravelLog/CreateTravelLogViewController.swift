@@ -378,7 +378,7 @@ extension CreateTravelLogViewController : UITextFieldDelegate, UIImagePickerCont
             fromBottomSheetVC = BottomSheetViewController()
             fromBottomSheetVC?.delegate = self // 델리게이트 설정
         }
-
+        
         fromBottomSheetVC?.modalPresentationStyle = .overFullScreen
         self.present(fromBottomSheetVC!, animated: false, completion: nil)
     }
@@ -390,7 +390,7 @@ extension CreateTravelLogViewController : UITextFieldDelegate, UIImagePickerCont
             toBottomSheetVC = BottomSheetViewController()
             toBottomSheetVC?.delegate = self // 델리게이트 설정
         }
-
+        
         toBottomSheetVC?.modalPresentationStyle = .overFullScreen
         self.present(toBottomSheetVC!, animated: false, completion: nil)
     }
@@ -415,10 +415,20 @@ extension CreateTravelLogViewController : UITextFieldDelegate, UIImagePickerCont
             datePickerContainer.layer.borderColor = WithYouAsset.mainColorDark.color.cgColor
             calendarIcon.image = UIImage(named: "CalendarIconDark")
             print("test")
+            didSetContext()
+            
+        }
+    }
+    private func didSetContext(){
+        if calendarIcon.image == UIImage(named: "CalendarIconDark") && titleTextField.hasText {
+            print("success")
+            createTripButton.backgroundColor = WithYouAsset.mainColorDark.color
+        }
+        else{
+            createTripButton.backgroundColor = WithYouAsset.subColor.color
         }
     }
     
-
 }
 
 

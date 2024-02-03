@@ -7,8 +7,8 @@ protocol BottomSheetDelegate: AnyObject {
 }
 
 class BottomSheetViewController: UIViewController {
-    
     weak var delegate: BottomSheetDelegate?
+    
     
     let DatePicker: UIDatePicker = {
         let datePicker = UIDatePicker()

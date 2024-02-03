@@ -8,15 +8,16 @@
 
 import Foundation
 
-struct Posting : Codable, Identifiable {
+struct Log : Codable, Identifiable {
     var id: Int
-    var text : String
+    var title : String
     var startDate : String
     var endDate : String
-    var media : URL
+    var imageUrl : String
 }
 
-extension Posting {
+extension Log {
+    
     func getTravelPeriod() -> String{
         return startDate + "~" + endDate.dropFirst(4)
     }

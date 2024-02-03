@@ -12,7 +12,7 @@ import UIKit
 
 class LogView: UIView {
     
-    var posting : Posting?
+    var log : Log?
     
     var title = {
         let label = UILabel()
@@ -43,9 +43,9 @@ class LogView: UIView {
     }()
 
     
-    init(frame: CGRect, posting : Posting){
+    init(frame: CGRect, log : Log){
         super.init(frame: frame)
-        self.posting = posting
+        self.log = log
         bind()
         setUp()
         setConst()
@@ -57,8 +57,8 @@ class LogView: UIView {
     
     public func bind(){
     
-        title.text = posting?.text
-        date.text = posting?.getTravelPeriod()
+        title.text = log?.title
+        date.text = log?.getTravelPeriod()
         dDay.setTitle(dateController.days(from: dateController.strToDate("2024.02.12")), for: .normal)
         dDay.titleLabel?.font = WithYouFontFamily.Pretendard.bold.font(size: 15)
         

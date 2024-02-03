@@ -56,4 +56,9 @@ class TwoComponentLineView: UIView{
             $0.leading.equalTo(imageView.snp.trailing).offset(10)
         }
     }
+    
+    
+    public func changeConst(completion : () -> Void){
+        completion()
+    }
 }

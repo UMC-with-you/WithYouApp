@@ -11,7 +11,6 @@ import  UIKit
 enum SizeOption : Int{
     case big = 50
     case small = 27
-
 }
 
 class WYAddButton: UIButton {
