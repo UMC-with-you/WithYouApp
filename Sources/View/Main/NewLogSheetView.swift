@@ -7,8 +7,10 @@
 //
 
 import RxSwift
+import RxRelay
 import SnapKit
 import UIKit
+
 
 
 class NewLogSheetView: UIViewController {
@@ -29,7 +31,7 @@ class NewLogSheetView: UIViewController {
     
     let createButton = WYButton("여행 만들기")
     
-    public var commander = PublishSubject<Bool>()
+    public var commander = PublishRelay<Bool>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,7 +84,7 @@ class NewLogSheetView: UIViewController {
     @objc
     private func toCreateLog(_ gesture : UITapGestureRecognizer){
         dismiss(animated: true)
-        self.commander.onCompleted()
+        self.commander.accept(true)
     }
      
     //로그 참여 로직

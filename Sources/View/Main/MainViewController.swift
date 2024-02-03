@@ -40,6 +40,7 @@ class MainViewController: UIViewController {
         label.textColor = .black
         return label
     }()
+    
     var logViews : [LogView] = []
     
     //Log가 없을 때 보여지는 뷰
@@ -78,6 +79,17 @@ class MainViewController: UIViewController {
             logViews.append(logView)
         }
          */
+        let parameter = [
+            "currentLocalDate" : dateController.getDate(Date())
+        ]
+        let header : HTTPHeaders = [
+            "Authorization": "1",
+        ]
+        
+        APIManager.shared.getData(urlEndPoint: "/travels",parameter: parameter,header: header, dataType: APIContainer<[Log]>.self){ result  in
+            print(result)
+        }
+        
         
       
         
@@ -91,6 +103,8 @@ class MainViewController: UIViewController {
     }
     
     func setSubscribes(){
+        
+        
         
         //터치에 따른 ING or UPCOMING 색 변경
         isUpcoming.subscribe(onNext: {
@@ -265,7 +279,7 @@ extension MainViewController{
             sheet.preferredCornerRadius = 30
         }
       
-        _ =  modalVC.commander.subscribe(onCompleted: {
+        _ =  modalVC.commander.subscribe({ event in
             let newLogVC = CreateTravelLogViewController()
             self.navigationController?.pushViewController(newLogVC, animated: true)
         })

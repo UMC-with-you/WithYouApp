@@ -37,13 +37,7 @@ final class WithUView: UIView {
         return view
     }()
     
-    let noticeView: UIView = {
-        let view = NoticeView()
-        view.layer.cornerRadius = 10
-        view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.quaternaryLabel.cgColor
-        return view
-    }()
+    let noticeView = NoticeView()
     
     let subLabel: UILabel = {
         let label = UILabel()

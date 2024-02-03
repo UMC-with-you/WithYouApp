@@ -6,8 +6,9 @@
 //  Copyright © 2024 withyou.org. All rights reserved.
 //
 
-import UIKit
+
 import SnapKit
+import UIKit
 
 class NoticeTableViewCell: UITableViewCell {
     
@@ -132,7 +133,7 @@ class NoticeTableViewCell: UITableViewCell {
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        print("Notice Cell Tapped")
         // Configure the view for the selected state
     }
 }

@@ -14,30 +14,37 @@ import UIKit
 class TwoComponentLineView: UIView{
     
     let label = {
-          let label = UILabel()
+        let label = UILabel()
         label.textColor = WithYouAsset.mainColorDark.color
         label.font = WithYouFontFamily.Pretendard.medium.font(size: 16)
-           return label
-       }()
-       
-       var imageView : UIView!
-       
-       override init(frame: CGRect) {
-           self.imageView = UIView()
-           super.init(frame: frame)
-       }
-
-       required init?(coder: NSCoder) {
-           fatalError("init(coder:) has not been implemented")
-       }
-       
-       init(_ label : String, imageView : UIView){
-           super.init(frame: .zero)
-           self.label.text = label
-           self.imageView = imageView
-           setUp()
-       }
-       
+        return label
+    }()
+    
+    var imageView : UIView!
+    
+    override init(frame: CGRect) {
+        self.imageView = UIView()
+        super.init(frame: frame)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    init(_ label : String, imageView : UIView){
+        super.init(frame: .zero)
+        self.label.text = label
+        self.imageView = imageView
+        setUp()
+    }
+    
+    init(_ label : String, imageName : String){
+        super.init(frame: .zero)
+        self.label.text = label
+        self.imageView = UIImageView(image: UIImage(named: imageName))
+        setUp()
+    }
+    
     func setUp(){
         self.addSubview(imageView)
         self.addSubview(label)

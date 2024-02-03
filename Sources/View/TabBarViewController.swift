@@ -18,7 +18,7 @@ class TabBarViewController: UITabBarController {
         tabBar.layer.borderWidth = 0.3
 
         //let mainView = MainViewController()
-        let mainView = BeforeTripLogViewViewController()
+        let mainView = MainViewController()
         let logView = WithUViewController()
         let myView = MyPageViewController()
 

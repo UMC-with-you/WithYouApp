@@ -11,11 +11,11 @@ import SnapKit
 
 class WithUViewController: UIViewController {
     
-//    private let withUView = NickNameView()
+    private let withUView = WithUView()
     
     override func loadView() {
-        // super.loadView() 필요없음
-//        view = withUView
+        super.loadView()
+        view = withUView
     }
 
     override func viewDidLoad() {

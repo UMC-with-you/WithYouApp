@@ -6,11 +6,12 @@
 //  Copyright © 2024 withyou.org. All rights reserved.
 //
 
+import Alamofire
 import SnapKit
 import RxCocoa
 import RxSwift
 import UIKit
-import Alamofire
+
 class BeforeTripLogViewViewController: UIViewController {
     //D-day
     let day = {
@@ -19,6 +20,10 @@ class BeforeTripLogViewViewController: UIViewController {
         label.textColor = .black
         return label
     }()
+    
+    var profilePic = ProfileView(size: .small)
+    
+    let sideMenu = UIImageView(image: UIImage(named: "SideMenu"))
     
     //Log title
     //아래 줄 생성 예정
@@ -30,6 +35,7 @@ class BeforeTripLogViewViewController: UIViewController {
     }()
     //Notice
     let noticeView = NoticeView()
+    
     //Packing Together
     let packingContainer = {
         let container = UIView()
@@ -55,13 +61,14 @@ class BeforeTripLogViewViewController: UIViewController {
     let packingListView = {
         //CollectionView
         let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: 350, height: 50)
+        layout.itemSize = CGSize(width: 320, height: 40)
         let list = UICollectionView(frame: .zero,collectionViewLayout: layout)
         list.register(PackingTableCell.self, forCellWithReuseIdentifier: PackingTableCell.cellId)
         return list
     }()
     
     //Add package
+    var addPackageWidthConstraint : Constraint?
     let addPackageContainer = {
        let uv = UIView()
         uv.backgroundColor = .systemGray5
@@ -88,18 +95,23 @@ class BeforeTripLogViewViewController: UIViewController {
         view.backgroundColor = WithYouAsset.backgroundColor.color
         setUp()
         setConst()
+        setDelegate()
         
         day.text = "D-20"
         logTitle.text = "오징어들의 오사카 여행"
 
         
         //Testing
+        /*
         let packingItemList = [
-            PackingItem(id: 0, logId: 1, itemName: "드라이기"),
-            PackingItem(id: 1, logId: 1, itemName: "로션"),
-            PackingItem(id: 2, logId: 1, itemName: "샴푸"),
-            PackingItem(id: 3, logId: 1, itemName: "수건")
+            PackingItem(id: 0,itemName: "드라이기",isChecked: false),
+            PackingItem(id: 1,  itemName: "로션",isChecked: false),
+            PackingItem(id: 2,  itemName: "샴푸",isChecked: false),
+            PackingItem(id: 3, itemName: "수건",isChecked: false)
         ]
+         */
+        
+        
         
         let dummyTravler = [
             Traveler(id: 0, name: "박우주", profilePicture: ""),
@@ -108,10 +120,11 @@ class BeforeTripLogViewViewController: UIViewController {
             Traveler(id: 3, name: "우우우", profilePicture: "")
         ]
         
-        AF.request("http://54.150.234.75:8080/api/v1/travels/1").response { response in
-            print(response)
-            
-        }
+        let url = "http://54.150.234.75:8080/api/v1/travels/1/packing_items"
+        
+        //APIManager.shared.getData(urlEndPoint: "/travels/1/packing_items", dataType: APIContainer<[PackingItem]>.self) { list in
+        //    self.dummyData.onNext(list.result)
+        //}
         
         //CollectionView Style
         dummyData
@@ -120,12 +133,37 @@ class BeforeTripLogViewViewController: UIViewController {
                 cell.bindTravlers(travelers: dummyTravler)
             }
             .disposed(by: disposeBag)
-
-        dummyData.onNext(packingItemList)
+        
+        addPackageButton.rx
+            .tapGesture()
+            .when(.recognized)
+            .subscribe(onNext: { gesture in
+                self.addButtonClicked()
+            })
+            .disposed(by: disposeBag)
     }
     
+    
+    private func setDelegate(){
+        noticeView.delegate = self
+        textField.delegate = self
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
+        sideMenu.rx
+            .tapGesture()
+            .when(.recognized)
+            .subscribe(onNext: { _ in
+                 self.openSideMenu()
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    
     private func setUp(){
-        [day,logTitle,noticeView,addPackageContainer,packingContainer].forEach{
+        [day,sideMenu,logTitle,noticeView,packingContainer,addPackageContainer].forEach{
             view.addSubview($0)
         }
         
@@ -143,9 +181,15 @@ class BeforeTripLogViewViewController: UIViewController {
     private func setConst(){
         
         day.snp.makeConstraints{
-            $0.leading.equalToSuperview().offset(20)
+            $0.leading.equalToSuperview().offset(15)
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
         }
+        
+        sideMenu.snp.makeConstraints{
+            $0.trailing.equalToSuperview().offset(-20)
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+        }
+        
         logTitle.snp.makeConstraints{
             $0.leading.equalTo(day)
             $0.top.equalTo(day.snp.bottom).offset(20)
@@ -154,7 +198,7 @@ class BeforeTripLogViewViewController: UIViewController {
         //NoticeView
         noticeView.snp.makeConstraints{
             $0.top.equalTo(logTitle.snp.bottom).offset(15)
-            $0.height.equalTo(170)
+            $0.bottom.equalTo(packingContainer.snp.top).offset(-30)
             $0.width.equalTo(packingContainer.snp.width)
             $0.centerX.equalToSuperview()
         }
@@ -179,12 +223,12 @@ class BeforeTripLogViewViewController: UIViewController {
         }
         
         //Adding Package
-        addPackageContainer.snp.makeConstraints{
-            $0.width.equalToSuperview().multipliedBy(0.9)
-            $0.centerX.equalToSuperview()
-            $0.height.equalTo(48)
+        addPackageContainer.snp.makeConstraints{ make in
+            addPackageWidthConstraint =  make.width.equalToSuperview().multipliedBy(0.9).constraint
+            make.centerX.equalToSuperview()
+            make.height.equalTo(48)
             //추후 위의 뷰와 거리 계산
-            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-40)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-40)
         }
         
         textField.snp.makeConstraints{
@@ -198,21 +242,69 @@ class BeforeTripLogViewViewController: UIViewController {
             $0.centerY.equalToSuperview()
         }
     }
-}
-
-
-extension BeforeTripLogViewViewController: UITextFieldDelegate{
-
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        // 텍스트 필드가 편집을 시작할 때 호출되는 메서드
-        textField.layer.cornerRadius = 8.0 // 둥근 테두리 반지름 설정
-        textField.layer.borderWidth = 1.0 // 테두리 두께 설정
-        textField.layer.borderColor = UIColor(named: "MainColor")?.cgColor // 테두리 색상 설정
+    
+    func addButtonClicked(){
+        let url = "http://4.150.234.75:8080/api/v1/travels/1/packing_items"
+        
+        let parameter = [
+            "itemName" : "드라이기"
+        ]
     }
     
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        // 텍스트 필드의 편집이 종료될 때 호출되는 메서드
-        print("End Editing")
+    func openSideMenu(){
+        let sideMenu = SideBarViewController()
+        sideMenu.modalPresentationStyle = .overFullScreen
+        
+        let transition = CATransition()
+        transition.duration = 0.25
+        transition.type = .fade
+        transition.subtype = .fromRight
+        transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+        view.window?.layer.add(transition, forKey: kCATransition)
+        present(sideMenu,animated: false)
     }
 }
 
+
+// MARK: TextFieldDelegate
+extension BeforeTripLogViewViewController: UITextFieldDelegate{
+    
+    //화면 터치시 키보드 내림
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    // 텍스트 필드의 편집이 종료될 때 호출되는 메서드
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        print("End Editing")
+    }
+    
+    // return button 눌렀을 떄
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool{
+        self.view.endEditing(true)
+        return true
+    }
+    
+    @objc func keyboardWillShow(_ sender: Notification) {
+        if let keyBoardHeight = sender.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            if view.frame.origin.y == 0 {
+                view.frame.origin.y -= keyBoardHeight.cgRectValue.height
+            }
+        }
+    }
+    
+    @objc func keyboardWillHide(_ sender: Notification) {
+        if view.frame.origin.y != 0 {
+            view.frame.origin.y = 0
+        }
+    }
+
+}
+
+extension BeforeTripLogViewViewController : NoticeViewDelegate{
+    func addNotice() {
+        let addNoticeView = AddNoticeViewController()
+        addNoticeView.modalPresentationStyle = .overFullScreen
+        present(addNoticeView, animated: false)
+    }
+}

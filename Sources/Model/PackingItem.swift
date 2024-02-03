@@ -7,25 +7,15 @@
 //
 
 import Foundation
-import RxDataSources
 
-struct PackingItem : Equatable, Identifiable {
+struct PackingItem : Codable, Equatable, Identifiable {
     var id : Int
-    var logId : Int
     var itemName : String
-}
-
-// RxDataSources 용
-struct SectionOfPackingItem {
-    var header : String
-    var items : [Item]
-}
-
-extension SectionOfPackingItem : SectionModelType {
-    typealias Item = PackingItem
+    var isChecked : Bool
     
-    init(original : SectionOfPackingItem, items : [PackingItem]){
-        self = original
-        self.items = items
+    private enum CodingKeys : String, CodingKey{
+        case id = "itemId"
+        case itemName
+        case isChecked = "checked"
     }
 }

@@ -14,10 +14,17 @@ struct Log : Codable, Identifiable {
     var startDate : String
     var endDate : String
     var imageUrl : String
+    
+    private enum CodingKeys : String, CodingKey{
+        case id = "travelId"
+        case title
+        case startDate
+        case endDate
+        case imageUrl
+    }
 }
 
 extension Log {
-    
     func getTravelPeriod() -> String{
         return startDate + "~" + endDate.dropFirst(4)
     }

@@ -11,15 +11,23 @@ import Foundation
 import UIKit
 
 
+// MARK: 네트워크 통신
 class APIManager{
+    
     public static let shared = APIManager()
     
-    let url = "http://54.150.234.75:8080/"
+    let baseUrl = "http://54.150.234.75:8080/api/v1"
 
-    
-    // API GET
-    func getData<T: Decodable>(parameter: Parameters, dataType : T.Type, _ completion: @escaping (T) -> Void){
-        AF.request(url ,method: .get,parameters: parameter)
+    // GET METHOD
+    func getData<T: Decodable>(urlEndPoint:String,
+                             parameter: Parameters? = nil,
+                               header : HTTPHeaders? = nil,
+                             dataType : T.Type,
+                             _ completion: @escaping (T) -> Void){
+        
+        let url = baseUrl + urlEndPoint
+        
+        AF.request(url, method: .get, parameters: parameter,headers: header)
             .responseDecodable(of: T.self){ response in
                 switch response.result{
                 case .success(let result):
@@ -30,9 +38,32 @@ class APIManager{
             }
     }
     
+    // POST METHOD
+    func postData<T: Codable, R: Decodable>(urlEndPoint: String,
+                                          parameter: APIParameters? = nil,
+                                            header : HTTPHeaders? = nil,
+                                          dataType : T.Type,
+                                          responseType : R.Type,
+                                          _ completion: @escaping (APIContainer<R>) -> Void){
+        
+        let url = baseUrl + urlEndPoint
+        
+        AF.request(url, method: .post, parameters: parameter, encoding: JSONEncoding.default, headers: header)
+            .responseDecodable(of : APIContainer<R>.self){ response in
+                switch response.result {
+                case .success(let result):
+                    completion(result)
+                case .failure(let error ):
+                    print(error)
+                }
+            }
+    }
+    
+    
     // Get Image
-    func getImage(_ url : URL, _ completion: @escaping (Data) -> Void ){
-        AF.request(url).responseData { response in
+    // 미완
+    func getImage(_ completion: @escaping (Data) -> Void ){
+        AF.request(baseUrl).responseData { response in
             switch response.result {
             case .success(let result):
                 completion(result)
