@@ -149,9 +149,9 @@ class BottomSheetViewController: UIViewController {
     
     @objc private func doneButtonTapped(){
         hideBottomSheetAndGoBack()
-        
         datePicked(DatePicker.date)
     }
+    
     func datePicked(_ date: Date) {
            // Notify the delegate that a date is picked
            delegate?.didPickDate(date)
