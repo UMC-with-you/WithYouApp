@@ -1,7 +1,14 @@
 import UIKit
 import SnapKit
 
+protocol BottomSheetDelegate: AnyObject {
+
+    func didPickDate(_ date: Date)
+}
+
 class BottomSheetViewController: UIViewController {
+    weak var delegate: BottomSheetDelegate?
+    
     
     let DatePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
@@ -16,11 +23,11 @@ class BottomSheetViewController: UIViewController {
         let button = UIButton()
         button.setTitle("완료", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor(named: "SubColor")
+        button.backgroundColor = UIColor(named: "MainColorDark")
         button.titleLabel?.font =  UIFont(name: "Pretendard-SemiBold", size: 16.0)
         button.layer.cornerRadius = 16.0 // 원하는 라운드 값으로 설정
         button.layer.masksToBounds = true // 라운드 적용을 위해 마스크 사용
-        button.addTarget(BottomSheetViewController.self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -142,5 +149,11 @@ class BottomSheetViewController: UIViewController {
     
     @objc private func doneButtonTapped(){
         hideBottomSheetAndGoBack()
+        
+        datePicked(DatePicker.date)
     }
+    func datePicked(_ date: Date) {
+           // Notify the delegate that a date is picked
+           delegate?.didPickDate(date)
+       }
 }

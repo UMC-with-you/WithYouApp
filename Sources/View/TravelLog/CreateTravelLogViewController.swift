@@ -2,7 +2,18 @@
 import UIKit
 import SnapKit
 
-class CreateTravelLogViewController: UIViewController {
+
+enum DateType{
+    case from
+    case to
+}
+
+class CreateTravelLogViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, BottomSheetDelegate {
+    
+    var fromBottomSheetVC: BottomSheetViewController?
+    var toBottomSheetVC: BottomSheetViewController?
+    var dateType: DateType = .from
+  
     let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "여행 제목"
@@ -156,7 +167,6 @@ class CreateTravelLogViewController: UIViewController {
         
         // fromDatePicker 버튼이 클릭되었을 때 Bottom Sheet를 표시하는 액션 추가
         fromDatePicker.addTarget(self, action: #selector(showBottomSheet), for: .touchUpInside)
-
         toDatePicker.addTarget(self, action: #selector(showBottomSheet), for: .touchUpInside)
     }
     
@@ -201,7 +211,6 @@ class CreateTravelLogViewController: UIViewController {
             make.width.equalToSuperview().multipliedBy(0.9)
             make.top.equalTo(characterCountLabel.snp.bottom).offset(5)
         }
-        
         datePickerContainer.snp.makeConstraints{
             $0.top.equalTo(travelPeriodLabel.snp.bottom).offset(15)
             $0.width.equalTo(titleTextField)
@@ -337,6 +346,20 @@ extension CreateTravelLogViewController : UITextFieldDelegate, UIImagePickerCont
         imagePicker.delegate = self
         imagePicker.sourceType = .photoLibrary
         present(imagePicker, animated: true, completion: nil)
+
+    
+    // UIImagePickerControllerDelegate 메서드
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let selectedImage = info[.originalImage] as? UIImage {
+            bannerImageView.image = selectedImage
+            selectImageButton.isHidden = true
+            cancleImageButton.isHidden = false
+        }
+        picker.dismiss(animated: true, completion: nil)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: nil)
     }
     
     // 이미지 취소 버튼의 액션 메서드
@@ -345,5 +368,59 @@ extension CreateTravelLogViewController : UITextFieldDelegate, UIImagePickerCont
         cancleImageButton.isHidden = true
         selectImageButton.isHidden = false
     }
+      
+    // MARK: - UITextFieldDelegate
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        // 텍스트 필드가 편집을 시작할 때 호출되는 메서드
+        textField.layer.cornerRadius = 8.0 // 둥근 테두리 반지름 설정
+        textField.layer.borderWidth = 1.0 // 테두리 두께 설정
+        textField.layer.borderColor = UIColor(named: "MainColor")?.cgColor // 테두리 색상 설정
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        // 텍스트 필드의 편집이 종료될 때 호출되는 메서드
+        print("End Editing")
+        
+    }
+    
+    @objc func showFromBottomSheet() {
+        dateType = .from
+        // bottomSheetVC가 nil이거나 해제되었는지 확인하고, 그 경우에만 새로운 인스턴스를 생성합니다.
+        if fromBottomSheetVC == nil || fromBottomSheetVC?.isViewLoaded == false {
+            fromBottomSheetVC = BottomSheetViewController()
+            fromBottomSheetVC?.delegate = self // 델리게이트 설정
+        }
 
+        fromBottomSheetVC?.modalPresentationStyle = .overFullScreen
+        self.present(fromBottomSheetVC!, animated: false, completion: nil)
+    }
+    
+    @objc func showToBottomSheet() {
+        dateType = .to
+        // bottomSheetVC가 nil이거나 해제되었는지 확인하고, 그 경우에만 새로운 인스턴스를 생성합니다.
+        if toBottomSheetVC == nil || toBottomSheetVC?.isViewLoaded == false {
+            toBottomSheetVC = BottomSheetViewController()
+            toBottomSheetVC?.delegate = self // 델리게이트 설정
+        }
+
+        toBottomSheetVC?.modalPresentationStyle = .overFullScreen
+        self.present(toBottomSheetVC!, animated: false, completion: nil)
+    }
+    
+    
+    
+    func didPickDate(_ date: Date) {
+        // 날짜를 선택한 후에 호출되는 메서드
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy.MM.dd"
+        
+        switch dateType {
+        case .from:
+            fromDatePicker.setTitle(dateFormatter.string(from: date), for: .normal)
+        case .to:
+            toDatePicker.setTitle(dateFormatter.string(from: date), for: .normal)
+        }
+    }
+   
 }
