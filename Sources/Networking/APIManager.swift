@@ -22,16 +22,18 @@ class APIManager{
     func getData<T: Decodable>(urlEndPoint:String,
                              parameter: Parameters? = nil,
                                header : HTTPHeaders? = nil,
-                             dataType : T.Type,
-                             _ completion: @escaping (T) -> Void){
+                               dataType : T.Type,
+                               _ completion: @escaping (T) -> Void){
         
         let url = baseUrl + urlEndPoint
         
-        AF.request(url, method: .get, parameters: parameter,headers: header)
+        print(url)
+        
+        AF.request(url, method: .get, parameters: parameter, encoding: URLEncoding.default, headers: header)
             .responseDecodable(of: T.self){ response in
-                switch response.result{
-                case .success(let result):
-                    completion(result)
+                switch response.result {
+                case .success(let data):
+                    completion(data)
                 case .failure(let error):
                     print(error)
                 }
@@ -75,4 +77,36 @@ class APIManager{
  }
 
 
+struct LogResponse : Codable {
+    var id : Int
+    
+    private enum CodingKeys : String, CodingKey{
+        case id = "travelId"
+    }
+}
 
+struct InviteCodeResponse : Codable {
+    var id : Int
+    var invitationCode : String
+    
+    private enum CodingKeys : String, CodingKey{
+        case id = "travelId"
+        case invitationCode
+    }
+}
+
+struct testModel : Codable{
+    var message : String
+    var code : String
+    var isSuccess : Bool
+    var result : [Log]
+}
+
+struct kakaoResponse : Codable {
+    var accessToken : String
+    var refreshToken : String
+}
+
+struct packingResponse : Codable {
+    var packingItemId : Int
+}

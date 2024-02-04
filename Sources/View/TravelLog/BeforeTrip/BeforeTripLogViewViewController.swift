@@ -84,6 +84,7 @@ class BeforeTripLogViewViewController: UIViewController {
         textField.textColor = WithYouAsset.mainColorDark.color
         return textField
     }()
+    var packageText = ""
     let addPackageButton = WYAddButton(.small)
     
     var dummyData = PublishSubject<[PackingItem]>()
@@ -120,11 +121,7 @@ class BeforeTripLogViewViewController: UIViewController {
             Traveler(id: 3, name: "우우우", profilePicture: "")
         ]
         
-        let url = "http://54.150.234.75:8080/api/v1/travels/1/packing_items"
-        
-        //APIManager.shared.getData(urlEndPoint: "/travels/1/packing_items", dataType: APIContainer<[PackingItem]>.self) { list in
-        //    self.dummyData.onNext(list.result)
-        //}
+       //loadPackingItems()
         
         //CollectionView Style
         dummyData
@@ -243,12 +240,38 @@ class BeforeTripLogViewViewController: UIViewController {
         }
     }
     
+    private func loadPackingItems(){
+        APIManager.shared.getData(urlEndPoint: "/travels/3/packing_items", dataType: APIContainer<[PackingItem]>.self) { list in
+            self.dummyData.onNext(list.result)
+        }
+    }
     func addButtonClicked(){
-        let url = "http://4.150.234.75:8080/api/v1/travels/1/packing_items"
+        let url = "http://54.150.234.75:8080/api/v1/travels/3/packing_items"
         
-        let parameter = [
-            "itemName" : "드라이기"
+        var parameter = [
+            "itemName" : ""
         ]
+        if let itemName = self.textField.text {
+            parameter["itemName"] = itemName
+            print(parameter)
+        }
+        
+        AF.request(url, method: .post, parameters : parameter, encoding: JSONEncoding.default ).responseDecodable(of: APIContainer<packingResponse>.self){ response in
+            switch response.result{
+            case .success(let container):
+                print(container.result.packingItemId)
+                self.loadPackingItems()
+            case .failure(let error):
+                print(error)
+            }
+        }
+        
+        /*
+        APIManager.shared.postData(urlEndPoint: url, dataType: Log.self, responseType: packingResponse.self) { container in
+            print(container.result.packingItemId)
+            self.loadPackingItems()
+        }
+         */
     }
     
     func openSideMenu(){

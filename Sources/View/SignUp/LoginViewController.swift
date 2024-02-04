@@ -6,8 +6,12 @@
 //  Copyright © 2024 withyou.org. All rights reserved.
 //
 
+import Alamofire
 import UIKit
 import SnapKit
+import KakaoSDKCommon
+import KakaoSDKAuth
+import KakaoSDKUser
 
 class LoginViewController: UIViewController {
 
@@ -87,8 +91,35 @@ class LoginViewController: UIViewController {
     }
     
     @objc private func loginButtonTapped() {
+        UserApi.shared.loginWithKakaoAccount {(oauthToken, error) in
+                if let error = error {
+                    print(error)
+                }
+                else {
+                    print("loginWithKakaoAccount() success.")
+                    //do something
+                    _ = oauthToken
+                    print(oauthToken?.accessToken)
+                    
+                    let parameter = [
+                        "accessToken" : oauthToken?.accessToken ?? "error",
+                        "provider" : "kakao"
+                    ]
+                    
+                    AF.request("http://54.150.234.75:8080/api/v1/auth/kakao", method: .post, parameters: parameter, encoding: JSONEncoding.default).responseDecodable(of: kakaoResponse.self){ response in
+                        switch response.result{
+                        case .success(let kakao):
+                            print(kakao)
+                        case .failure(let error):
+                            print(error)
+                        }
+                    }
+                }
+            }
+        /*
         let nickNameViewController = NickNameViewController()
                navigationController?.pushViewController(nickNameViewController, animated: true)
+         */
     }
 }
 

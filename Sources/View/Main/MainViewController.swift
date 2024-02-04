@@ -67,6 +67,8 @@ class MainViewController: UIViewController {
     
     var disposeBag = DisposeBag()
     
+    var logs : BehaviorSubject<[Log]> = BehaviorSubject(value: [])
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -79,20 +81,59 @@ class MainViewController: UIViewController {
             logViews.append(logView)
         }
          */
+        
         let parameter = [
-            "currentLocalDate" : dateController.getDate(Date())
+            "title": "선릉 패치 테스트",
+              "startDate": "2024-02-03",
+              "endDate": "2024-02-03",
+              "url": "string",
+              "localDate": "2024-02-03"
         ]
+        
         let header : HTTPHeaders = [
-            "Authorization": "1",
+            "Authorization" : "1",
         ]
         
-        APIManager.shared.getData(urlEndPoint: "/travels",parameter: parameter,header: header, dataType: APIContainer<[Log]>.self){ result  in
-            print(result)
+        
+        //Log Delete Test
+        /*
+        AF.request("http://54.150.234.75:8080/api/v1/travels/1", method: .delete, headers: header).responseDecodable(of: APIContainer<LogResponse>.self){ response in
+            switch response.result {
+            case .success(let data):
+                print(data)
+            case .failure(let error):
+                print(error)
+            }
+            
         }
+         */
+        
+
+        //Log Patch Test
+        /*
+        AF.request("http://54.150.234.75:8080/api/v1/travels/3", method: .patch, parameters: parameter, encoding: JSONEncoding.default, headers: header).responseDecodable(of: APIContainer<LogResponse>.self){ response in
+            switch response.result{
+            case .success(let data):
+                print(data)
+            case .failure(let error):
+                print(error)
+            }
+        }
+         */
         
         
-      
-        
+        //Log get 테스트
+        /*
+        AF.request("http://54.150.234.75:8080/api/v1/travels", method: .get, parameters: parameter, encoding: URLEncoding.default, headers: headers).responseDecodable(of:APIContainer<[Log]>.self){ response in
+            switch response.result{
+            case .success(let data):
+                print(data.result)
+                self.logs.onNext(data.result)
+            case .failure(let error):
+                print(error)
+            }
+        }
+         */
         
         // 2. if logs.count != 0 ? 여행중인지 아닌지 판단 후 표시 / default는 여행 중 아님
         
@@ -100,10 +141,19 @@ class MainViewController: UIViewController {
         setConst()
         setFuncs()
         setSubscribes()
+        
+        //loadLogs()
     }
     
     func setSubscribes(){
-        
+        logs.subscribe(onNext: { logs in
+            logs.forEach{
+                let logView = LogView(frame: CGRect(), log: $0)
+                self.logViews.append(logView)
+                self.setLogConst()
+            }
+        })
+        .disposed(by: disposeBag)
         
         
         //터치에 따른 ING or UPCOMING 색 변경
@@ -147,7 +197,39 @@ class MainViewController: UIViewController {
     }
     
     private func loadLogs(){
-        //log불러오는 함수
+        
+        let headers : HTTPHeaders = [
+            "Authorization" : "1",
+        ]
+        
+        let parameter = [
+            "localDate" : dateController.dateToSendServer()
+        ]
+        
+        AF.request("http://54.150.234.75:8080/api/v1/travels", method: .get, parameters: parameter, encoding: URLEncoding.default, headers: headers).responseDecodable(of:APIContainer<[Log]>.self){ response in
+            switch response.result{
+            case .success(let data):
+                print(data.result)
+                self.logs.onNext(data.result)
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
+    private func setLogConst(){
+        logViews.forEach{
+            logViewContainer.addSubview($0)
+        }
+        
+        logViews.reversed().enumerated().forEach{ index, item in
+            item.snp.makeConstraints{
+                $0.centerX.equalToSuperview().offset(index)
+                $0.centerY.equalToSuperview().offset(-50)
+                $0.width.equalToSuperview().multipliedBy(0.75)
+                $0.height.equalToSuperview().multipliedBy(0.53)
+            }
+        }
     }
     
     private func setFuncs(){
@@ -196,9 +278,7 @@ class MainViewController: UIViewController {
             logViewContainer.addSubview($0)
         }
         
-        logViews.forEach{
-            logViewContainer.addSubview($0)
-        }
+       
     }
     
     private func setConst(){
@@ -244,15 +324,6 @@ class MainViewController: UIViewController {
             $0.top.equalTo(ing.snp.bottom).offset(10)
             $0.width.height.equalTo(5)
             try! $0.centerX.equalTo(isUpcoming.value() ? upcoming.snp.centerX : ing.snp.centerX)
-        }
-        
-        logViews.reversed().enumerated().forEach{ index, item in
-            item.snp.makeConstraints{
-                $0.centerX.equalToSuperview().offset(index * 20)
-                $0.centerY.equalToSuperview().offset(-50)
-                $0.width.equalToSuperview().multipliedBy(0.75)
-                $0.height.equalToSuperview().multipliedBy(0.53)
-            }
         }
 
         button.snp.makeConstraints{

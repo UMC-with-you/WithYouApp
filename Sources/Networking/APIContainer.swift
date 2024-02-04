@@ -9,9 +9,10 @@
 import Foundation
 
 
-struct APIContainer<T: Decodable> : Decodable{
+struct APIContainer<T: Codable> : Codable{
     var message : String
     var code : String
     var isSuccess : Bool
     var result : T
 }
+

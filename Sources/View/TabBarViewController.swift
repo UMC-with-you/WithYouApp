@@ -19,8 +19,8 @@ class TabBarViewController: UITabBarController {
 
         //let mainView = MainViewController()
         let mainView = MainViewController()
-        let logView = WithUViewController()
-        let myView = MyPageViewController()
+        let logView = BeforeTripLogViewViewController()
+        let myView = LoginViewController()
 
         
         let nav1 = UINavigationController(rootViewController: mainView)
