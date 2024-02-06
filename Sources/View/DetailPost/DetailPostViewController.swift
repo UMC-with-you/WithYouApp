@@ -12,7 +12,7 @@ import SnapKit
 class DetailPostViewController: UIViewController {
     
     var dataSource: [String] = []
-    var likeCountValue:Int = 3
+    var likeCountValue:Int = 0
     
     private func setupDataSource() {
         for i in 0...8 {
@@ -122,10 +122,11 @@ class DetailPostViewController: UIViewController {
     
     lazy var contextLabel: UILabel = {
         let label = UILabel()
-        label.text = "이번 여행도 재밌었다!!"
+        label.text = "이번 여행도 재밌었다!!이번 여행도 재밌었다!!이번 여행도 재밌었다!!v이번 여행도 재밌었다!!이번 여행도 재밌었다!!이번 여행도 재밌었다!!v이번 여행도 재밌었다!!이번 여행도 재밌이번 여행도 재밌었다!!이번 여행도 재밌었다!!이번 여행도 재밌었다!!v이번 여행도 재밌었다!!이번 여행도 재밌었다!!이번 여행도 재밌었다!!v이번 여행도 재밌었다!!이번 여행도 재밌이번 여행도 재밌었다!!이번 여행도 재밌었다!!이번 여행도 재밌었다!!v이번 여행도 재밌었다!!이번 여행도 재밌었다!!이번 여행도 재밌었다!!v이번 여행도 재밌었다!!이번 여행도 재밌이번 여행도 재밌었다!!이번 여행도 재밌었다!!이번 여행도 재밌었다!!v이번 여행도 재밌었다!!이번 여행도 재밌었다!!이번 여행도 재밌었다!!v이번 여행도 재밌었다!!이번 여행도 재밌이번 여행도 재밌었다!!이번 여행도 재밌었다!!이번 여행도 재밌었다!!v이번 여행"
         label.font = WithYouFontFamily.Pretendard.regular.font(size: 15)
         label.textColor = .black
         label.textAlignment = .left
+        label.numberOfLines = 0
         return label
     }()
     
@@ -136,24 +137,48 @@ class DetailPostViewController: UIViewController {
         setUI()
     }
     
-    private func setUI(){
+    lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        return scrollView
+    }()
+    
+    lazy var contentView: UIView = {
+        let view = UIView()
+        return view
+    }()
+    
+    private func setUI() {
+        view.addSubview(scrollView)
+        scrollView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalToSuperview()
+        }
+        
+        scrollView.addSubview(contentView)
+        contentView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.width.equalToSuperview()
+            $0.height.greaterThanOrEqualToSuperview()
+        }
+        
         view.backgroundColor = WithYouAsset.backgroundColor.color
-        view.addSubview(titleLabel)
-        view.addSubview(periodLabel)
-        view.addSubview(postCollectionView)
-        view.addSubview(pageControl)
-        view.addSubview(likeButton)
-        view.addSubview(messageButton)
-        view.addSubview(bookMarkButton)
-        view.addSubview(likeLabel)
-        view.addSubview(likeCount)
-        view.addSubview(contextLabel)
+        contentView.addSubview(titleLabel)
+        contentView.addSubview(periodLabel)
+        contentView.addSubview(postCollectionView)
+        contentView.addSubview(pageControl)
+        contentView.addSubview(likeButton)
+        contentView.addSubview(messageButton)
+        contentView.addSubview(bookMarkButton)
+        contentView.addSubview(likeLabel)
+        contentView.addSubview(likeCount)
+        contentView.addSubview(contextLabel)
         postCollectionView.register(PostCollectionViewCell.self, forCellWithReuseIdentifier: PostCollectionViewCell.id)
-
+        
         postCollectionView.delegate = self
         postCollectionView.dataSource = self
         titleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(100)
+            make.top.equalToSuperview().offset(10)
             make.centerX.equalToSuperview()
         }
         
@@ -185,39 +210,41 @@ class DetailPostViewController: UIViewController {
         bookMarkButton.snp.makeConstraints { make in
             make.top.equalTo(likeButton.snp.top)
             make.trailing.equalToSuperview().offset(-15)
-            
-            //            make.leading.equalTo(messageButton.snp.trailing).offset(10)
         }
         
         likeLabel.snp.makeConstraints { make in
             make.top.equalTo(likeButton.snp.bottom).offset(10)
             make.leading.equalTo(likeButton)
             if likeCountValue == 0 {
-                   make.height.equalTo(0)
-               } else {
-                   make.height.equalTo(20)
-               }
+                make.height.equalTo(0)
+            } else {
+                make.height.equalTo(20)
+            }
         }
         
         likeCount.snp.makeConstraints { make in
             make.top.equalTo(likeLabel.snp.top)
             make.leading.equalTo(likeLabel.snp.trailing)
             if likeCountValue == 0 {
-                   make.height.equalTo(0)
-               } else {
-                   make.height.equalTo(20)
-               }
+                make.height.equalTo(0)
+            } else {
+                make.height.equalTo(20)
+            }
         }
-        
         
         contextLabel.snp.makeConstraints { make in
             make.top.equalTo(likeCount.snp.bottom).offset(5)
             make.centerX.equalToSuperview()
-            make.width.equalToSuperview().offset(-30)
+            make.leading.equalToSuperview().offset(15)
+            make.trailing.equalToSuperview().offset(-15)
+            make.bottom.lessThanOrEqualToSuperview().offset(-15)
         }
         
+        // Calculate contentView's height based on contextLabel's content
+        contentView.layoutIfNeeded()
+        scrollView.contentSize = CGSize(width: scrollView.frame.width, height: contentView.frame.height)
     }
-    
+
     //MARK: - 버튼 터치 이벤트 메서드
     @objc func likeButtonTapped() {
         likeButton.isSelected.toggle()
@@ -233,6 +260,7 @@ class DetailPostViewController: UIViewController {
                 make.leading.equalTo(likeButton.snp.leading)
             }
             likeCount.snp.remakeConstraints { make in
+                
                 make.height.equalTo(20)
                 make.top.equalTo(likeButton.snp.bottom).offset(10)
                 make.leading.equalTo(likeLabel.snp.trailing)
