@@ -1,7 +1,7 @@
 
 import UIKit
 import SnapKit
-
+import Alamofire
 
 enum DateType{
     case from
@@ -300,9 +300,32 @@ class CreateTravelLogViewController: UIViewController, BottomSheetDelegate{
         if let tripTitle = titleTextField.text, !tripTitle.isEmpty {
             print("여행 제목: \(tripTitle)")
            // API.travelsAPI()
-            
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd"
+            
+            let parameters = [
+                "title": "선릉 테스트",
+                "startDate": "2024-02-05",
+                "endDate": "2024-02-07",
+                "url": "string",
+                "localDate" : dateController.dateToSendServer()
+            ]
+            
+            
+            
+            /*
+             //NewLog Create
+            AF.request("http://54.150.234.75:8080/api/v1/travels", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: header)
+                .responseDecodable(of : APIContainer<LogResponse>.self){ response in
+                    switch response.result {
+                    case .success(let result):
+                        print(result)
+                    case .failure(let error ):
+                        print(error)
+                    }
+                }
+             */
+            
         } else {
             print("텍스트 필드에 여행 제목을 입력하세요.")
         }

@@ -13,6 +13,7 @@ struct Log : Codable, Identifiable {
     var title : String
     var startDate : String
     var endDate : String
+    var status : String
     var imageUrl : String
     
     private enum CodingKeys : String, CodingKey{
@@ -20,6 +21,7 @@ struct Log : Codable, Identifiable {
         case title
         case startDate
         case endDate
+        case status
         case imageUrl
     }
 }
@@ -29,4 +31,6 @@ extension Log {
         return startDate + "~" + endDate.dropFirst(4)
     }
 }
+
+
 

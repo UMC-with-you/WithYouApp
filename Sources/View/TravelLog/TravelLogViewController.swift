@@ -55,9 +55,9 @@ class TravelLogViewController: UIViewController {
         view.backgroundColor = .white
         //Log들 불러와서 LogList에 저장
         //logList = APIManager.shared.getData(<#T##url: URL##URL#>, parameter: <#T##Parameters#>, dataType: <#T##Decodable#>, <#T##completion: (Decodable) -> Void##(Decodable) -> Void#>)
-        logList = [Log(id: 0, title: "오징어들의 파리 여행",startDate: "2024.02.13", endDate: "2024.03.01", imageUrl: "www.naver.com"),
-        Log(id: 1, title: "여름보다 뜨거운 겨울 여행",startDate: "2024.03.13", endDate: "2024.03.23", imageUrl: "www.naver.com"),
-        Log(id: 2, title: "식폭행 전과자들",startDate: "2024.06.03", endDate: "2024.06.6", imageUrl: "www.naver.com")]
+        //logList = [Log(id: 0, title: "오징어들의 파리 여행",startDate: "2024.02.13", endDate: "2024.03.01", imageUrl: "www.naver.com"),
+       // Log(id: 1, title: "여름보다 뜨거운 겨울 여행",startDate: "2024.03.13", endDate: "2024.03.23", imageUrl: "www.naver.com"),
+       // Log(id: 2, title: "식폭행 전과자들",startDate: "2024.06.03", endDate: "2024.06.6", imageUrl: "www.naver.com")]
         // Observable로 뿌려주기
         
         gridView.backgroundColor = .systemBackground

@@ -80,8 +80,6 @@ class SideBarViewController: UIViewController {
         setConst()
         setFunction()
         
-        
-       
        // members.onNext(dummyTravler)
     }
     
@@ -158,7 +156,9 @@ class SideBarViewController: UIViewController {
         }
         
         inviteFriend.snp.makeConstraints{
-            $0.bottom.equalTo(leaveTravel.snp.top).offset(-50)
+            $0.width.equalToSuperview()
+            $0.height.equalTo(30)
+            $0.bottom.equalTo(leaveTravel.snp.top).offset(-40)
         }
         
         leaveTravel.snp.makeConstraints{
