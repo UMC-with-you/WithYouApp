@@ -16,7 +16,7 @@ class OnBoardingViewController: UIViewController {
         let page2 = ViewController2()
         let page3 = ViewController3()
         let page4 = ViewController4()
-        let page5 = ViewController5()
+        let page5 = loginView
         
         pages.append(page1)
         pages.append(page2)
@@ -27,6 +27,10 @@ class OnBoardingViewController: UIViewController {
         currentVC = pages.first!
         
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        DataManager.shared.setIsFirstTime()
     }
     
     required init?(coder: NSCoder) {
@@ -96,7 +100,7 @@ private let onBoardingView = OnBoardingView()
 private let onBoarding1 = OnBoarding1()
 private let onBoarding2 = OnBoarding2()
 private let onBoarding3 = OnBoarding3()
-private let loginView = LoginView()
+private let loginView = LoginViewController()
 
 class ViewController1: UIViewController {
     override func viewDidLoad() {
@@ -123,13 +127,6 @@ class ViewController4: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view = onBoarding3
-    }
-}
-
-class ViewController5: UIViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view = loginView
     }
 }
 

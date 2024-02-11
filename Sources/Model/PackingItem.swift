@@ -11,11 +11,13 @@ import Foundation
 struct PackingItem : Codable, Equatable, Identifiable {
     var id : Int
     var itemName : String
+    var packerId : Int
     var isChecked : Bool
     
     private enum CodingKeys : String, CodingKey{
         case id = "itemId"
         case itemName
+        case packerId
         case isChecked = "checked"
     }
 }

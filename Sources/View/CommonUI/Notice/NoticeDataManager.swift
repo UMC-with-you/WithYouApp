@@ -14,7 +14,7 @@ class NoticeDataManager {
 
     func makeNoticeData() {
         noticeDataArray = [
-            Notice(profileImage: UIImage(named: "person"), userName: "경주", noticeString: "유니버셜 스튜디오\n9:00AM OPEN!")
+            //Notice(profileImage: UIImage(named: "person"), userName: "경주", noticeString: "유니버셜 스튜디오\n9:00AM OPEN!")
         ]
     }
 
@@ -23,7 +23,7 @@ class NoticeDataManager {
     }
     
     func updateNoticeData() {
-        let notice = Notice(profileImage: UIImage(named: "person"), userName: "경주", noticeString: "유니버셜 스튜디오\n9:00AM OPEN!")
-        noticeDataArray.append(notice)
+        //let notice = Notice(profileImage: UIImage(named: "person"), userName: "경주", noticeString: "유니버셜 스튜디오\n9:00AM OPEN!")
+        //noticeDataArray.append(notice)
     }
 }

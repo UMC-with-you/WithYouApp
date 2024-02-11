@@ -11,22 +11,7 @@ import RxSwift
 import SnapKit
 import UIKit
 
-enum NoticeOptions  {
-    case before
-    case ing
-    case always
-    
-    var text : String {
-        switch self{
-        case .before:
-            return "여행 전에만"
-        case .ing:
-            return "여행 중"
-        case .always :
-            return "전체 기간"
-        }
-    }
-}
+
 
 class AddNoticeViewController: UIViewController {
     
@@ -257,7 +242,7 @@ extension AddNoticeViewController : UITextViewDelegate {
         if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || textView.text == textViewPlaceHolder{
             textView.text = textViewPlaceHolder
             textView.textColor = WithYouAsset.subColor.color
-            self.addButton.backgroundColor = WithYouAsset.subColor.color
+            
         } else {
             self.addButton.backgroundColor = WithYouAsset.mainColorDark.color
         }

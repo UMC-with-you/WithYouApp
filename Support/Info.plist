@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>UIUserInterfaceStyle</key>
+	<string>Light</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -24,6 +26,14 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>kakao1295c9d7651a86701ea8af72a43d8e3a</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.818270364495-kc8uqlj5g7ajsgaigjamhd1nqfnhtl3t</string>
 			</array>
 		</dict>
 	</array>
@@ -86,5 +96,7 @@
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>GIDClientID</key>
+	<string>818270364495-kc8uqlj5g7ajsgaigjamhd1nqfnhtl3t.apps.googleusercontent.com</string>
 </dict>
 </plist>

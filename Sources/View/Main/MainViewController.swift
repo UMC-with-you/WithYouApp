@@ -10,15 +10,28 @@ import RxGesture
 import RxSwift
 import UIKit
 
-import Alamofire
 
 class MainViewController: UIViewController {
     let header = TopHeader()
-    
+
     let button = WYAddButton(.big)
     
-    //Log가 있을 때 보여지는 뷰
+    ///Log가 있을 때 보여지는 뷰
     let logViewContainer = UIView()
+    
+    lazy var logCollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.itemSize = CGSize(width: UIScreen.main.bounds.width * 0.75, height: UIScreen.main.bounds.height * 0.45)
+        layout.minimumLineSpacing = 17
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.register(LogCollectionViewCell.self, forCellWithReuseIdentifier: LogCollectionViewCell.cellId)
+        cv.contentInset = UIEdgeInsets(top: 0, left: 50, bottom: 0, right: 30)
+        cv.showsHorizontalScrollIndicator = false
+        cv.decelerationRate = .fast
+        return cv
+    }()
+    
     let eclipse = {
         let view = UIView()
         view.frame = CGRect(x: 0,y: 0,width: 5,height: 5)
@@ -40,10 +53,13 @@ class MainViewController: UIViewController {
         label.textColor = .black
         return label
     }()
+    let sortIcon = {
+        let img = UIImageView(image: WithYouAsset.sortIcon.image)
+        return img
+    }()
     
-    var logViews : [LogView] = []
     
-    //Log가 없을 때 보여지는 뷰
+    ///Log가 없을 때 보여지는 뷰
     let emptyLogView = UIView()
     let info = {
        let label = UILabel()
@@ -55,180 +71,110 @@ class MainViewController: UIViewController {
         label.textAlignment = .center
         return label
     }()
-
     let mascout = {
         let img = UIImageView(image: UIImage(named: "Mascout"))
         return img
     }()
     
-    var isLogEmpty : BehaviorSubject<Bool> = BehaviorSubject(value: false)
-    
-    var isUpcoming : BehaviorSubject<Bool> = BehaviorSubject(value: true)
-    
+    ///기능 구현을 위한 변수들
+    private var eclipseConstraint: Constraint?
+    var isLogEmpty : BehaviorRelay<Bool> = BehaviorRelay(value: true)
+    var isUpcoming : BehaviorRelay<Bool> = BehaviorRelay(value: false)
     var disposeBag = DisposeBag()
-    
-    var logs : BehaviorSubject<[Log]> = BehaviorSubject(value: [])
+    var upcomingLogs : [Log] = []
+    var ingLogs : [Log] = []
+    var logs : BehaviorRelay<[Log]> = BehaviorRelay(value: [])
+    var previousIndex : Int?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        
-        // 1. if logs.count == 0 ? emptyLogView : lgoView
-        /*
-        for i in 0...2{
-            let log = Log(id: i, text: "오징어들의 파리 여행",startDate: "2024.02.13", endDate: "2024.03.01", media: URL(fileURLWithPath: "www.naver.com"))
-            let logView = LogView(frame: CGRect(), log: log)
-            logViews.append(logView)
-        }
-         */
-        
-        let parameter = [
-            "title": "선릉 패치 테스트",
-              "startDate": "2024-02-03",
-              "endDate": "2024-02-03",
-              "url": "string",
-              "localDate": "2024-02-03"
-        ]
-        
-        let header : HTTPHeaders = [
-            "Authorization" : "1",
-        ]
-        
-        
-        //Log Delete Test
-        /*
-        AF.request("http://54.150.234.75:8080/api/v1/travels/1", method: .delete, headers: header).responseDecodable(of: APIContainer<LogResponse>.self){ response in
-            switch response.result {
-            case .success(let data):
-                print(data)
-            case .failure(let error):
-                print(error)
-            }
-            
-        }
-         */
-        
-
-        //Log Patch Test
-        /*
-        AF.request("http://54.150.234.75:8080/api/v1/travels/3", method: .patch, parameters: parameter, encoding: JSONEncoding.default, headers: header).responseDecodable(of: APIContainer<LogResponse>.self){ response in
-            switch response.result{
-            case .success(let data):
-                print(data)
-            case .failure(let error):
-                print(error)
-            }
-        }
-         */
-        
-        
-        //Log get 테스트
-        /*
-        AF.request("http://54.150.234.75:8080/api/v1/travels", method: .get, parameters: parameter, encoding: URLEncoding.default, headers: headers).responseDecodable(of:APIContainer<[Log]>.self){ response in
-            switch response.result{
-            case .success(let data):
-                print(data.result)
-                self.logs.onNext(data.result)
-            case .failure(let error):
-                print(error)
-            }
-        }
-         */
+        self.navigationItem.backButtonTitle = "Home"
+        logViewContainer.backgroundColor = .systemBackground
+        //로그 가져오기
+        loadLogs()
         
         // 2. if logs.count != 0 ? 여행중인지 아닌지 판단 후 표시 / default는 여행 중 아님
-        
         setViews()
         setConst()
         setFuncs()
         setSubscribes()
         
-        //loadLogs()
+        //
+        //로그 존재 여부에 따른 화면 표시
+        countLogs()
     }
     
     func setSubscribes(){
-        logs.subscribe(onNext: { logs in
-            logs.forEach{
-                let logView = LogView(frame: CGRect(), log: $0)
-                self.logViews.append(logView)
-                self.setLogConst()
+        //로그 데이터 CollectionView 연결
+        logs
+            .bind(to: logCollectionView.rx.items(cellIdentifier: LogCollectionViewCell.cellId, cellType: LogCollectionViewCell.self)){ index, item, cell in
+                cell.bind(log: item, isBigCell: true)
+                if index != 0{
+                    cell.transform = CGAffineTransform(scaleX: 1, y: 0.87)
+                }
             }
-        })
         .disposed(by: disposeBag)
-        
         
         //터치에 따른 ING or UPCOMING 색 변경
         isUpcoming.subscribe(onNext: {
             if $0 {
                 self.ing.textColor = WithYouAsset.subColor.color
                 self.upcoming.textColor = WithYouAsset.mainColorDark.color
-                self.eclipse.snp.updateConstraints{ ecl in
-                    ecl.centerX.equalTo(self.upcoming.snp.centerX)
+                self.eclipseConstraint?.deactivate()
+                self.eclipse.snp.makeConstraints{ ecl in
+                    self.eclipseConstraint = ecl.centerX.equalTo(self.upcoming.snp.centerX).constraint
                 }
             } else {
                 self.ing.textColor = WithYouAsset.mainColorDark.color
                 self.upcoming.textColor = WithYouAsset.subColor.color
-                self.eclipse.snp.updateConstraints{ ecl in
-                    ecl.centerX.equalTo(self.upcoming.snp.centerX).offset(-115)
+                self.eclipseConstraint?.deactivate()
+                self.eclipse.snp.makeConstraints{ ecl in
+                    self.eclipseConstraint = ecl.centerX.equalTo(self.ing.snp.centerX).constraint
                 }
             }
         })
         .disposed(by: disposeBag)
         
         // 로그 존재 여부에 따른 뷰 설정
-        isLogEmpty.subscribe(onNext: {
-            if $0 {
+        isLogEmpty.subscribe(onNext: { isEmpty in
+            if isEmpty {
                 self.emptyLogView.isHidden = false
                 self.logViewContainer.isHidden = true
             } else {
                 self.emptyLogView.isHidden = true
                 self.logViewContainer.isHidden = false
             }
-        })
-        .disposed(by: disposeBag)
-        
-        
-        // 로그 존재 여부에 따른 버튼 위치 조절
-        isLogEmpty.subscribe(onNext: { logStatus in
             self.button.snp.updateConstraints{
-                $0.bottom.equalToSuperview().offset(logStatus ? -300 : -130)
+                $0.bottom.equalToSuperview().offset(isEmpty ? -280 : -130)
             }
         })
         .disposed(by: disposeBag)
+    }
+    
+    private func countLogs(){
+        let count = upcomingLogs.count + ingLogs.count
+        isLogEmpty.accept(count == 0 ? true : false)
     }
     
     private func loadLogs(){
-        
-        let headers : HTTPHeaders = [
-            "Authorization" : "1",
+        //LogManager.shared.updateLogsFromServer()
+        //self.logs.accept(LogManager.shared.getLogs())
+        self.upcomingLogs = [
+            Log(id: 0, title: "친구들과 좋은시간", startDate: "2024.02.08", endDate: "2024.02.010", status: "여행 중", imageUrl: "이미지"),
+            Log(id: 1, title: "서울 테스트 아아", startDate: "2024.02.22", endDate: "2024.02.25", status: "여행 전", imageUrl: "이미지"),
+            Log(id: 2, title: "배고픈 모임 당산", startDate: "2024.03.01", endDate: "2024.03.06", status: "여행 전", imageUrl: "이미지"),
+            Log(id: 3, title: "이태원 뿌시기 모임 가보자", startDate: "2024.03.09", endDate: "2024.03.13", status: "여행 전", imageUrl: "이미지"),
+            Log(id: 4, title: "아주좋아 아주좋아", startDate: "2024.03.16", endDate: "2024.03.18", status: "여행 전", imageUrl: "이미지")
         ]
         
-        let parameter = [
-            "localDate" : dateController.dateToSendServer()
-        ]
+        self.ingLogs = [Log(id: 0, title: "친구들과 좋은시간", startDate: "2024.02.08", endDate: "2024.02.010", status: "여행 중", imageUrl: "이미지")]
         
-        AF.request("http://54.150.234.75:8080/api/v1/travels", method: .get, parameters: parameter, encoding: URLEncoding.default, headers: headers).responseDecodable(of:APIContainer<[Log]>.self){ response in
-            switch response.result{
-            case .success(let data):
-                print(data.result)
-                self.logs.onNext(data.result)
-            case .failure(let error):
-                print(error)
-            }
-        }
-    }
-    
-    private func setLogConst(){
-        logViews.forEach{
-            logViewContainer.addSubview($0)
-        }
-        
-        logViews.reversed().enumerated().forEach{ index, item in
-            item.snp.makeConstraints{
-                $0.centerX.equalToSuperview().offset(index)
-                $0.centerY.equalToSuperview().offset(-50)
-                $0.width.equalToSuperview().multipliedBy(0.75)
-                $0.height.equalToSuperview().multipliedBy(0.53)
-            }
+        if ingLogs.count != 0 {
+            logs.accept(ingLogs)
+        } else {
+            logs.accept(upcomingLogs)
+            isUpcoming.accept(true)
         }
     }
     
@@ -243,6 +189,7 @@ class MainViewController: UIViewController {
             .when(.recognized)
             .bind{ _ in
                 self.ingClicked()
+                self.logs.accept(self.ingLogs)
             }
             .disposed(by: disposeBag)
 
@@ -250,20 +197,14 @@ class MainViewController: UIViewController {
             .when(.recognized)
             .bind{ _ in
                 self.upcomingClicked()
+                self.logs.accept(self.upcomingLogs)
             }
             .disposed(by: disposeBag)
- 
-        logViews.forEach{
-            $0.rx.tapGesture()
-                .when(.recognized)
-                .bind{ _ in
-                    self.navigateToLog()
-                }
-                .disposed(by: disposeBag)
-        }
     }
     
     private func setViews(){
+        logCollectionView.delegate = self
+        
         [header,emptyLogView,logViewContainer,button].forEach{
             view.addSubview($0)
         }
@@ -274,11 +215,9 @@ class MainViewController: UIViewController {
         }
         
         //로그가 존재할때 보여지는 View
-        [ing,upcoming,eclipse].forEach {
+        [logCollectionView,ing,upcoming,eclipse,sortIcon].forEach {
             logViewContainer.addSubview($0)
         }
-        
-       
     }
     
     private func setConst(){
@@ -287,6 +226,7 @@ class MainViewController: UIViewController {
             $0.width.equalToSuperview()
         }
         
+        //Log가 비었을 때 뷰
         emptyLogView.snp.makeConstraints {
             $0.top.equalTo(header.snp.bottom)
             $0.width.bottom.equalToSuperview()
@@ -304,11 +244,17 @@ class MainViewController: UIViewController {
             $0.centerY.equalToSuperview().offset(-30)
         }
         
+        //로그가 존재할 때 뷰
         logViewContainer.snp.makeConstraints{
             $0.top.equalTo(header.snp.bottom)
-            $0.width.bottom.equalToSuperview()
+            $0.width.bottom.equalTo(view.safeAreaLayoutGuide)
         }
-
+        
+        logCollectionView.snp.makeConstraints{
+            $0.top.equalTo(ing.snp.bottom).offset(30)
+            $0.bottom.equalTo(button.snp.top).offset(-40)
+            $0.width.equalToSuperview()
+        }
         
         ing.snp.makeConstraints{
             $0.top.equalToSuperview().offset(60)
@@ -323,12 +269,19 @@ class MainViewController: UIViewController {
         eclipse.snp.makeConstraints{
             $0.top.equalTo(ing.snp.bottom).offset(10)
             $0.width.height.equalTo(5)
-            try! $0.centerX.equalTo(isUpcoming.value() ? upcoming.snp.centerX : ing.snp.centerX)
+            self.eclipseConstraint = $0.centerX.equalTo(isUpcoming.value ? upcoming.snp.centerX : ing.snp.centerX).constraint
+        }
+        
+        sortIcon.snp.makeConstraints{
+            $0.top.equalTo(ing.snp.top)
+            $0.height.equalTo(23)
+            $0.width.equalTo(26)
+            $0.trailing.equalToSuperview().offset(-20)
         }
 
         button.snp.makeConstraints{
             $0.centerX.equalToSuperview()
-            try! $0.bottom.equalToSuperview().offset(isLogEmpty.value() ? -300 : -130)
+            $0.bottom.equalToSuperview().offset(isLogEmpty.value ? -270 : -130)
         }
     }
 }
@@ -337,10 +290,10 @@ extension MainViewController{
     // log 만드는 옵션
     func popUpLogOption(){
         let modalVC = NewLogSheetView()
+        
         //모달 사이즈 설정
         let smallDetentId = UISheetPresentationController.Detent.Identifier("small")
         let smallDetent = UISheetPresentationController.Detent.custom(identifier: smallDetentId) { context in
-
             return UIScreen.main.bounds.height / 3.5
         }
         
@@ -369,10 +322,49 @@ extension MainViewController{
     
     // Upcoming Ing Label 클릭시
     func upcomingClicked(){
-        self.isUpcoming.onNext(true)
+        self.isUpcoming.accept(true)
     }
     
     func ingClicked(){
-        self.isUpcoming.onNext(false)
+        self.isUpcoming.accept(false)
     }
+}
+
+extension MainViewController : UICollectionViewDelegateFlowLayout{
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        let scrolledOffsetX = targetContentOffset.pointee.x + scrollView.contentInset.left
+        let cellWidth = UIScreen.main.bounds.width * 0.75 + 17
+        let index = round(scrolledOffsetX / cellWidth)
+        targetContentOffset.pointee = CGPoint(x: index * cellWidth - scrollView.contentInset.left, y: scrollView.contentInset.top)
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let cellWidth = CGFloat(UIScreen.main.bounds.width * 0.75 + 17)
+        let curScrollOffset = scrollView.contentOffset.x + scrollView.contentInset.left
+        let index = Int(round(curScrollOffset/cellWidth))
+        let indexPath = IndexPath(item: index, section: 0)
+        
+        if let cell = logCollectionView.cellForItem(at: indexPath) {
+            transformCellOriginSize(cell)
+        }
+        
+        defer {
+            self.previousIndex = index
+        }
+        
+        guard let previousIndex = self.previousIndex, previousIndex != index else {return}
+        if let prevCell = logCollectionView.cellForItem(at: IndexPath(item: previousIndex, section: 0)){
+            transformCellMinifyWithAnimation(prevCell)
+        }
+    }
+    
+    func transformCellOriginSize( _ cell: UICollectionViewCell) {
+       UIView.animate(withDuration: 0.13, delay: 0, options: .curveEaseOut, animations: {cell.transform = .identity}) {_ in
+         }
+     }
+    
+    func transformCellMinifyWithAnimation(_ cell: UICollectionViewCell) {
+          UIView.animate(withDuration: 0.13, delay: 0, options: .curveEaseOut, animations: {cell.transform = CGAffineTransform(scaleX: 1, y: 0.87)}) {_ in
+            }
+        }
 }
