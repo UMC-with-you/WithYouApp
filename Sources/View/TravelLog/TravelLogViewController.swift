@@ -37,7 +37,7 @@ class TravelLogViewController: UIViewController {
         layout.itemSize = CGSize(width: UIScreen.main.bounds.width / 2.6, height: 225)
         
         let grid = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        grid.register(LogGridViewCell.self, forCellWithReuseIdentifier: "LogGridCell")
+        grid.register(LogCollectionViewCell.self, forCellWithReuseIdentifier: LogCollectionViewCell.cellId)
     
         return grid
     }()
@@ -77,8 +77,8 @@ class TravelLogViewController: UIViewController {
         
         
         logObservable
-            .bind(to: gridView.rx.items(cellIdentifier: "LogGridCell", cellType: LogGridViewCell.self)) { index, item, cell in
-                cell.bind(log: item)
+            .bind(to: gridView.rx.items(cellIdentifier: LogCollectionViewCell.cellId, cellType: LogCollectionViewCell.self)) { index, item, cell in
+                cell.bind(log: item, isBigCell: false)
             }
             .disposed(by: disposeBag)
     }

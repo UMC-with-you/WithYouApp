@@ -7,13 +7,19 @@
 //
 
 import Alamofire
+import AuthenticationServices
+import GoogleSignIn
+import KakaoSDKAuth
+import KakaoSDKCommon
+import KakaoSDKUser
 import UIKit
 import SnapKit
-import KakaoSDKCommon
-import KakaoSDKAuth
-import KakaoSDKUser
+
+
+
 
 class LoginViewController: UIViewController {
+
 
     let logoImageView: UIImageView = {
         let imageView = UIImageView()
@@ -22,24 +28,24 @@ class LoginViewController: UIViewController {
         return imageView
     }()
     
-    let appleLoginButton: UIButton = {
+    let appleLoginButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(named: "AppleLogin"), for: .normal)
-        button.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(appleButtonTapped), for: .touchUpInside)
         return button
     }()
     
     let googleLoginButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(named: "GoogleLogin"), for: .normal)
-        button.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(googleButtonTapped), for: .touchUpInside)
         return button
     }()
     
     let kakaoLoginButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(named: "KakaoLogin"), for: .normal)
-        button.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(kakaoButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -48,10 +54,8 @@ class LoginViewController: UIViewController {
         
         //        backgroundColor = .white
         view.backgroundColor = UIColor(red: 0.969, green: 0.969, blue: 0.969, alpha: 1)
-        
         setViews()
         setConstraints()
-        
     }
     
     private func setViews() {
@@ -90,7 +94,35 @@ class LoginViewController: UIViewController {
         }
     }
     
-    @objc private func loginButtonTapped() {
+    @objc private func appleButtonTapped(){
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let request = appleIDProvider.createRequest()
+        request.requestedScopes = [.fullName, .email]
+        
+        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+        authorizationController.delegate = self
+        authorizationController.presentationContextProvider = self
+        authorizationController.performRequests()
+        
+        
+    }
+    
+    @objc private func googleButtonTapped(){
+        GIDSignIn.sharedInstance.signIn(withPresenting: self) { [weak self] signInResult, _ in
+            guard let self,
+                  let result = signInResult else { return }
+            
+            // 서버에 토큰을 보내기
+            AuthService.shared.authWithGoogle(result.user.accessToken.tokenString){ response in
+                print(response)
+                //로그인 이후 로직
+            }
+            moveToMainView()
+        }
+  
+    }
+    
+    @objc private func kakaoButtonTapped() {
         UserApi.shared.loginWithKakaoAccount {(oauthToken, error) in
                 if let error = error {
                     print(error)
@@ -99,29 +131,67 @@ class LoginViewController: UIViewController {
                     print("loginWithKakaoAccount() success.")
                     //do something
                     _ = oauthToken
-                    print(oauthToken?.accessToken)
-                    
-                    let parameter = [
-                        "accessToken" : oauthToken?.accessToken ?? "error",
-                        "provider" : "kakao"
-                    ]
-                    
-                    AF.request("http://54.150.234.75:8080/api/v1/auth/kakao", method: .post, parameters: parameter, encoding: JSONEncoding.default).responseDecodable(of: kakaoResponse.self){ response in
-                        switch response.result{
-                        case .success(let kakao):
-                            print(kakao)
-                        case .failure(let error):
-                            print(error)
-                        }
+                    AuthService.shared.authWithKakao(oauthToken?.accessToken ?? "error"){ response in
+                            print(response)
                     }
+                    //로그인 이후 로직
+                    self.moveToMainView()
                 }
             }
-        /*
-        let nickNameViewController = NickNameViewController()
-               navigationController?.pushViewController(nickNameViewController, animated: true)
-         */
+    }
+    
+    func moveToMainView(){
+        let VC = TabBarViewController()
+        VC.modalPresentationStyle = .overFullScreen
+        self.present(VC,animated: true)
     }
 }
 
 
 
+extension LoginViewController :ASAuthorizationControllerPresentationContextProviding , ASAuthorizationControllerDelegate{
+    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        return self.view.window!
+    }
+    
+    // 성공 후 동작
+       func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization){
+           //로그인 성공
+           switch authorization.credential {
+           case let appleIDCredential as ASAuthorizationAppleIDCredential:
+               //처음 오는 Code 형태는 string이 아니라 변환해줘야함
+               if  let authorizationCode = appleIDCredential.authorizationCode,
+                   let identityToken = appleIDCredential.identityToken,
+                   let authCodeString = String(data: authorizationCode, encoding: .utf8),
+                   let identifyTokenString = String(data: identityToken, encoding: .utf8) {
+                   print("authorizationCode: \(authorizationCode)")
+                   print("identityToken: \(identityToken)")
+                   print("authCodeString: \(authCodeString)")
+                   print("identifyTokenString: \(identifyTokenString)")
+                   
+                   AuthService.shared.authWithApple(authCodeString){ response in
+                       print(response)
+                       self.moveToMainView()
+                   }
+                   
+               }
+               //로그인 이후 로직
+               
+           case let passwordCredential as ASPasswordCredential:
+               // Sign in using an existing iCloud Keychain credential.
+               let username = passwordCredential.user
+               let password = passwordCredential.password
+               
+               print("username: \(username)")
+               print("password: \(password)")
+               
+           default:
+               break
+           }
+       }
+       
+       // 실패 후 동작
+       func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+           print("apple login failed")
+       }
+}

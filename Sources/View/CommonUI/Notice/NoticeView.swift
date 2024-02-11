@@ -153,9 +153,9 @@ extension NoticeView: UITableViewDelegate, UITableViewDataSource {
         let array = noticeDataManager.getNoticeData()
         let notice = array[indexPath.row]
         
-        cell.profileImageView.image = notice.profileImage
+        //cell.profileImageView.image = notice.profileImage
         cell.userNameLabel.text = notice.userName
-        cell.noticeLabel.text = notice.noticeString
+        //cell.noticeLabel.text = notice.noticeString
         cell.selectionStyle = .none
 
         return cell

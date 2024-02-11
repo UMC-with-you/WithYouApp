@@ -112,8 +112,6 @@ class BeforeTripLogViewViewController: UIViewController {
         ]
          */
         
-        
-        
         let dummyTravler = [
             Traveler(id: 0, name: "박우주", profilePicture: ""),
             Traveler(id: 1, name: "우박주", profilePicture: ""),
@@ -241,9 +239,7 @@ class BeforeTripLogViewViewController: UIViewController {
     }
     
     private func loadPackingItems(){
-        APIManager.shared.getData(urlEndPoint: "/travels/3/packing_items", dataType: APIContainer<[PackingItem]>.self) { list in
-            self.dummyData.onNext(list.result)
-        }
+    
     }
     func addButtonClicked(){
         let url = "http://54.150.234.75:8080/api/v1/travels/3/packing_items"
@@ -255,16 +251,7 @@ class BeforeTripLogViewViewController: UIViewController {
             parameter["itemName"] = itemName
             print(parameter)
         }
-        
-        AF.request(url, method: .post, parameters : parameter, encoding: JSONEncoding.default ).responseDecodable(of: APIContainer<packingResponse>.self){ response in
-            switch response.result{
-            case .success(let container):
-                print(container.result.packingItemId)
-                self.loadPackingItems()
-            case .failure(let error):
-                print(error)
-            }
-        }
+
         
         /*
         APIManager.shared.postData(urlEndPoint: url, dataType: Log.self, responseType: packingResponse.self) { container in

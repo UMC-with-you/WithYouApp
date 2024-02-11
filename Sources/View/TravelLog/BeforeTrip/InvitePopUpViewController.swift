@@ -72,22 +72,9 @@ class InvitePopUpViewController: UIViewController {
         
         var travelId = 3
         
-        let url = "http://54.150.234.75:8080/api/v1/\(travelId)/invitation_code"
-        
-        let header : HTTPHeaders = [
-            "Authorization" : "1"
-        ]
-        
-        /*
-        AF.request(url, method: .get, headers: header).responseDecodable(of: APIContainer<InviteCodeResponse>.self){ response in
-            switch response.result{
-            case .success(let data):
-                self.inviteCode.text = data.result.invitationCode
-            case .failure(let error):
-                print(error)
-            }
+        LogService.shared.getInviteCode(logId: 3){ code in
+            self.inviteCode.text = code as? String
         }
-         */
         
         setUp()
         setConst()
