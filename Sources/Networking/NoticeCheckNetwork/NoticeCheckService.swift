@@ -1,5 +1,5 @@
 //
-//  NoticeService.swift
+//  NoticeCheckService.swift
 //  WithYou
 //
 //  Created by 김도경 on 2/11/24.
