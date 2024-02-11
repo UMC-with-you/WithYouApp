@@ -6,10 +6,16 @@
 //  Copyright © 2024 withyou.org. All rights reserved.
 //
 
-import UIKit
+
 import SnapKit
+import RxSwift
+import RxGesture
+import UIKit
+
 
 final class NoticeView: UIView {
+    
+    var delegate : NoticeViewDelegate?
     
     var noticeArray: [Notice] = []
     
@@ -39,7 +45,6 @@ final class NoticeView: UIView {
         button.setImage(UIImage(systemName: "plus"), for: .normal)
         button.tintColor = .white
 //        button.layer.borderColor = #colorLiteral(red: 0.2, green: 0.2, blue: 0.2, alpha: 1)
-        button.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -56,15 +61,29 @@ final class NoticeView: UIView {
         let tableView = UITableView()
         return tableView
     }()
+    
+    var bag = DisposeBag()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        //View 속성
         backgroundColor = .white
-
+        self.layer.masksToBounds = true
+        layer.cornerRadius = 10
+        
+        
         setupTableView()
         setupDatas()
         setConstraints()
+        
+        //버튼 매핑 (도경)
+        addButton.rx.tapGesture()
+            .when(.recognized)
+            .subscribe(onNext: { event in
+                self.addButtonTapped()
+            })
+            .disposed(by: bag)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -114,12 +133,12 @@ final class NoticeView: UIView {
         tableView.snp.makeConstraints { make in
             make.top.equalTo(checkImage.snp.bottom).offset(10)
             make.leading.trailing.bottom.equalToSuperview()
+            make.bottom.equalToSuperview()
         }
     }
     
-    @objc func addButtonTapped() {
-        noticeDataManager.updateNoticeData()
-        tableView.reloadData()
+    func addButtonTapped() {
+        delegate?.addNotice()
     }
 }
 
@@ -134,9 +153,9 @@ extension NoticeView: UITableViewDelegate, UITableViewDataSource {
         let array = noticeDataManager.getNoticeData()
         let notice = array[indexPath.row]
         
-        cell.profileImageView.image = notice.profileImage
+        //cell.profileImageView.image = notice.profileImage
         cell.userNameLabel.text = notice.userName
-        cell.noticeLabel.text = notice.noticeString
+        //cell.noticeLabel.text = notice.noticeString
         cell.selectionStyle = .none
 
         return cell
@@ -146,4 +165,9 @@ extension NoticeView: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
     }
+}
+
+
+protocol NoticeViewDelegate {
+    func addNotice()
 }

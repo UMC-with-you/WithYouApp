@@ -5,22 +5,33 @@
 //  Created by 김도경 on 1/8/24.
 //
 
+import GoogleSignIn
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-
+    
     var window: UIWindow?
-
+    
+    var isLogin : Bool = false
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = .init(windowScene: windowScene)
-//        window?.rootViewController = TabBarViewController()
-//        window?.rootViewController = MyPageViewController()
-        let rootViewController = MyPageViewController()
-        let navigationController = UINavigationController(rootViewController: rootViewController)
-        window?.rootViewController = navigationController
+        print("SD: isFirstTime : \(DataManager.shared.getIsFirstTime())")
+        if !DataManager.shared.getIsFirstTime() {
+            window?.rootViewController = OnBoardingViewController()
+        } else {
+            window?.rootViewController = LoginViewController()
+        }
+        window?.rootViewController = TabBarViewController()
         window?.makeKeyAndVisible()
         
+    }
+    
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        guard let url = URLContexts.first?.url else { return }
+        let _ = GIDSignIn.sharedInstance.handle(url)
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

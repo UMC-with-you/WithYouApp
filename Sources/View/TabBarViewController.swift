@@ -17,9 +17,8 @@ class TabBarViewController: UITabBarController {
         tabBar.tintColor = UIColor(named: "MainColorDark")
         tabBar.layer.borderWidth = 0.3
 
-        //let mainView = MainViewController()
-        let mainView = BeforeTripLogViewViewController()
-        let logView = WithUViewController()
+        let mainView = MainViewController()
+        let logView = TravelLogViewController()
         let myView = MyPageViewController()
 
         
