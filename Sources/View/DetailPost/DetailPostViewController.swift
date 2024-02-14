@@ -11,13 +11,14 @@ import SnapKit
 
 class DetailPostViewController: UIViewController {
     
-    var dataSource: [String] = []
+    var dataSource: [UIImage?] = []
     var likeCountValue:Int = 0
     
     private func setupDataSource() {
-        for i in 0...8 {
-            dataSource += ["\(i)"]
+        for i in 1...5 {
+            dataSource.append(UIImage(named:"post\(i)"))
         }
+        print(dataSource)
     }
 
     lazy var titleLabel: UILabel = {
@@ -42,7 +43,7 @@ class DetailPostViewController: UIViewController {
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 0
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .gray
+        collectionView.backgroundColor = WithYouAsset.backgroundColor.color
         collectionView.isPagingEnabled = true
         collectionView.showsHorizontalScrollIndicator = false
         return collectionView

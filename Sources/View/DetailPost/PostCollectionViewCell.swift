@@ -1,20 +1,18 @@
 import UIKit
 
 class PostCollectionViewCell: UICollectionViewCell {
-
     static var id: String { NSStringFromClass(Self.self).components(separatedBy: ".").last ?? "" }
 
-    var model: String? { didSet { bind() } }
+    var model: UIImage? { didSet { bind() } }
 
-    lazy var titleLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .white // Set text color
-        return label
+    lazy var postImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit // Adjust content mode as needed
+        return imageView
     }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-
         addSubviews()
         configure()
     }
@@ -24,18 +22,22 @@ class PostCollectionViewCell: UICollectionViewCell {
     }
 
     private func addSubviews() {
-        addSubview(titleLabel)
+        addSubview(postImageView)
     }
 
     private func configure() {
-        titleLabel.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+        print("PostCollectionViewCell::configure() 호출")
+        postImageView.snp.makeConstraints { make in
+            make.edges.equalToSuperview() // Fill the cell with the image
         }
-        backgroundColor = .brown
     }
 
     private func bind() {
-        titleLabel.text = model
+        if let image = model {
+            postImageView.image = image
+        } else {
+            // Handle case when model is nil, for example, display a placeholder image or clear the image view
+            postImageView.image = nil // Or set a placeholder image
+        }
     }
 }
-
