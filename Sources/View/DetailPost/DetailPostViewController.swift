@@ -56,6 +56,7 @@ class DetailPostViewController: UIViewController {
         pageControl.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
         pageControl.pageIndicatorTintColor = WithYouAsset.subColor.color
         pageControl.currentPageIndicatorTintColor = .black
+        pageControl.isEnabled = false
         return pageControl
     }()
     
@@ -333,3 +334,4 @@ extension DetailPostViewController: UICollectionViewDelegateFlowLayout {
         
     }
 }
+

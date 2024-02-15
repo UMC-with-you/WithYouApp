@@ -91,6 +91,7 @@ class TravelRewindViewController: UIViewController{
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.scrollDirection = .horizontal
         flowLayout.minimumLineSpacing = 0 // cell사이의 간격 설정
+        flowLayout.minimumInteritemSpacing = 1
         let view = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
         view.backgroundColor = WithYouAsset.backgroundColor.color
         
