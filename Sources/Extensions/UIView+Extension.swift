@@ -18,4 +18,16 @@ extension UIView {
         shapeLayer.path = bezierPath.cgPath
         self.layer.mask = shapeLayer
     }
+    
+    //뷰를 이미지 파일로
+    func asImage() -> UIImage {
+        let renderer = UIGraphicsImageRenderer(bounds: bounds)
+        return renderer.image { rendererContext in
+            layer.render(in: rendererContext.cgContext)
+        }
+    }
 }
+extension UIView {
+  
+}
+

@@ -44,17 +44,21 @@ class NickNameViewController: UIViewController {
         button.titleLabel?.font = UIFont(name: "Pretendard-Medium", size: 18)
         button.setTitle("확인하기", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor(named: "MainColorDark")
+        button.backgroundColor = WithYouAsset.subColor.color
         button.layer.cornerRadius = 20
         button.layer.masksToBounds = true
         button.addTarget(self, action: #selector(checkButtonTapped), for: .touchUpInside)
         return button
     }()
-    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        //self.navigationController?.setNavigationBarHidden(true, animated: true)
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         navigationItem.hidesBackButton = true
+        nickNameTextField.delegate = self
         
         setViews()
         setConstraints()
@@ -96,16 +100,47 @@ class NickNameViewController: UIViewController {
         
         checkButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(underlineView.snp.bottom).offset(300)
-            make.width.equalTo(360)
+            make.bottom.equalToSuperview().offset(-40)
+            make.width.equalToSuperview().multipliedBy(0.9)
             make.height.equalTo(40)
         }
-        
     }
     
     @objc func checkButtonTapped() {
-        let profileSetViewController = ProfileSetViewController()
-        profileSetViewController.nickName = nickNameTextField.text
-        navigationController?.pushViewController(profileSetViewController, animated: true)
+        if !nickNameTextField.hasText {
+            let alert = UIAlertController(title: "에러", message: "닉네임을 올바르게 입력해주세요", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default))
+            self.present(alert, animated: true)
+        } else {
+            let profileSetViewController = ProfileSetViewController()
+            profileSetViewController.nickName = nickNameTextField.text!
+            self.navigationController?.pushViewController(profileSetViewController, animated: true)
+        }
+    }
+}
+
+extension NickNameViewController : UITextFieldDelegate{
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if textField.text!.count == 0 {
+            checkButton.backgroundColor = WithYouAsset.mainColorDark.color
+        } else {
+            
+        }
+        return true
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if !textField.hasText {
+            checkButton.backgroundColor = WithYouAsset.subColor.color
+        }
     }
 }

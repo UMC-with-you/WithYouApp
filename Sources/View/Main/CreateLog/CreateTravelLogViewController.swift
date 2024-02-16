@@ -68,7 +68,11 @@ class CreateTravelLogViewController: UIViewController, BottomSheetDelegate{
         return button
     }()
     
-    lazy var calendarIcon = UIImageView(image: UIImage(named: "CalendarIcon"))
+    lazy var calendarIcon = {
+        let imageView = UIImageView(image: UIImage(named: "CalendarIcon")?.withRenderingMode(.alwaysTemplate))
+        imageView.tintColor = WithYouAsset.subColor.color
+        return imageView
+    }()
     
     let toDateLabel: UILabel = {
         let label = UILabel()
@@ -170,7 +174,6 @@ class CreateTravelLogViewController: UIViewController, BottomSheetDelegate{
     override func viewDidLoad() {
         super.viewDidLoad()
         titleTextField.delegate = self
-        
         setupUI()
         setConst()
         
@@ -296,15 +299,10 @@ class CreateTravelLogViewController: UIViewController, BottomSheetDelegate{
     
     @objc func createTripButtonTapped() {
         if let tripTitle = titleTextField.text, !tripTitle.isEmpty {
-            print("여행 제목: \(tripTitle)")
-           // API.travelsAPI()
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy-MM-dd"
             guard let fromDate = fromDatePicker.titleLabel?.text else {return }
             guard let toDate = toDatePicker.titleLabel?.text else {return}
             // 새로운 Log 생성후 서버에 보내기 id, status는 사용하지 않기에 Dummy Data 넣음
             // log.asRequest 메서드가 호출 되서 자동으로 필요한 데이터만 보냄
-            
             let newLog = Log(id: 0, title: tripTitle, startDate: fromDate, endDate: toDate, status: "", imageUrl: "")
             
             LogService.shared.addLog(log: newLog){ logId in
@@ -387,6 +385,7 @@ extension CreateTravelLogViewController : UITextFieldDelegate, UIImagePickerCont
     
     // MARK: - UIDatePicker
     @objc func showFromBottomSheet() {
+        self.view.endEditing(true)
         dateType = .from
         // bottomSheetVC가 nil이거나 해제되었는지 확인하고, 그 경우에만 새로운 인스턴스를 생성합니다.
         if fromBottomSheetVC == nil || fromBottomSheetVC?.isViewLoaded == false {
@@ -399,6 +398,7 @@ extension CreateTravelLogViewController : UITextFieldDelegate, UIImagePickerCont
     }
     
     @objc func showToBottomSheet() {
+        self.view.endEditing(true)
         dateType = .to
         // bottomSheetVC가 nil이거나 해제되었는지 확인하고, 그 경우에만 새로운 인스턴스를 생성합니다.
         if toBottomSheetVC == nil || toBottomSheetVC?.isViewLoaded == false {
@@ -413,7 +413,7 @@ extension CreateTravelLogViewController : UITextFieldDelegate, UIImagePickerCont
     func didPickDate(_ date: Date) {
         // 날짜를 선택한 후에 호출되는 메서드
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy.MM.dd"
+        dateFormatter.dateFormat = "yyyy-MM-dd"
         
         switch dateType {
         case .from:
@@ -428,13 +428,14 @@ extension CreateTravelLogViewController : UITextFieldDelegate, UIImagePickerCont
         
         if fromDateLabel.textColor == WithYouAsset.mainColorDark.color && toDateLabel.textColor == WithYouAsset.mainColorDark.color {
             datePickerContainer.layer.borderColor = WithYouAsset.mainColorDark.color.cgColor
-            calendarIcon.image = UIImage(named: "CalendarIconDark")
+            //calendarIcon.image = UIImage(named: "CalendarIconDark")
+            calendarIcon.tintColor = WithYouAsset.mainColorDark.color
             print("test")
             didSetContext()
         }
     }
     private func didSetContext(){
-        if calendarIcon.image == UIImage(named: "CalendarIconDark") && titleTextField.hasText {
+        if titleTextField.hasText {
             print("success")
             createTripButton.backgroundColor = WithYouAsset.mainColorDark.color
         }

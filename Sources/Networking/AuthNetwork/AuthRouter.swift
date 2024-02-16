@@ -12,7 +12,7 @@ import Foundation
 
 enum AuthRouter {
     case kakao(authCode : String)
-    case apple(authCode : String)
+    case apple(authCode : String, email: String, userName : String)
     case google(authCode : String)
 }
 
@@ -34,8 +34,8 @@ extension AuthRouter : BaseRouter {
         switch self {
         case .kakao(let code):
                 .body(AuthModelRequest(accessToken: code, provider: "kakao"))
-        case .apple(let code):
-                .body(AuthModelRequest(accessToken: code, provider: "apple"))
+        case .apple(let code, let email, let userName):
+                .body(AppleAuthModel(accessToken: code, userName: userName, email: email, provider: "apple"))
         case .google(let code):
                 .body(AuthModelRequest(accessToken: code, provider: "google"))
         }

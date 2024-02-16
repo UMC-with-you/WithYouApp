@@ -205,32 +205,6 @@ class ProfileEditViewController: UIViewController {
 
 }
 
-extension ProfileEditViewController {
-    // log 만드는 옵션
-    func popUpLogOption(){
-        let modalVC = NewLogSheetView()
-        //모달 사이즈 설정
-        let smallDetentId = UISheetPresentationController.Detent.Identifier("small")
-        let smallDetent = UISheetPresentationController.Detent.custom(identifier: smallDetentId) { context in
-            
-            return UIScreen.main.bounds.height / 3.5
-        }
-        
-        if let sheet = modalVC.sheetPresentationController{
-            sheet.detents = [smallDetent]
-            sheet.prefersGrabberVisible = true
-            sheet.preferredCornerRadius = 30
-        }
-        
-        _ =  modalVC.commander.subscribe(onCompleted: {
-            let newLogVC = CreateTravelLogViewController()
-            self.navigationController?.pushViewController(newLogVC, animated: true)
-        })
-        
-        present(modalVC, animated: true)
-    }
-}
-
 // 도경 : Delegate 관련 extension으로 빼고 함수 정렬
 extension ProfileEditViewController : UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     // MARK: - UIImagePickerDelegate

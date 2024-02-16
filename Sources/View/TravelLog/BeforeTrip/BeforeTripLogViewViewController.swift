@@ -62,7 +62,9 @@ class BeforeTripLogViewViewController: UIViewController {
         //CollectionView
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: 320, height: 40)
+        
         let list = UICollectionView(frame: .zero,collectionViewLayout: layout)
+        list.contentInset = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 0)
         list.register(PackingTableCell.self, forCellWithReuseIdentifier: PackingTableCell.cellId)
         return list
     }()
@@ -84,10 +86,17 @@ class BeforeTripLogViewViewController: UIViewController {
         textField.textColor = WithYouAsset.mainColorDark.color
         return textField
     }()
-    var packageText = ""
     let addPackageButton = WYAddButton(.small)
     
-    var dummyData = PublishSubject<[PackingItem]>()
+    //기능 구현 변수들
+    var log : Log?
+    
+    //PackingItem
+    let packingManager = PackingItemManager()
+    var packingItems = PublishSubject<[PackingItem]>()
+    var packageText = ""
+    //Travel Members
+    var travelMembers = [Traveler]()
 
     var disposeBag = DisposeBag()
     
@@ -97,37 +106,8 @@ class BeforeTripLogViewViewController: UIViewController {
         setUp()
         setConst()
         setDelegate()
-        
-        day.text = "D-20"
-        logTitle.text = "오징어들의 오사카 여행"
-
-        
-        //Testing
-        /*
-        let packingItemList = [
-            PackingItem(id: 0,itemName: "드라이기",isChecked: false),
-            PackingItem(id: 1,  itemName: "로션",isChecked: false),
-            PackingItem(id: 2,  itemName: "샴푸",isChecked: false),
-            PackingItem(id: 3, itemName: "수건",isChecked: false)
-        ]
-         */
-        
-        let dummyTravler = [
-            Traveler(id: 0, name: "박우주", profilePicture: ""),
-            Traveler(id: 1, name: "우박주", profilePicture: ""),
-            Traveler(id: 2, name: "주박우", profilePicture: ""),
-            Traveler(id: 3, name: "우우우", profilePicture: "")
-        ]
-        
-       //loadPackingItems()
-        
-        //CollectionView Style
-        dummyData
-            .bind(to: packingListView.rx.items(cellIdentifier: PackingTableCell.cellId, cellType: PackingTableCell.self)) { index, item, cell in
-                cell.itemName.text = item.itemName
-                cell.bindTravlers(travelers: dummyTravler)
-            }
-            .disposed(by: disposeBag)
+        setFunc()
+        setInfo()
         
         addPackageButton.rx
             .tapGesture()
@@ -138,13 +118,28 @@ class BeforeTripLogViewViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
+    private func setInfo(){
+        logTitle.text = log?.title
+        day.text = dateController.days(from: log?.startDate ?? "오류")
+        
+        //여행 멤버 불러오기
+        LogService.shared.getAllMembers(logId: self.log!.id){ response in
+            self.travelMembers = response
+            self.loadPackingItems()
+        }
+        
+        //PackingItemCollectionView cell mapping
+        packingItems
+            .bind(to: packingListView.rx.items(cellIdentifier: PackingTableCell.cellId, cellType: PackingTableCell.self)) { index, item, cell in
+                cell.bind(travelers: self.travelMembers, packingItem: item,manager: self.packingManager)
+            }
+        .disposed(by: disposeBag)
+        
+    }
     
-    private func setDelegate(){
-        noticeView.delegate = self
-        textField.delegate = self
-        
+    private func setFunc(){
+        //짐 추가 텍스트필드 선택 시 입력창 위로 옮기기
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         
         sideMenu.rx
@@ -154,11 +149,27 @@ class BeforeTripLogViewViewController: UIViewController {
                  self.openSideMenu()
             })
             .disposed(by: disposeBag)
+        
+        //서버에서 packingItem 변경시 새로고침
+        packingManager.itemChangedNotify.subscribe { _ in
+            self.loadPackingItems()
+        }
+        .disposed(by: disposeBag)
     }
     
+    private func setDelegate(){
+        noticeView.delegate = self
+        textField.delegate = self
+        
+        //당겨서 새로고침
+        packingListView.refreshControl = UIRefreshControl()
+        packingListView.refreshControl?.addTarget(self, action: #selector(handleRefreshControl), for: .valueChanged)
+        
+        packingListView.rx.setDelegate(self).disposed(by: disposeBag)
+    }
     
     private func setUp(){
-        [day,sideMenu,logTitle,noticeView,packingContainer,addPackageContainer].forEach{
+        [day,logTitle,noticeView,packingContainer,addPackageContainer].forEach{
             view.addSubview($0)
         }
         
@@ -171,6 +182,11 @@ class BeforeTripLogViewViewController: UIViewController {
         [textField,addPackageButton].forEach{
             addPackageContainer.addSubview($0)
         }
+        
+        //NavigationBar
+        self.navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(customView: sideMenu),
+            UIBarButtonItem(customView: ProfileView(size: .small, traveler: Traveler(id: 0, name: DataManager.shared.getUserName())))]
     }
     
     private func setConst(){
@@ -181,8 +197,8 @@ class BeforeTripLogViewViewController: UIViewController {
         }
         
         sideMenu.snp.makeConstraints{
-            $0.trailing.equalToSuperview().offset(-20)
-            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.width.height.equalTo(30)
+            
         }
         
         logTitle.snp.makeConstraints{
@@ -239,32 +255,35 @@ class BeforeTripLogViewViewController: UIViewController {
     }
     
     private func loadPackingItems(){
-    
-    }
-    func addButtonClicked(){
-        let url = "http://54.150.234.75:8080/api/v1/travels/3/packing_items"
-        
-        var parameter = [
-            "itemName" : ""
-        ]
-        if let itemName = self.textField.text {
-            parameter["itemName"] = itemName
-            print(parameter)
+        packingManager.updateItemFromServer(travelId: self.log!.id){
+            let item = self.packingManager.getItemList()
+            if !item.isEmpty {
+                self.packingItems.onNext(item)
+            }
         }
-
-        
-        /*
-        APIManager.shared.postData(urlEndPoint: url, dataType: Log.self, responseType: packingResponse.self) { container in
-            print(container.result.packingItemId)
-            self.loadPackingItems()
-        }
-         */
     }
     
+    //PackingItem 추가 버튼 클릭시
+    private func addButtonClicked(){
+        guard let itemName = self.textField.text else {return}
+        if itemName.count > 0 {
+            PackingItemService.shared.addItem(travelId: self.log!.id, itemName: itemName){ response in
+                self.loadPackingItems()
+                self.textField.text = ""
+            }
+        } else {
+            let alert = UIAlertController(title: "실패", message: "정확한 이름을 써주세요", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default))
+            self.present(alert, animated: true)
+        }
+    }
+    
+    //사이드바 열기
     func openSideMenu(){
         let sideMenu = SideBarViewController()
         sideMenu.modalPresentationStyle = .overFullScreen
-        
+        //Log 전달
+        sideMenu.bind(log: self.log!,members: self.travelMembers)
         let transition = CATransition()
         transition.duration = 0.25
         transition.type = .fade
@@ -272,6 +291,14 @@ class BeforeTripLogViewViewController: UIViewController {
         transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
         view.window?.layer.add(transition, forKey: kCATransition)
         present(sideMenu,animated: false)
+    }
+    
+    //PackingItem 당겨서 새로고침
+    @objc func handleRefreshControl(){
+        loadPackingItems()
+        DispatchQueue.main.async{
+            self.packingListView.refreshControl?.endRefreshing()
+        }
     }
 }
 
@@ -308,13 +335,33 @@ extension BeforeTripLogViewViewController: UITextFieldDelegate{
             view.frame.origin.y = 0
         }
     }
-
 }
 
-extension BeforeTripLogViewViewController : NoticeViewDelegate{
+//MARK: CollectionViewDelegate
+extension BeforeTripLogViewViewController : UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        false
+    }
+}
+
+extension BeforeTripLogViewViewController : NoticeViewDelegate {
+    //노티스 생성
     func addNotice() {
         let addNoticeView = AddNoticeViewController()
         addNoticeView.modalPresentationStyle = .overFullScreen
+        
+        addNoticeView.noticeAdder.subscribe(onNext: { noticeDic in
+            LogService.shared.getAllMembers(logId: self.log!.id){ response in
+                let memberId = response[0].id
+                print(memberId)
+                NoticeService.shared.createNotice(info: noticeDic, memberId: memberId, logId: self.log!.id){ response in
+                }
+            }
+            
+        })
+        .disposed(by: disposeBag)
+        
         present(addNoticeView, animated: false)
     }
 }
+

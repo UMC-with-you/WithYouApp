@@ -10,10 +10,6 @@ import Foundation
 
 
 struct Post : Codable {
-    var travelId : Int
-    var title : String
-    var startDate : String
-    var endDate : String
-    var status : String
-    var imageUrl : String
+    var postId : Int
+    var thumbnailUrl : String
 }

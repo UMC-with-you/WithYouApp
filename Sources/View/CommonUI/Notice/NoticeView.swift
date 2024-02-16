@@ -17,8 +17,6 @@ final class NoticeView: UIView {
     
     var delegate : NoticeViewDelegate?
     
-    var noticeArray: [Notice] = []
-    
     var noticeDataManager = NoticeDataManager()
     
     private let checkImage: UIImageView = {
@@ -30,7 +28,7 @@ final class NoticeView: UIView {
     
     let mainLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont(name: "Pretendard-Regular", size: 18)
+        label.font = WithYouFontFamily.Pretendard.semiBold.font(size: 18)
         label.text = "NOTICE"
         label.textColor = UIColor(named: "MainColorDark")
         label.textAlignment = .center
@@ -103,8 +101,8 @@ final class NoticeView: UIView {
     }
     
     func setupDatas() {
-        noticeDataManager.makeNoticeData() // 일반적으로는 서버에 요청
-        noticeArray = noticeDataManager.getNoticeData() // 데이터 받아서 뷰컨의 배열에 저장
+        //noticeDataManager.makeNoticeData() // 일반적으로는 서버에 요청
+        //noticeArray = noticeDataManager.getNoticeData() // 데이터 받아서 뷰컨의 배열에 저장
     }
     
     private func setConstraints() {

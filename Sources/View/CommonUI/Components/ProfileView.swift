@@ -19,6 +19,8 @@ class ProfileView: UIView {
     
     var size : ProfileSizeOption
     
+    var traveler : Traveler
+    
     let profileImage = {
        let image = UIImageView()
         image.layer.cornerRadius = 15
@@ -29,6 +31,10 @@ class ProfileView: UIView {
     
     init( size : ProfileSizeOption, traveler : Traveler = Traveler(id: 0, name: "김아무개", profilePicture: "없음")){
         self.size = size
+        self.traveler = traveler
+        if traveler.name == DataManager.shared.getUserName(){
+            self.profileImage.image = UIImage(data:DataManager.shared.getUserImage())
+        }
         super.init(frame: .zero)
         
         //API 연동 후

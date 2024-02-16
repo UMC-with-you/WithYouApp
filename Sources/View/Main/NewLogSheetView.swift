@@ -43,7 +43,6 @@ class NewLogSheetView: UIViewController {
         setConst()
         setFunc()
         
-       
     }
     
     private func setUp(){
@@ -111,15 +110,12 @@ class NewLogSheetView: UIViewController {
      
     //로그 참여 로직
     private func joinLog(){
-        
-        
-        if let text = self.textField.text {
+        if let text = self.textField.text, text.count > 10 {
             LogService.shared.joinLog(invitationCode: text){ _ in
                 self.view.endEditing(true)
                 let alert = UIAlertController(title: "Travel 참여 완료", message: "성공적으로 참여가 완료되었습니다", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "확인", style: .default))
                 self.present(alert, animated: true)
-                
             }
         }
     }
@@ -142,7 +138,6 @@ extension NewLogSheetView : UITextFieldDelegate {
                 createButton.backgroundColor = WithYouAsset.mainColorDark.color
             } else {
                 createButton.backgroundColor = WithYouAsset.subColor.color
-                return true
             }
             return true
         } else {

@@ -31,20 +31,19 @@ class TravelLogViewController: UIViewController {
     }()
     let sortIcon = UIImageView(image: WithYouAsset.sortIcon.image)
     
-    var gridView = {
+    lazy var gridView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.itemSize = CGSize(width: UIScreen.main.bounds.width / 2.6, height: 225)
+        layout.itemSize = CGSize(width: UIScreen.main.bounds.width / 2 - 20, height: 225)
+        layout.minimumInteritemSpacing = 10
         
         let grid = UICollectionView(frame: .zero, collectionViewLayout: layout)
         grid.register(LogCollectionViewCell.self, forCellWithReuseIdentifier: LogCollectionViewCell.cellId)
-    
+        grid.showsVerticalScrollIndicator = false
         return grid
     }()
     
-    var logList = [Log]()
-    
-    var logObservable = PublishSubject<[Log]>()
+    var logs = BehaviorSubject<[Log]>(value: [])
     
     let button = WYAddButton()
 
@@ -53,37 +52,89 @@ class TravelLogViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        //Log들 불러와서 LogList에 저장
-        //logList = APIManager.shared.getData(<#T##url: URL##URL#>, parameter: <#T##Parameters#>, dataType: <#T##Decodable#>, <#T##completion: (Decodable) -> Void##(Decodable) -> Void#>)
-        //logList = [Log(id: 0, title: "오징어들의 파리 여행",startDate: "2024.02.13", endDate: "2024.03.01", imageUrl: "www.naver.com"),
-       // Log(id: 1, title: "여름보다 뜨거운 겨울 여행",startDate: "2024.03.13", endDate: "2024.03.23", imageUrl: "www.naver.com"),
-       // Log(id: 2, title: "식폭행 전과자들",startDate: "2024.06.03", endDate: "2024.06.6", imageUrl: "www.naver.com")]
-        // Observable로 뿌려주기
         
-        gridView.backgroundColor = .systemBackground
-        
+        //기본 셋업
         setUp()
         setConst()
-        logObservable.onNext(logList)
+        setFunc()
+        // Observable로 뿌려주기
+        let tempLog = LogManager.shared.getLogs()
+        //여기 로그는 여행이 끝난 로그만
+        if tempLog.isEmpty {
+            LogManager.shared.updateLogsFromServer(){ logs in
+                self.logs.onNext(self.getFinishedLogs(logs: logs))
+            }
+        } else {
+            logs.onNext(getFinishedLogs(logs: tempLog))
+        }
+    }
+    private func getFinishedLogs(logs : [Log]) -> [Log]{
+        return logs.filter{ $0.status == "BYGONE" }
     }
     
-    func setUp(){
+    private func setFunc(){
+        logs
+            .bind(to: gridView.rx.items(cellIdentifier: LogCollectionViewCell.cellId, cellType: LogCollectionViewCell.self)) { index, item, cell in
+                cell.bind(log: item, isBigCell: false)
+            }
+            .disposed(by: disposeBag)
+        
+        gridView.rx
+            .modelSelected(Log.self)
+            .subscribe{ log in
+                self.navigateToWithYou(log: log)
+            }
+            .disposed(by: disposeBag)
+        button
+            .rx
+            .tapGesture()
+            .when(.recognized)
+            .subscribe { _ in
+                self.popUpLogOption()
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    private func popUpLogOption(){
+        let modalVC = NewLogSheetView()
+        
+        //모달 사이즈 설정
+        let smallDetentId = UISheetPresentationController.Detent.Identifier("small")
+        let smallDetent = UISheetPresentationController.Detent.custom(identifier: smallDetentId) { context in
+            return UIScreen.main.bounds.height / 3.5
+        }
+        
+        if let sheet = modalVC.sheetPresentationController{
+            sheet.detents = [smallDetent]
+            sheet.prefersGrabberVisible = true
+            sheet.preferredCornerRadius = 30
+        }
+      
+        // Log 만들기로 Navigate
+        _ = modalVC.commander.subscribe({ event in
+            let newLogVC = CreateTravelLogViewController()
+            self.navigationController?.pushViewController(newLogVC, animated: true)
+        })
+
+        present(modalVC, animated: true)
+    }
+    
+    private func navigateToWithYou(log : Log){
+        let logVC = WithUViewController()
+        logVC.log = log
+        self.navigationController?.pushViewController(logVC, animated: true)
+    }
+    
+    private func setUp(){
         [header,searchBar,sortIcon,gridView,button].forEach {
             view.addSubview($0)
         }
         [searchIcon,searchField].forEach{
             searchBar.addSubview($0)
         }
-        
-        
-        logObservable
-            .bind(to: gridView.rx.items(cellIdentifier: LogCollectionViewCell.cellId, cellType: LogCollectionViewCell.self)) { index, item, cell in
-                cell.bind(log: item, isBigCell: false)
-            }
-            .disposed(by: disposeBag)
     }
     
-    func setConst(){
+    private func setConst(){
         header.snp.makeConstraints{
             $0.top.equalToSuperview()
             $0.width.equalToSuperview()
@@ -114,7 +165,7 @@ class TravelLogViewController: UIViewController {
         gridView.snp.makeConstraints{
             $0.leading.equalToSuperview().offset(15)
             $0.trailing.equalToSuperview().offset(-15)
-            $0.top.equalTo(searchBar.snp.bottom)
+            $0.top.equalTo(searchBar.snp.bottom).offset(15)
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
         
@@ -122,8 +173,5 @@ class TravelLogViewController: UIViewController {
             $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-15)
             $0.trailing.equalToSuperview().offset(-15)
         }
-      
     }
-    
-    
 }

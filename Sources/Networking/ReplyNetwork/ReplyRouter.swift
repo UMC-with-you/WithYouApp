@@ -35,7 +35,7 @@ extension ReplyRouter : BaseRouter {
     
     var path: String {
         switch self {
-        case .addReply(let commentId,_): return "/\(commentId)"
+        case .addReply(let commentId,_): return "/\(commentId)/replies"
         case .deleteReply(let replyId) : return "/\(replyId)"
         case .editReply(let replyId,_) : return "/\(replyId)"
         }

@@ -11,6 +11,7 @@ import RxSwift
 import UIKit
 
 class SideBarViewController: UIViewController {
+    var log : Log?
     
     let sideView = {
         let sv = UIView()
@@ -32,8 +33,6 @@ class SideBarViewController: UIViewController {
     //MARK: Edit required
     let label = {
         let title = UILabel()
-        //로그에서 가져와야함
-        title.text = "오징어들의 오사카 여행"
         title.font = WithYouFontFamily.Pretendard.medium.font(size: 20)
         title.textColor = UIColor.gray
         return title
@@ -62,13 +61,7 @@ class SideBarViewController: UIViewController {
         return x
     }()
     
-    var members = BehaviorSubject<[Traveler]>(value: [
-        Traveler(id: 0, name: "박우주", profilePicture: "xmark"),
-        Traveler(id: 1, name: "우박주", profilePicture: "checkbox"),
-        Traveler(id: 2, name: "주박우", profilePicture: "DownMark"),
-        Traveler(id: 3, name: "우우우", profilePicture: "HomeIcon")
-    ]
-    )
+    var members = BehaviorSubject<[Traveler]>(value:[])
     
     var bag = DisposeBag()
     
@@ -79,45 +72,75 @@ class SideBarViewController: UIViewController {
         setUp()
         setConst()
         setFunction()
-        
-       // members.onNext(dummyTravler)
+    }
+    
+    func bind(log: Log, members : [Traveler]){
+        self.log = log
+        label.text = log.title
+        self.members.onNext(members)
     }
     
     private func setFunction(){
         //참여자 목록 설정
         members
             .bind(to: memberListView.rx.items(cellIdentifier: SideBarMemeberListCell.cellId, cellType: SideBarMemeberListCell.self)){ index, item, cell in
-                let line = TwoComponentLineView(item.name, imageName: item.profilePicture)
+                var line = TwoComponentLineView()
+                
+                if item.name == DataManager.shared.getUserName() {
+                    let image = UIImage(data: DataManager.shared.getUserImage())!
+                    line = TwoComponentLineView(item.name, imageView: UIImageView(image: image))
+                }else{
+                    line = TwoComponentLineView(item.name, imageName: item.profilePicture ?? "")
+                }
+                
                 line.changeConst {
                     line.label.textColor = UIColor.gray
                     line.label.font = WithYouFontFamily.Pretendard.regular.font(size: 18)
-
                 }
                 cell.bindView(line)
-        }
+            }
             .disposed(by: bag)
         
         //친구 초대하기
         inviteFriend.rx
             .tapGesture()
             .when(.recognized)
-            .subscribe(onNext: { _ in
+            .subscribe{ _ in
                 print("Check")
                 self.popInviteView()
-            })
+            }
             .disposed(by: bag)
         
         //종료 버튼
         closeButton.rx
             .tapGesture()
             .when(.recognized)
-            .subscribe(onNext: { _ in
+            .subscribe { _ in
                 self.dismissSideBar()
-            })
+            }
             .disposed(by: bag)
         
         //그룹 나가기 설정 필요
+        leaveTravel.rx
+            .tapGesture()
+            .when(.recognized)
+            .subscribe{ _ in
+                self.leaveLog()
+            }
+            .disposed(by: bag)
         
+    }
+    private func leaveLog(){
+        var memberId = 0
+        let name = DataManager.shared.getUserName()
+        _ = try! self.members.value().map{
+            if $0.name == name {
+                memberId = $0.id
+            }
+        }
+        LogService.shared.leaveLog(travelId: log!.id, memberId: memberId){ _ in
+            self.navigationController?.popToRootViewController(animated: true)
+        }
     }
     
     private func setUp(){
@@ -158,10 +181,12 @@ class SideBarViewController: UIViewController {
         inviteFriend.snp.makeConstraints{
             $0.width.equalToSuperview()
             $0.height.equalTo(30)
-            $0.bottom.equalTo(leaveTravel.snp.top).offset(-40)
+            $0.bottom.equalTo(leaveTravel.snp.top).offset(-20)
         }
         
         leaveTravel.snp.makeConstraints{
+            $0.width.equalToSuperview()
+            $0.height.equalTo(30)
             $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-30)
         }
     }
@@ -178,6 +203,8 @@ class SideBarViewController: UIViewController {
     
     func popInviteView(){
         let pv = InvitePopUpViewController()
+        pv.travelId = log?.id ?? 0
+        pv.mainTitle.text = log?.title
         pv.modalPresentationStyle = .overFullScreen
         present(pv,animated: false)
     }

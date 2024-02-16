@@ -13,10 +13,11 @@ enum LogRouter  {
     case getAllLog
     case addLog(log: Log)
     case deleteLog(travelId : Int)
-    case editLog(travelId : Int)
+    case editLog(travelId : Int, editRequest : EditLogRequest)
     case joinLog(inviteCode : String)
     case getAllLogMemebers(travelId : Int)
     case getInviteCode(travelId : Int)
+    case leaveLog(travelId : Int, memberId : Int)
 }
 
 extension LogRouter : BaseRouter {
@@ -30,13 +31,13 @@ extension LogRouter : BaseRouter {
             return .get
         case .addLog : return .post
         case .deleteLog : return .delete
-        case .editLog, .joinLog : return .patch
+        case .editLog, .joinLog , .leaveLog: return .patch
         }
     }
     
     var path: String {
         switch self{
-        case .deleteLog(let travelId), .editLog(let travelId) :
+        case .deleteLog(let travelId), .editLog(let travelId,_) :
             return "/\(travelId)"
         case .joinLog :
             return "/members"
@@ -44,6 +45,8 @@ extension LogRouter : BaseRouter {
             return "/\(travelId)/members"
         case .getInviteCode(let travelId):
             return "\(travelId)/invitation_code"
+        case .leaveLog(let travelId, let memberId):
+            return "\(travelId)/members/\(memberId)"
         default :
             return ""
         }
@@ -57,7 +60,9 @@ extension LogRouter : BaseRouter {
             return .body(log.asLogRequest())
         case .joinLog(let code):
             return .body(["invitationCode" : code])
-        default :
+        case . editLog(_,let editRequest):
+            return .body(editRequest)
+        case .deleteLog, .getInviteCode, .getAllLogMemebers, .leaveLog:
             return .none
         }
     }

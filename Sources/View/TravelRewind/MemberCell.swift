@@ -1,12 +1,10 @@
 import UIKit
 
+
 class MemberCell: UICollectionViewCell {
 
     static var id: String { NSStringFromClass(Self.self).components(separatedBy: ".").last ?? "" }
-
-    var model: String? { didSet { bind() } }
-    var image: UIImage? {didSet {bind()}}
-    
+    var traveler : Traveler?
     lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont(name: "Pretendard-SemiBold", size: 14.0)
@@ -26,8 +24,8 @@ class MemberCell: UICollectionViewCell {
         super.init(frame: frame)
 
         addSubviews()
-
         configure()
+        
     }
 
     @available(*, unavailable)
@@ -42,7 +40,6 @@ class MemberCell: UICollectionViewCell {
 
     private func configure() {
         
-        
         profileImageView.snp.makeConstraints { make in
             make.center.equalToSuperview()
             make.height.equalToSuperview().multipliedBy(0.7)
@@ -52,12 +49,14 @@ class MemberCell: UICollectionViewCell {
             make.top.equalTo(profileImageView.snp.bottom)
             make.centerX.equalToSuperview()
         }
-        backgroundColor = WithYouAsset.backgroundColor.color
     }
 
-    private func bind() {
-        titleLabel.text = model
-        profileImageView.image = image
+    func bind(traveler : Traveler) {
+        if traveler.name == DataManager.shared.getUserName() {
+            profileImageView.image = UIImage(data: DataManager.shared.getUserImage())!
+        }
+        titleLabel.text = traveler.name
+        self.traveler = traveler
     }
 
 }

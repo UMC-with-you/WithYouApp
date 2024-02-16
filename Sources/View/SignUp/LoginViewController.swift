@@ -17,7 +17,6 @@ import SnapKit
 
 
 
-
 class LoginViewController: UIViewController {
 
 
@@ -103,8 +102,6 @@ class LoginViewController: UIViewController {
         authorizationController.delegate = self
         authorizationController.presentationContextProvider = self
         authorizationController.performRequests()
-        
-        
     }
     
     @objc private func googleButtonTapped(){
@@ -116,10 +113,9 @@ class LoginViewController: UIViewController {
             AuthService.shared.authWithGoogle(result.user.accessToken.tokenString){ response in
                 print(response)
                 //로그인 이후 로직
+                self.judgeNextStep(token: response)
             }
-            moveToMainView()
         }
-  
     }
     
     @objc private func kakaoButtonTapped() {
@@ -132,28 +128,50 @@ class LoginViewController: UIViewController {
                     //do something
                     _ = oauthToken
                     AuthService.shared.authWithKakao(oauthToken?.accessToken ?? "error"){ response in
-                            print(response)
+                        print(response)
+                        self.judgeNextStep(token: response)
                     }
-                    //로그인 이후 로직
-                    self.moveToMainView()
                 }
             }
     }
     
-    func moveToMainView(){
-        let VC = TabBarViewController()
-        VC.modalPresentationStyle = .overFullScreen
-        self.present(VC,animated: true)
+    private func judgeNextStep(token: AuthModelResponse){
+        //토큰 저장
+        if self.saveTokens(tokens: token) {
+            if DataManager.shared.getIsLogin() {
+                //프로필이 존재하면 메인 화면으로 가기
+                let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
+                guard let delegate = sceneDelegate else { return }
+                delegate.window?.rootViewController = TabBarViewController()
+    
+            } else {
+                //첫 로그인 시 프로필 설정 화면으로 가기
+                navigationController?.pushViewController(NickNameViewController(), animated: true)
+            }
+        } else {
+            print("토큰 저장 실패")
+        }
+    }
+    
+    private func moveToView(newVC: UIViewController){
+        newVC.modalPresentationStyle = .overFullScreen
+        self.present(newVC,animated: true)
+    }
+
+
+    func saveTokens(tokens: AuthModelResponse) -> Bool{
+        if SecureDataManager.shared.setData(tokens.accessToken, label: .accessToken) && SecureDataManager.shared.setData(tokens.refreshToken, label: .refreshToken) {
+            return true
+        } else {
+            return false
+        }
     }
 }
-
-
 
 extension LoginViewController :ASAuthorizationControllerPresentationContextProviding , ASAuthorizationControllerDelegate{
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
         return self.view.window!
     }
-    
     // 성공 후 동작
        func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization){
            //로그인 성공
@@ -163,17 +181,16 @@ extension LoginViewController :ASAuthorizationControllerPresentationContextProvi
                if  let authorizationCode = appleIDCredential.authorizationCode,
                    let identityToken = appleIDCredential.identityToken,
                    let authCodeString = String(data: authorizationCode, encoding: .utf8),
-                   let identifyTokenString = String(data: identityToken, encoding: .utf8) {
-                   print("authorizationCode: \(authorizationCode)")
-                   print("identityToken: \(identityToken)")
-                   print("authCodeString: \(authCodeString)")
-                   print("identifyTokenString: \(identifyTokenString)")
-                   
-                   AuthService.shared.authWithApple(authCodeString){ response in
+                   let identifyTokenString = String(data: identityToken, encoding: .utf8),
+                   let email = appleIDCredential.email,
+                   let userName = appleIDCredential.fullName{
+                   print(email)
+                   print(userName)
+                   print(userName.formatted())
+                   AuthService.shared.authWithApple(authCodeString, userName: userName.formatted(), email: email){ response in
                        print(response)
-                       self.moveToMainView()
+                       self.moveToView(newVC:MainViewController())
                    }
-                   
                }
                //로그인 이후 로직
                

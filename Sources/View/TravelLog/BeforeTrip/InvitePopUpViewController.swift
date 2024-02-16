@@ -11,7 +11,9 @@ import RxSwift
 import UIKit
 
 class InvitePopUpViewController: UIViewController {
-
+    
+    var travelId = 0
+    
     let popupView = {
         let view = UIView()
         view.backgroundColor = WithYouAsset.backgroundColor.color
@@ -25,6 +27,7 @@ class InvitePopUpViewController: UIViewController {
         label.text = "친구 초대"
         label.font = WithYouFontFamily.Pretendard.semiBold.font(size: 17)
         label.textColor = WithYouAsset.mainColorDark.color
+        
         return label
     }()
     
@@ -41,16 +44,17 @@ class InvitePopUpViewController: UIViewController {
         let label = UILabel()
         label.text = "Travel Log 초대 코드"
         label.font = WithYouFontFamily.Pretendard.regular.font(size: 16)
-        label.textColor = WithYouAsset.mainColor.color
+        label.textColor = WithYouAsset.subColor.color
         return label
     }()
     
     let inviteCode = {
         let label = UILabel()
         // 서버에서 받아오기
-        label.text = "gfcxhkggiyugyu"
         label.font = WithYouFontFamily.Pretendard.semiBold.font(size: 24)
         label.textColor = WithYouAsset.mainColorDark.color
+        label.lineBreakMode = .byWordWrapping
+        label.numberOfLines = 0
         return label
     }()
     
@@ -69,16 +73,15 @@ class InvitePopUpViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.8)
-        
-        var travelId = 3
-        
-        LogService.shared.getInviteCode(logId: 3){ code in
-            self.inviteCode.text = code as? String
+        LogService.shared.getInviteCode(logId: self.travelId){ code in
+            print("Invite COde")
+            self.inviteCode.text = code.invitationCode
+            self.sendButton.backgroundColor = WithYouAsset.mainColorDark.color
         }
-        
         setUp()
         setConst()
         setFunc()
+        
     }
     
     private func setFunc(){
@@ -88,6 +91,15 @@ class InvitePopUpViewController: UIViewController {
             .subscribe(onNext: { _ in
                 self.dismiss(animated: false)
             })
+            .disposed(by: bag)
+        
+        sendButton.rx
+            .tapGesture()
+            .when(.recognized)
+            .subscribe { _ in
+                let activityViewController = UIActivityViewController(activityItems: [self.inviteCode.text!], applicationActivities: nil)
+                self.present(activityViewController,animated: true)
+            }
             .disposed(by: bag)
     }
     
@@ -129,6 +141,7 @@ class InvitePopUpViewController: UIViewController {
         inviteCode.snp.makeConstraints{
             $0.centerX.equalToSuperview()
             $0.centerY.equalToSuperview().offset(20)
+            $0.width.equalToSuperview().multipliedBy(0.9)
         }
         
         sendButton.snp.makeConstraints{

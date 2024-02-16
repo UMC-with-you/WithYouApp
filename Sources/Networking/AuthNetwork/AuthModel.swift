@@ -17,3 +17,10 @@ struct AuthModelResponse : Codable {
     var accessToken : String
     var refreshToken : String
 }
+
+struct AppleAuthModel : Codable {
+    var accessToken : String
+    var userName : String
+    var email : String
+    var provider : String
+}

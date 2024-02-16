@@ -42,6 +42,11 @@ extension Log {
         ]
         return dic
     }
+    
+    //본인 여행중
+    func checkStatus(){
+        
+    }
 }
 
 

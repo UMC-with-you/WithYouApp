@@ -13,17 +13,24 @@ class NoticeService : BaseService {
     override private init(){}
     
     //Notice 생성
-    func createNotice(notice : Notice, memberId : Int, logId: Int,_ completion : @escaping (Any)-> Void){
-        requestReturnsData(NoticeResponse.self, router: NoticeRouter.createNotice(notice: notice.asNewNoticeRequest(memberId: memberId, logId: logId)), completion: completion)
+    func createNotice(info : Dictionary<String,Any>, memberId : Int, logId: Int,_ completion : @escaping (NoticeResponse)-> Void){
+        var noticeDic : [String : Any] = [
+            "memberId" : memberId,
+            "logId" : logId,
+            "state" : info["state"]!,
+            "content" : info["content"]!
+        ]
+        print(noticeDic)
+        requestReturnsData(NoticeResponse.self, router: NoticeRouter.createNotice(notice: noticeDic), completion: completion)
     }
     
     //Notice 수정
-    func editNotice(notice : Notice, _ completion: @escaping (Any)-> Void){
-        requestReturnsData(NoticeResponse.self, router: NoticeRouter.editNotice(notice: notice.asEditNoticeRequest()), completion: completion)
+    func editNotice(notice : EditNoiceRequest, _ completion: @escaping (NoticeResponse)-> Void){
+        requestReturnsData(NoticeResponse.self, router: NoticeRouter.editNotice(notice: notice), completion: completion)
     }
     
     //Notice 단건 조회
-    func getOneNotice(noticeId : Int, _ completion : @escaping (Any) -> Void){
+    func getOneNotice(noticeId : Int, _ completion : @escaping (NoticeResponse) -> Void){
         requestReturnsData(NoticeResponse.self, router: NoticeRouter.getOneNotice(noticeId: noticeId), completion: completion)
     }
     
@@ -33,13 +40,13 @@ class NoticeService : BaseService {
     }
     
     //TravelLog의 모든 Notice 조회
-    func getAllNoticByLog(travelId : Int,logId : Int,_ completion : @escaping (Any) -> Void){
-        requestReturnsData([NoticeListResponse].self, router: NoticeRouter.getAllNoticeByLog(travelId: travelId, logId: logId), completion: completion)
+    func getAllNoticByLog(travelId : Int,_ completion : @escaping ([NoticeListResponse]) -> Void){
+        requestReturnsData([NoticeListResponse].self, router: NoticeRouter.getAllNoticeByLog(travelId: travelId), completion: completion)
     }
     
 
-    func getAllNoticeByDate(travelId : Int,logId : Int,_ completion : @escaping (Any) -> Void){
-        requestReturnsData([NoticeListResponse].self, router: NoticeRouter.getAllNoticeByDate(travelId: travelId, logId: logId), completion: completion)
+    func getAllNoticeByDate(travelId : Int,logId : Int,_ completion : @escaping ([NoticeListResponse]) -> Void){
+        requestReturnsData([NoticeListResponse].self, router: NoticeRouter.getAllNoticeByDate(travelId: travelId), completion: completion)
     }
     
 }

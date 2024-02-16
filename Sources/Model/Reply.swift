@@ -9,8 +9,7 @@
 import Foundation
 
 struct Reply : Codable {
-    var postId : Int
-    var memberId : Int
     var commentId : Int
+    var replyId : Int
     var content : String
 }

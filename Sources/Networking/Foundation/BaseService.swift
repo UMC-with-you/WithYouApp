@@ -37,7 +37,7 @@ class BaseService {
         }
     }
     
-    func authRequest(router : BaseRouter, completion : @escaping (Any)-> Void){
+    func authRequest(router : BaseRouter, completion : @escaping (AuthModelResponse)-> Void){
         AFManager.request(router).responseDecodable(of: AuthModelResponse.self) { response in
             switch response.result {
             case .success(let tokens):

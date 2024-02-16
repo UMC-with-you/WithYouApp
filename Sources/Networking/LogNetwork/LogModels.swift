@@ -21,5 +21,13 @@ struct LogJoinResponse : Codable {
 
 struct InviteCodeResponse : Codable {
     var travelId : Int
-    var invitationcode : String
+    var invitationCode : String
+}
+
+struct EditLogRequest : Codable {
+    var title : String
+    var startDate : String
+    var endDate : String
+    var url : String
+    var localDate : String
 }

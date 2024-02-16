@@ -18,6 +18,10 @@ struct EditPostRequest : Codable {
     var content : String
 }
 
-struct OnePostResponse :Codable{ 
+struct PostIdResponse : Codable {
+    var postId : Int
+}
+
+struct OnePostResponse :Codable{
     
 }

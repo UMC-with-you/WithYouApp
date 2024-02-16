@@ -50,10 +50,10 @@ class LogCollectionViewCell: UICollectionViewCell {
     public func bind(log: Log, isBigCell : Bool){
         self.title.text = log.title
         self.date.text = log.getTravelPeriod()
-        dDay.setTitle(dateController.days(from: dateController.strToDate(log.startDate)), for: .normal)
+        dDay.setTitle(dateController.days(from:log.startDate), for: .normal)
         
         // Testing Code
-        self.backImage.image = UIImage(named: "LogModel\(Int.random(in: 1...3))")
+        self.backImage.image = UIImage(named: "LogModel\(log.id % 3)")
         
         setConst(isBigCell)
         setSize(isBigCell)
@@ -80,13 +80,13 @@ class LogCollectionViewCell: UICollectionViewCell {
         }
         
         title.snp.makeConstraints{
-            $0.leading.equalToSuperview().offset(20)
-            $0.bottom.equalTo(date).offset(-20)
+            $0.leading.equalToSuperview().offset(isBigCell ? 20: 10)
+            $0.bottom.equalTo(date).offset(isBigCell ? -20 : -15)
         }
         
         date.snp.makeConstraints{
             $0.leading.equalTo(title)
-            $0.bottom.equalToSuperview().offset(-20)
+            $0.bottom.equalToSuperview().offset(isBigCell ? -20 : -10)
         }
         
         if isBigCell {
