@@ -9,10 +9,10 @@
 import Foundation
 
 struct CommentIdResponse : Codable {
-    
+    var travelId : Int
 }
 
 
 struct CommentEditResponse : Codable {
-    
+    var replyId : Int
 }

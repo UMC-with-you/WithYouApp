@@ -156,15 +156,9 @@ class ProfileSetViewController: UIViewController {
     @objc func doneButtonTapped() {
         guard let image = profileImageView.image else {return}
         guard let name = nickName else {return}
-<<<<<<< Updated upstream
-//        DataManager.shared.saveImage(image: self.profileImageView.image!, key: "ProfilePicture")
-//        DataManager.shared.saveText(text: name, key: String(SecureDataManager.shared.getData(label: .refreshToken).prefix(8)))
-//        DataManager.shared.setIsLogin()
-=======
         DataManager.shared.saveImage(image: image, key: "ProfilePicture")
         DataManager.shared.saveText(text: name, key: "UserName")
-        DataManager.shared.setIsLogin()
->>>>>>> Stashed changes
+
         // 메인 화면으로 가기
         let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
         guard let delegate = sceneDelegate else { return }

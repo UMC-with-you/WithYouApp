@@ -11,11 +11,11 @@ import RxSwift
 import SnapKit
 import UIKit
 
-
-
 class AddNoticeViewController: UIViewController {
     
     var noticeOption : NoticeOptions = .before
+    
+    var noticeAdder : PublishSubject<[String:Any]> = PublishSubject()
     
     //내용 담는 변수
     var noticeText = ""
@@ -203,7 +203,13 @@ class AddNoticeViewController: UIViewController {
     func addNotice(){
         self.view.endEditing(true)
         // Notice 처리
-        print(noticeText + noticeOption.text)
+        var dic = [
+            "content" : self.noticeText,
+            "state" : noticeOption.rawValue
+        ] as [String : Any]
+        
+        self.noticeAdder.onNext(dic)
+        
     }
 }
 
