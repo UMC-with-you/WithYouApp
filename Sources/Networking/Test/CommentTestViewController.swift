@@ -51,7 +51,7 @@ class CommentTestViewController : UIViewController {
         button1.rx.tapGesture().when(.recognized)
             .subscribe { _ in
                 CommentService.shared.addComment(postId: self.postId, content: "테스트 대댓ㅅㅅㅅ글"){ response in
-                   // self.commnetId = response.commentId
+                    self.commnetId = response.commentId
                 }
             }
             .disposed(by: bag )

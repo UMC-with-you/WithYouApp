@@ -70,25 +70,25 @@ class NoticeTestViewController : UIViewController {
     private func setFunc(){
         button1.rx.tapGesture().when(.recognized)
             .subscribe { _ in
-//                NoticeService.shared.createNotice(info: ["state" : 0, "content": "테스트 아아"] , memberId: 5, logId: self.logId){ response in
-//                    self.noticeId = response.noticeId
-//                }
+                NoticeService.shared.createNotice(info: ["state" : 0, "content": "테스트 아아"] , memberId: 5, logId: self.logId){ response in
+                    self.noticeId = response.noticeId
+                }
             }
             .disposed(by: bag )
         
         button2.rx.tapGesture().when(.recognized)
             .subscribe { _ in
-//                NoticeService.shared.getOneNotice(noticeId: self.noticeId){ response in
-//                    print(response.noticeId)
-//                }
+                NoticeService.shared.getOneNotice(noticeId: self.noticeId){ response in
+                    print(response.noticeId)
+                }
             }
             .disposed(by: bag )
         
         button3.rx.tapGesture().when(.recognized)
             .subscribe { _ in
-//                NoticeService.shared.editNotice(notice: EditNoiceRequest(noticeId: self.noticeId, state: 1, content: "수정테스트")){ response in
-//                    
-//                }
+                NoticeService.shared.editNotice(notice: EditNoiceRequest(noticeId: self.noticeId, state: 1, content: "수정테스트")){ response in
+                    
+                }
             }
             .disposed(by: bag )
         

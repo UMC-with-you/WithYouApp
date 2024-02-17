@@ -18,7 +18,7 @@ class AuthService : BaseService {
     }
     
     func authWithApple(_ authCode : String, userName : String, email : String, _ completion : @escaping (AuthModelResponse)-> Void){
-        authRequest( router: AuthRouter.apple(authCode: authCode,email: email, userName: userName), completion: completion)
+        authRequest( router: AuthRouter.apple(authCode: authCode, email: email, userName: userName), completion: completion)
     }
     
     func authWithGoogle(_ authCode : String, _ completion : @escaping (AuthModelResponse)-> Void){

@@ -66,18 +66,18 @@ class RewindTestViewController : UIViewController {
     private func setFunc(){
         button1.rx.tapGesture().when(.recognized)
             .subscribe { _ in
-//                let request = RewindPostRequest(day: 1,
-//                                                mvpCandidateId: 5,
-//                                                mood: "good",
-//                                                qnaList: [
-//                                                    RewindQnaPostRequest(questionId: 94, answer: "good"),
-//                                                    RewindQnaPostRequest(questionId: 105, answer: "hi")
-//                                                ],
-//                                                comment: "좋았습니다")
-//                RewindService.shared.postRewind(rewindPostRequest: request, travelId: self.travelId){ response in
-//                   // self.label.text = response.createdAt
-//                    //self.rewindId = response.rewindId
-//                }
+                let request = RewindPostRequest(day: 1,
+                                                mvpCandidateId: 5,
+                                                mood: "good",
+                                                qnaList: [
+                                                    RewindQnaPostRequest(questionId: 94, answer: "good"),
+                                                    RewindQnaPostRequest(questionId: 105, answer: "hi")
+                                                ],
+                                                comment: "좋았습니다")
+                RewindService.shared.postRewind(rewindPostRequest: request, travelId: self.travelId){ response in
+                   // self.label.text = response.createdAt
+                    //self.rewindId = response.rewindId
+                }
             }
             .disposed(by: bag )
         
@@ -90,12 +90,12 @@ class RewindTestViewController : UIViewController {
         
         button3.rx.tapGesture().when(.recognized)
             .subscribe { _ in
-//                RewindService.shared.editRewind(rewindEditRequest: RewindEditRequest(mvpCandidateId: 0, mood: "Bad", qnaList: [
-//                    RewindQnaPostRequest(questionId: 0, answer: "bad"),
-//                    RewindQnaPostRequest(questionId: 1, answer: "qwertty")
-//                ], comment: "되자"), travelId: self.travelId, rewindId: self.rewindId){ response in
-//                    print(response)
-//                }
+                RewindService.shared.editRewind(rewindEditRequest: RewindEditRequest(mvpCandidateId: 0, mood: "Bad", qnaList: [
+                    RewindQnaPostRequest(questionId: 0, answer: "bad"),
+                    RewindQnaPostRequest(questionId: 1, answer: "qwertty")
+                ], comment: "되자"), travelId: self.travelId, rewindId: self.rewindId){ response in
+                    print(response)
+                }
             }
             .disposed(by: bag )
         
@@ -115,9 +115,9 @@ class RewindTestViewController : UIViewController {
         
         button6.rx.tapGesture().when(.recognized)
             .subscribe{ _ in
-//                RewindService.shared.getQnaList{ response in
-//                    
-//                }
+                RewindService.shared.getQnaList{ response in
+                    
+                }
             }
             .disposed(by: bag)
         

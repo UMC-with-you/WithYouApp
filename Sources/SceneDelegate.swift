@@ -14,10 +14,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         
-        //3로그인화면 부터 실행하고 싶을 시
-        for key in UserDefaults.standard.dictionaryRepresentation().keys {
-            UserDefaults.standard.removeObject(forKey: key.description)
-        }
+        //로그인화면 부터 실행하고 싶을 시
+//        for key in UserDefaults.standard.dictionaryRepresentation().keys {
+//            UserDefaults.standard.removeObject(forKey: key.description)
+//        }
         
         
         guard let windowScene = (scene as? UIWindowScene) else { return }
@@ -26,7 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if DataManager.shared.getIsLogin() {
             //로그인 기록 있을 시
             //Tabbar는 NavigationView로 할당하면 안됌
-            window?.rootViewController = TabBarViewController()
+            window?.rootViewController = TestTabbarViewController()
             window?.makeKeyAndVisible()
         } else {
             //로그인 기록 없을 시

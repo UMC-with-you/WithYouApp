@@ -79,7 +79,7 @@ class PostTestViewController : UIViewController {
             .subscribe { _ in
                 let newPost = NewPostRequest(text: "포스트 테스트", urls: ["imgString","imgString"])
                 PostService.shared.addPost(travelId: self.travelId, newPost: newPost){ response in
-                 //   self.postId = response.postId
+                    self.postId = response.postId
                 }
             }
             .disposed(by: bag )

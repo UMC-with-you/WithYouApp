@@ -62,7 +62,7 @@ class PackingItemTestViewController : UIViewController {
         button1.rx.tapGesture().when(.recognized)
             .subscribe { _ in
                 PackingItemService.shared.addItem(travelId: 7, itemName: "테스트 추가"){ response in
-                    //self.packingItemID.append(response.packingItemId)
+                    self.packingItemID.append(response.packingItemId)
                 }
             }
             .disposed(by: bag )

@@ -60,7 +60,7 @@ class TravelLogTest : UIViewController {
         button1.rx.tapGesture().when(.recognized)
             .subscribe { _ in
                 LogService.shared.addLog(log: Log(id: 0, title: "테스트", startDate: "2024-03-01", endDate: "2024-03-05", status: "여행 전", imageUrl: "")){ response in
-                    //self.travelId = response.travelId
+                    self.travelId = response.travelId
                     
                 }
             }
@@ -76,9 +76,9 @@ class TravelLogTest : UIViewController {
         
         button3.rx.tapGesture().when(.recognized)
             .subscribe { _ in
-//                LogService.shared.editLog(logId: self.travelId, editRequest: EditLogRequest(title: "수정 테스트", startDate: "2024-03-01", endDate: "2024-03-03", url: "",localDate: dateController.dateToSendServer())){_ in 
-//                    
-//                }
+                LogService.shared.editLog(logId: self.travelId, editRequest: EditLogRequest(title: "수정 테스트", startDate: "2024-03-01", endDate: "2024-03-03", url: "",localDate: dateController.dateToSendServer())){_ in 
+                    
+                }
             }
             .disposed(by: bag )
         

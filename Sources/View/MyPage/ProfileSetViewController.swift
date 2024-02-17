@@ -143,12 +143,12 @@ class ProfileSetViewController: UIViewController {
         let nameProfileViewController = NameProfileViewController()
         nameProfileViewController.nickName = nickName
         
-//        nameProfileViewController.newImage.subscribe(onNext: { image in
-//            self.profileImageView.image = image
-//            self.selectImageButton.isHidden = true
-//            self.cancelImageButton.isHidden = false
-//        })
-//        .disposed(by: bag)
+        nameProfileViewController.newImage.subscribe(onNext: { image in
+            self.profileImageView.image = image
+            self.selectImageButton.isHidden = true
+            self.cancelImageButton.isHidden = false
+        })
+        .disposed(by: bag)
         
         navigationController?.pushViewController(nameProfileViewController, animated: true)
     }
@@ -158,7 +158,8 @@ class ProfileSetViewController: UIViewController {
         guard let name = nickName else {return}
         DataManager.shared.saveImage(image: image, key: "ProfilePicture")
         DataManager.shared.saveText(text: name, key: "UserName")
-
+        DataManager.shared.setIsLogin()
+        
         // 메인 화면으로 가기
         let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
         guard let delegate = sceneDelegate else { return }
