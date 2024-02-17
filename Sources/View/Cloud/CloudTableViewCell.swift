@@ -8,10 +8,17 @@
 
 import UIKit
 import SnapKit
+import PhotosUI
 
 class CloudTableViewCell: UITableViewCell {
     static let identifier = "CloudTableViewCell"
 //    static let cellHeight = 100.0
+    
+    // 이미지 선택 결과 저장
+    private var selections = [String: PHPickerResult]()
+    
+    // 선택한 이미지의 identifier 배열
+    private var selectedAssetIdentifiers = [String]()
     
     private let gridFlowLayout: GridCollectionViewFlowLayout = {
         let layout = GridCollectionViewFlowLayout()
@@ -41,12 +48,6 @@ class CloudTableViewCell: UITableViewCell {
     private lazy var collectionView: UICollectionView = {
         let view = UICollectionView(frame: .zero, collectionViewLayout: self.gridFlowLayout)
         view.isScrollEnabled = true
-//        view.showsHorizontalScrollIndicator = false
-//        view.showsVerticalScrollIndicator = true
-        //    view.scrollIndicatorInsets = UIEdgeInsets(top: -2, left: 0, bottom: 0, right: 4)
-//        view.contentInset = .zero
-//        view.backgroundColor = .clear
-        //        view.clipsToBounds = true
         view.register(CloudCollectionViewCell.self, forCellWithReuseIdentifier: "CloudCollectionViewCell")
         return view
     }()
@@ -56,7 +57,7 @@ class CloudTableViewCell: UITableViewCell {
         
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
-        collectionView.backgroundColor = .blue
+        collectionView.backgroundColor = .white
     
         setViews()
         setConstraints()
@@ -104,17 +105,39 @@ class CloudTableViewCell: UITableViewCell {
             setNeedsUpdateConstraints()
         }
     
+//    func setImages(_ selections: [String: PHPickerResult], _ selectedAssetIdentifiers: [String]) {
+//            self.selections = selections
+//            self.selectedAssetIdentifiers = selectedAssetIdentifiers
+//            collectionView.reloadData()
+//        }
+    
+    func configure(with selections: [String: PHPickerResult], _ selectedAssetIdentifiers: [String]) {
+           self.selections = selections
+           self.selectedAssetIdentifiers = selectedAssetIdentifiers
+           collectionView.reloadData()
+       }
 
 }
 
 extension CloudTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         //    self.items.count
-        return 32
+        return selectedAssetIdentifiers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CloudCollectionViewCell.identifier, for: indexPath) as! CloudCollectionViewCell
+        let identifier = selectedAssetIdentifiers[indexPath.item]
+            if let result = selections[identifier] {
+                let itemProvider = result.itemProvider
+                itemProvider.loadObject(ofClass: UIImage.self) { image, error in
+                    if let image = image as? UIImage {
+                        DispatchQueue.main.async {
+                            cell.configure(with: image)
+                        }
+                    }
+                }
+            }
         return cell
     }
 }
