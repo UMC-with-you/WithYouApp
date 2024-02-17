@@ -15,7 +15,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = .init(windowScene: windowScene)
 //        window?.rootViewController = TabBarViewController()
-        window?.rootViewController = DetailPostViewController()
+        window?.rootViewController = RewindBookViewController()
 //        window?.rootViewController = BeforeTripLogViewViewController()
         window?.makeKeyAndVisible()
         
