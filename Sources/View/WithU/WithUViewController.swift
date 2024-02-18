@@ -104,9 +104,12 @@ class WithUViewController: UIViewController {
         view.bringSubviewToFront(mainLabel)
         self.navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: sideMenu), UIBarButtonItem(customView: ProfileView(size: .small, traveler: Traveler(id: 0, name: DataManager.shared.getUserName())))]
         
+        noticeView.delegate = self
+        
         //멤버 정보 가져오기
         LogService.shared.getAllMembers(logId: log!.id){ response in
             self.travelMembers.onNext(response)
+            self.noticeView.members = response
         }
         
         setConstraints()
@@ -207,5 +210,26 @@ class WithUViewController: UIViewController {
         sideMenu.snp.makeConstraints{
             $0.width.height.equalTo(30)
         }
+    }
+}
+
+extension WithUViewController : NoticeViewDelegate {
+    func addNotice() {
+        let addNoticeView = AddNoticeViewController()
+        addNoticeView.modalPresentationStyle = .overFullScreen
+        
+        addNoticeView.noticeAdder.subscribe(onNext: { noticeDic in
+            LogService.shared.getAllMembers(logId: self.log!.id){ response in
+                let memberId = response[0].id
+                print(memberId)
+                NoticeService.shared.createNotice(info: noticeDic, memberId: memberId, logId: self.log!.id){ response in
+                    
+                }
+            }
+            
+        })
+        .disposed(by: bag)
+        
+        present(addNoticeView, animated: false)
     }
 }

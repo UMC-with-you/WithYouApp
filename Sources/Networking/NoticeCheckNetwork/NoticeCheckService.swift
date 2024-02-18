@@ -13,7 +13,7 @@ class NoticeCheckService : BaseService {
     override private init(){}
     
     //Notice 체크
-    func checkNotice(noticeId: Int, memberId :Int, _ completion : @escaping (Any)->Void){
+    func checkNotice(noticeId: Int, memberId :Int, _ completion : @escaping (NoticeCheckResponse)->Void){
         requestReturnsData(NoticeCheckResponse.self, router: NoticeCheckRouter.checkNotice(noticeId: noticeId, memberId: memberId), completion: completion)
     }
 }

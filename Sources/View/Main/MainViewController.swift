@@ -87,6 +87,7 @@ class MainViewController: UIViewController {
     var previousIndex : Int?
     
     override func viewDidLoad() {
+        print("viewdidload")
         super.viewDidLoad()
         view.backgroundColor = .white
         self.navigationItem.backButtonTitle = "Home"
@@ -98,6 +99,9 @@ class MainViewController: UIViewController {
         setConst()
         setFuncs()
         setSubscribes()
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        loadLogs()
     }
     
     private func setSubscribes(){
@@ -160,17 +164,20 @@ class MainViewController: UIViewController {
     }
     
     private func loadLogs(){
+        self.ingLogs = []
+        self.upcomingLogs = []
         LogManager.shared.updateLogsFromServer { logs in
             logs.forEach{ log in
-                if log.status == "BYGONE"{
+                if log.status == "ONGOING"{
                     self.ingLogs.append(log)
-                } else {
+                } else if log.status == "UPCOMING" {
                     self.upcomingLogs.append(log)
                 }
             }
             
             if self.ingLogs.count != 0 {
                 self.logs.accept(self.ingLogs)
+                self.isUpcoming.accept(false)
             } else {
                 self.logs.accept(self.upcomingLogs)
                 self.isUpcoming.accept(true)

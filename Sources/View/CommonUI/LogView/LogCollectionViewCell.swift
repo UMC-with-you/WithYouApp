@@ -6,6 +6,7 @@
 //  Copyright © 2024 withyou.org. All rights reserved.
 //
 
+import Kingfisher
 import SnapKit
 import RxSwift
 import RxGesture
@@ -53,8 +54,9 @@ class LogCollectionViewCell: UICollectionViewCell {
         dDay.setTitle(dateController.days(from:log.startDate), for: .normal)
         
         // Testing Code
-        self.backImage.image = UIImage(named: "LogModel\(log.id % 3)")
-        
+        self.backImage.kf.setImage(with: URL(string: log.imageUrl))
+        self.backImage.alpha = 0.5
+    
         setConst(isBigCell)
         setSize(isBigCell)
     }

@@ -13,8 +13,8 @@ import UIKit
 
 class RewindTestViewController : UIViewController {
     var bag = DisposeBag()
-    var rewindId = 0
-    var travelId = 5
+    var rewindId = 2
+    var travelId = 12
     
     var label = UILabel()
     var button1 = WYButton("RewindPostTest")
@@ -67,16 +67,16 @@ class RewindTestViewController : UIViewController {
         button1.rx.tapGesture().when(.recognized)
             .subscribe { _ in
                 let request = RewindPostRequest(day: 1,
-                                                mvpCandidateId: 5,
-                                                mood: "good",
+                                                mvpCandidateId: 2,
+                                                mood: "SAD",
                                                 qnaList: [
-                                                    RewindQnaPostRequest(questionId: 94, answer: "good"),
-                                                    RewindQnaPostRequest(questionId: 105, answer: "hi")
+                                                    RewindQnaPostRequest(qnaId: 94, answer: "good"),
+                                                    RewindQnaPostRequest(qnaId: 105, answer: "hi")
                                                 ],
                                                 comment: "좋았습니다")
                 RewindService.shared.postRewind(rewindPostRequest: request, travelId: self.travelId){ response in
                    // self.label.text = response.createdAt
-                    //self.rewindId = response.rewindId
+                    self.rewindId = response.rewindId
                 }
             }
             .disposed(by: bag )
@@ -90,9 +90,10 @@ class RewindTestViewController : UIViewController {
         
         button3.rx.tapGesture().when(.recognized)
             .subscribe { _ in
-                RewindService.shared.editRewind(rewindEditRequest: RewindEditRequest(mvpCandidateId: 0, mood: "Bad", qnaList: [
-                    RewindQnaPostRequest(questionId: 0, answer: "bad"),
-                    RewindQnaPostRequest(questionId: 1, answer: "qwertty")
+                //edit qnaID로 해야함 질문 id 아니고
+                RewindService.shared.editRewind(rewindEditRequest: RewindEditRequest(mvpCandidateId: 2, mood: "SAD", qnaList: [
+                    RewindQnaPostRequest(qnaId: 3, answer: "bad"),
+                    RewindQnaPostRequest(qnaId: 4, answer: "qwertty")
                 ], comment: "되자"), travelId: self.travelId, rewindId: self.rewindId){ response in
                     print(response)
                 }

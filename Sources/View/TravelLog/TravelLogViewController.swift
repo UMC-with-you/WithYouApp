@@ -57,6 +57,17 @@ class TravelLogViewController: UIViewController {
         setUp()
         setConst()
         setFunc()
+        loadLogs()
+        
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        loadLogs()
+    }
+    private func getFinishedLogs(logs : [Log]) -> [Log]{
+        return logs.filter{ $0.status == "BYGONE" }
+    }
+    
+    private func loadLogs(){
         // Observable로 뿌려주기
         let tempLog = LogManager.shared.getLogs()
         //여기 로그는 여행이 끝난 로그만
@@ -68,10 +79,6 @@ class TravelLogViewController: UIViewController {
             logs.onNext(getFinishedLogs(logs: tempLog))
         }
     }
-    private func getFinishedLogs(logs : [Log]) -> [Log]{
-        return logs.filter{ $0.status == "BYGONE" }
-    }
-    
     private func setFunc(){
         logs
             .bind(to: gridView.rx.items(cellIdentifier: LogCollectionViewCell.cellId, cellType: LogCollectionViewCell.self)) { index, item, cell in

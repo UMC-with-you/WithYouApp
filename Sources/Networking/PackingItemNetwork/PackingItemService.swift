@@ -24,8 +24,8 @@ class PackingItemService : BaseService {
     }
     
     //짐 삭제 -> travelId 응답
-    func deleteItem(packingItemId : Int, _ completion : @escaping (LogIDResponse) -> Void){
-        requestReturnsData(LogIDResponse.self, router: PackingItemRouter.deleteItem(packingItemId: packingItemId), completion: completion)
+    func deleteItem(packingItemId : Int, _ completion : @escaping (PackingItemIdResponse) -> Void){
+        requestReturnsData(PackingItemIdResponse.self.self, router: PackingItemRouter.deleteItem(packingItemId: packingItemId), completion: completion)
     }
     
     //짐 패킹 토글

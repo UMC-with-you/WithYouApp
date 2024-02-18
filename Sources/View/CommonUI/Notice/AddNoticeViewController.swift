@@ -209,7 +209,7 @@ class AddNoticeViewController: UIViewController {
         ] as [String : Any]
         
         self.noticeAdder.onNext(dic)
-        
+        self.dismiss(animated: true)
     }
 }
 
@@ -237,6 +237,10 @@ extension AddNoticeViewController : UITextViewDelegate {
         // 글자 수 제한
         if textView.text.count > 30 {
             textView.deleteBackward()
+        } else if textView.text.count > 0 {
+            self.addButton.backgroundColor = WithYouAsset.mainColorDark.color
+        } else if textView.text.count == 0 {
+            self.addButton.backgroundColor = WithYouAsset.subColor.color
         }
         // 글자수 변경
         characterCountLabel.text = "\(textView.text.count)/30"
@@ -249,8 +253,6 @@ extension AddNoticeViewController : UITextViewDelegate {
             textView.text = textViewPlaceHolder
             textView.textColor = WithYouAsset.subColor.color
             
-        } else {
-            self.addButton.backgroundColor = WithYouAsset.mainColorDark.color
         }
         
         self.noticeText = textView.text

@@ -51,6 +51,7 @@ class PackingTableCell: UICollectionViewListCell {
         self.itemName.text = packingItem.itemName
         self.packingManager = manager
         self.setRx()
+        self.checkPacker(packerId: packingItem.packerId)
         self.checkCircle.image = packingItem.isChecked ? WithYouAsset.iconCheckOn.image : WithYouAsset.iconCheckOff.image
     }
     
@@ -60,7 +61,6 @@ class PackingTableCell: UICollectionViewListCell {
             .tapGesture()
             .when(.recognized)
             .subscribe(onNext: { gesture in
-                //ApiManager -> tapped ->
                 PackingItemService.shared.checkItem(packingItemId: self.packingItem!.id){ response in
                     self.packingManager?.itemChangedNotify.onNext(true)
                     if self.checkCircle.image == WithYouAsset.iconCheckOn.image {
@@ -86,10 +86,22 @@ class PackingTableCell: UICollectionViewListCell {
                 .subscribe(onNext: {_ in
                     PackingItemService.shared.setItemMember(packingItemId: self.packingItem!.id, memberId: view.traveler.id) { response in
                         self.packingManager?.itemChangedNotify.onNext(true)
-                        view.profileImage.tintColor = .black.withAlphaComponent(0.5)
+                        self.checkPacker(packerId: response.packerId)
                     }
                 })
                 .disposed(by: disposeBag)
+        }
+    }
+    
+    private func checkPacker(packerId : Int?){
+        for image in travelerImages {
+            if let id = packerId {
+                if image.traveler.id == id {
+                    image.profileImage.alpha = 1
+                }
+            } else {
+                image.profileImage.alpha = 0.3
+            }
         }
     }
     

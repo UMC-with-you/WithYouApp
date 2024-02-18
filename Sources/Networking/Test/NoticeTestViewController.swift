@@ -13,8 +13,8 @@ import UIKit
 
 class NoticeTestViewController : UIViewController {
     var bag = DisposeBag()
-    var noticeId = 0
-    var logId = 5
+    var noticeId = 1
+    var logId = 4
     var label = UILabel()
     var button1 = WYButton("NoticePostTest")
     var button2 = WYButton("GetNoticeTest")
@@ -70,7 +70,7 @@ class NoticeTestViewController : UIViewController {
     private func setFunc(){
         button1.rx.tapGesture().when(.recognized)
             .subscribe { _ in
-                NoticeService.shared.createNotice(info: ["state" : 0, "content": "테스트 아아"] , memberId: 5, logId: self.logId){ response in
+                NoticeService.shared.createNotice(info: ["state" : 0, "content": "테스트 아아"] , memberId: 2, logId: self.logId){ response in
                     self.noticeId = response.noticeId
                 }
             }

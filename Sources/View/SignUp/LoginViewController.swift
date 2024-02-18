@@ -8,6 +8,7 @@
 
 import Alamofire
 import AuthenticationServices
+import CryptoKit
 import GoogleSignIn
 import KakaoSDKAuth
 import KakaoSDKCommon
@@ -19,7 +20,8 @@ import SnapKit
 
 class LoginViewController: UIViewController {
 
-
+    fileprivate var currentNonce: String?
+    
     let logoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "MainLogo")
@@ -94,9 +96,13 @@ class LoginViewController: UIViewController {
     }
     
     @objc private func appleButtonTapped(){
+        let nonce = randomNonceString()
+        currentNonce = nonce
         let appleIDProvider = ASAuthorizationAppleIDProvider()
         let request = appleIDProvider.createRequest()
         request.requestedScopes = [.fullName, .email]
+        request.nonce = sha256(nonce)
+        
         
         let authorizationController = ASAuthorizationController(authorizationRequests: [request])
         authorizationController.delegate = self
@@ -146,6 +152,7 @@ class LoginViewController: UIViewController {
     
             } else {
                 //첫 로그인 시 프로필 설정 화면으로 가기
+                
                 navigationController?.pushViewController(NickNameViewController(), animated: true)
             }
         } else {
@@ -173,42 +180,83 @@ extension LoginViewController :ASAuthorizationControllerPresentationContextProvi
         return self.view.window!
     }
     // 성공 후 동작
-       func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization){
-           //로그인 성공
-           switch authorization.credential {
-           case let appleIDCredential as ASAuthorizationAppleIDCredential:
-               //처음 오는 Code 형태는 string이 아니라 변환해줘야함
-               if  let authorizationCode = appleIDCredential.authorizationCode,
-                   let identityToken = appleIDCredential.identityToken,
-                   let authCodeString = String(data: authorizationCode, encoding: .utf8),
-                   let identifyTokenString = String(data: identityToken, encoding: .utf8),
-                   let email = appleIDCredential.email,
-                   let userName = appleIDCredential.fullName{
-                   print(email)
-                   print(userName)
-                   print(userName.formatted())
-                   AuthService.shared.authWithApple(authCodeString, userName: userName.formatted(), email: email){ response in
-                       print(response)
-                       self.moveToView(newVC:MainViewController())
-                   }
-               }
-               //로그인 이후 로직
-               
-           case let passwordCredential as ASPasswordCredential:
-               // Sign in using an existing iCloud Keychain credential.
-               let username = passwordCredential.user
-               let password = passwordCredential.password
-               
-               print("username: \(username)")
-               print("password: \(password)")
-               
-           default:
-               break
-           }
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization){
+        //로그인 성공
+        switch authorization.credential {
+        case let appleIDCredential as ASAuthorizationAppleIDCredential:
+            //처음 오는 Code 형태는 string이 아니라 변환해줘야함
+            if  let authorizationCode = appleIDCredential.authorizationCode,
+                let identityToken = appleIDCredential.identityToken,
+                let authCodeString = String(data: authorizationCode, encoding: .utf8),
+                let identifyTokenString = String(data: identityToken, encoding: .utf8),
+                let email = appleIDCredential.email,
+                let userName = appleIDCredential.fullName,
+                let nonce = currentNonce{
+
+                AuthService.shared.authWithApple(identifyTokenString, userName: userName.formatted(), email: email,nonce: nonce){ response in
+                    print(response)
+                    self.judgeNextStep(token: response)
+                }
+            }
+            //로그인 이후 로직
+            
+        case let passwordCredential as ASPasswordCredential:
+            // Sign in using an existing iCloud Keychain credential.
+            let username = passwordCredential.user
+            let password = passwordCredential.password
+            
+            print("username: \(username)")
+            print("password: \(password)")
+            
+        default:
+            break
+        }
+    }
+    
+    // 실패 후 동작
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        print("apple login failed")
+    }
+    
+    private func sha256(_ input: String) -> String {
+           let inputData = Data(input.utf8)
+           let hashedData = SHA256.hash(data: inputData)
+           let hashString = hashedData.compactMap {
+               return String(format: "%02x", $0)
+           }.joined()
+           
+           return hashString
        }
-       
-       // 실패 후 동작
-       func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
-           print("apple login failed")
-       }
+    
+    private func randomNonceString(length: Int = 32) -> String {
+        precondition(length > 0)
+        let charset: Array<Character> =
+        Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+        var result = ""
+        var remainingLength = length
+        
+        while remainingLength > 0 {
+            let randoms: [UInt8] = (0 ..< 16).map { _ in
+                var random: UInt8 = 0
+                let errorCode = SecRandomCopyBytes(kSecRandomDefault, 1, &random)
+                if errorCode != errSecSuccess {
+                    fatalError("Unable to generate nonce. SecRandomCopyBytes failed with OSStatus \(errorCode)")
+                }
+                return random
+            }
+            
+            randoms.forEach { random in
+                if remainingLength == 0 {
+                    return
+                }
+                
+                if random < charset.count {
+                    result.append(charset[Int(random)])
+                    remainingLength -= 1
+                }
+            }
+        }
+        
+        return result
+    }
 }

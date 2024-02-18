@@ -23,4 +23,5 @@ struct AppleAuthModel : Codable {
     var userName : String
     var email : String
     var provider : String
+    var nonce  : String
 }

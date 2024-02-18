@@ -90,13 +90,13 @@ class BeforeTripLogViewViewController: UIViewController {
     
     //기능 구현 변수들
     var log : Log?
-    
+    //Travel Members
+    var travelMembers = [Traveler]()
     //PackingItem
     let packingManager = PackingItemManager()
     var packingItems = PublishSubject<[PackingItem]>()
     var packageText = ""
-    //Travel Members
-    var travelMembers = [Traveler]()
+   
 
     var disposeBag = DisposeBag()
     
@@ -108,6 +108,7 @@ class BeforeTripLogViewViewController: UIViewController {
         setDelegate()
         setFunc()
         setInfo()
+        noticeView.bindLog(log: self.log!)
         
         addPackageButton.rx
             .tapGesture()
@@ -126,6 +127,7 @@ class BeforeTripLogViewViewController: UIViewController {
         LogService.shared.getAllMembers(logId: self.log!.id){ response in
             self.travelMembers = response
             self.loadPackingItems()
+            self.noticeView.members = response
         }
         
         //PackingItemCollectionView cell mapping
@@ -134,6 +136,20 @@ class BeforeTripLogViewViewController: UIViewController {
                 cell.bind(travelers: self.travelMembers, packingItem: item,manager: self.packingManager)
             }
         .disposed(by: disposeBag)
+        
+        packingListView
+            .rx
+            .modelSelected(PackingItem.self)
+            .subscribe(onNext:{ packingItem in
+                print("아이템 선택")
+                let alert = UIAlertController(title: "삭제", message: "해당 PackingItem을 삭제하시겠습니까?", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "확인", style: .destructive,handler: { _ in
+                    PackingItemService.shared.deleteItem(packingItemId: packingItem.id){_ in}
+                }))
+                alert.addAction(UIAlertAction(title: "취소", style: .default))
+                self.present(alert, animated: true)
+            })
+            .disposed(by: disposeBag)
         
     }
     
@@ -159,6 +175,7 @@ class BeforeTripLogViewViewController: UIViewController {
     
     private func setDelegate(){
         noticeView.delegate = self
+        noticeView.log = self.log
         textField.delegate = self
         
         //당겨서 새로고침
@@ -342,9 +359,11 @@ extension BeforeTripLogViewViewController : UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         false
     }
+
 }
 
 extension BeforeTripLogViewViewController : NoticeViewDelegate {
+
     //노티스 생성
     func addNotice() {
         let addNoticeView = AddNoticeViewController()
@@ -353,8 +372,8 @@ extension BeforeTripLogViewViewController : NoticeViewDelegate {
         addNoticeView.noticeAdder.subscribe(onNext: { noticeDic in
             LogService.shared.getAllMembers(logId: self.log!.id){ response in
                 let memberId = response[0].id
-                print(memberId)
                 NoticeService.shared.createNotice(info: noticeDic, memberId: memberId, logId: self.log!.id){ response in
+                   
                 }
             }
             

@@ -304,8 +304,9 @@ class CreateTravelLogViewController: UIViewController, BottomSheetDelegate{
             // 새로운 Log 생성후 서버에 보내기 id, status는 사용하지 않기에 Dummy Data 넣음
             // log.asRequest 메서드가 호출 되서 자동으로 필요한 데이터만 보냄
             let newLog = Log(id: 0, title: tripTitle, startDate: fromDate, endDate: toDate, status: "", imageUrl: "")
+            guard let image = bannerImageView.image else { return }
             
-            LogService.shared.addLog(log: newLog){ logId in
+            LogService.shared.addLog(log: newLog,image: image){ logId in
                 print("LogId : \(logId) 생성 완료")
                 self.dismiss(animated: true)
             }

@@ -116,6 +116,7 @@ class ProfileEditViewController: UIViewController {
         view.backgroundColor = .white
         navigationItem.rightBarButtonItem = doneButton
         navigationItem.title = "프로필 수정"
+        nickNameTextField.delegate = self
         setViews()
         setConstraints()
     }
@@ -234,5 +235,17 @@ extension ProfileEditViewController : UIImagePickerControllerDelegate, UINavigat
         profileImageView.image = UIImage()
         cancelImageButton.isHidden = true
         selectImageButton.isHidden = false
+    }
+}
+
+
+extension ProfileEditViewController : UITextFieldDelegate {
+    //화면 터치시 키보드 내림
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
     }
 }

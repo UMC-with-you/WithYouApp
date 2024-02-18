@@ -25,6 +25,7 @@ class TestTabbarViewController : TabBarViewController {
         let nav5 = UINavigationController(rootViewController: PostTestViewController())
         let nav6 = UINavigationController(rootViewController: CommentTestViewController())
         let nav7 = UINavigationController(rootViewController: ReplyTestViewController())
+        let nav8 = UINavigationController(rootViewController: CloudTestViewController())
         
         nav1.tabBarItem = UITabBarItem(title: "Travel", image: UIImage(named: "HomeIcon"), tag: 1)
         nav2.tabBarItem = UITabBarItem(title: "Notice", image: UIImage(named: "TravelLogIcon"), tag: 2)
@@ -33,7 +34,7 @@ class TestTabbarViewController : TabBarViewController {
         nav5.tabBarItem = UITabBarItem(title: "Post", image: UIImage(named: "MyIcon"), tag: 5)
         nav6.tabBarItem = UITabBarItem(title: "Comment", image: UIImage(named: "MyIcon"), tag: 6)
         nav7.tabBarItem = UITabBarItem(title: "Reply", image: UIImage(named: "MyIcon"), tag: 7)
-        
-        setViewControllers([nav1,nav2,nav3,nav4,nav5,nav6,nav7], animated: false)
+        nav8.tabBarItem = UITabBarItem(title: "Reply", image: UIImage(named: "MyIcon"), tag: 8)
+        setViewControllers([nav1,nav2,nav3,nav4,nav5,nav6,nav7,nav8], animated: false)
     }
 }

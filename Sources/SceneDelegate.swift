@@ -23,10 +23,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = .init(windowScene: windowScene)
         print("SD: isFirstTime : \(DataManager.shared.getIsFirstTime())")
+//        window?.rootViewController = TestTabbarViewController()
+//       window?.makeKeyAndVisible()
         if DataManager.shared.getIsLogin() {
             //로그인 기록 있을 시
             //Tabbar는 NavigationView로 할당하면 안됌
-            window?.rootViewController = TestTabbarViewController()
+            window?.rootViewController = TabBarViewController()
             window?.makeKeyAndVisible()
         } else {
             //로그인 기록 없을 시

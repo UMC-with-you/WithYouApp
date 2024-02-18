@@ -20,7 +20,7 @@ struct EditNoiceRequest : Codable {
 }
 struct NoticeListResponse : Codable {
     var noticeId : Int
-    var url : String
+    var url : String?
     var name : String
     var content : String
     var checkNum : Int

@@ -9,7 +9,7 @@ class ReplyTestViewController : UIViewController {
     var bag = DisposeBag()
     var replyId = 0
     //Commnet 만들고 설정해주세요"
-    var commentId = 8
+    var commentId = 1
     
     var label = UILabel()
     var button1 = WYButton("PostReplyTest")
@@ -52,7 +52,7 @@ class ReplyTestViewController : UIViewController {
         button1.rx.tapGesture().when(.recognized)
             .subscribe { _ in
                 ReplyService.shared.addReply(commentId: self.commentId, content: "대댓대댇ㅅ글 테스트"){ response in
-                   // self.replyId = response.replyId
+                   self.replyId = response.replyId
                 }
             }
             .disposed(by: bag )

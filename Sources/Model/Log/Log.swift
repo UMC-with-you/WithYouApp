@@ -37,7 +37,6 @@ extension Log {
             "title" : title,
             "startDate" : startDate,
             "endDate" : endDate,
-            "url" : imageUrl,
             "localDate" : dateController.dateToSendServer()
         ]
         return dic

@@ -21,8 +21,8 @@ class ProfileView: UIView {
     
     var traveler : Traveler
     
-    let profileImage = {
-       let image = UIImageView()
+    var profileImage = {
+       var image = UIImageView()
         image.layer.cornerRadius = 15
         image.layer.borderWidth = 1
         image.layer.borderColor = WithYouAsset.subColor.color.cgColor

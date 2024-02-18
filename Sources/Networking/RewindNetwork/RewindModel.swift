@@ -35,7 +35,7 @@ struct RewindPostRequest : Codable{
 }
 
 struct RewindQnaPostRequest : Codable {
-    var questionId : Int
+    var qnaId : Int
     var answer : String
 }
 

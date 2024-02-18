@@ -18,16 +18,16 @@ class PostService : BaseService {
     }
     
     //포스트 수정
-    func addPost( travelId : Int, newPost : NewPostRequest, _ completion: @escaping (PostIdResponse)-> Void){
-        requestReturnsData(PostIdResponse.self.self, router: PostRouter.addPost(travelId: travelId , newPost: newPost), completion: completion)
+    func addPost( travelId : Int, newPost : NewPostStruct, _ completion: @escaping (PostIdResponse)-> Void){
+        let router = PostRouter.addPost(travelId: travelId , newPost: newPost)
+        multipartRequest(PostIdResponse.self, router: router, completion: completion)
     }
     
-    //포스트 단건 조회 보류
-    /*
-    func getOnePost( _ completion: @escaping (Any)-> Void){
-        requestReturnsData(<#T##dataType: (Decodable & Encodable).Protocol##(Decodable & Encodable).Protocol#>, router: <#T##BaseRouter#>, completion: <#T##(Any) -> Void#>)
+    //포스트 단건 조회
+    
+    func getOnePost(postId : Int, travelId : Int, _ completion: @escaping (OnePostResponse)-> Void){
+        requestReturnsData(OnePostResponse.self, router: PostRouter.getOnePost(postId: postId , travelId: travelId), completion: completion)
     }
-     */
     
     //게시글 스크랩
     func scrapPost(postId: Int,_ completion: @escaping (PostIdResponse)-> Void){

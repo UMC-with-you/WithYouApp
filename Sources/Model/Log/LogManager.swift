@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 class LogManager {
     static let shared = LogManager()
@@ -29,8 +30,8 @@ class LogManager {
         }
     }
     
-    func addLog(with log : Log){
-        LogService.shared.addLog(log: log){ response in
+    func addLog(with log : Log,image : UIImage){
+        LogService.shared.addLog(log: log,image: image){ response in
             print(response)
         }
     }

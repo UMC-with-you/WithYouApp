@@ -8,12 +8,13 @@
 
 import Alamofire
 import Foundation
+import UIKit
 
 enum LogRouter  {
     case getAllLog
-    case addLog(log: Log)
+    case addLog(log: Log,image : UIImage)
     case deleteLog(travelId : Int)
-    case editLog(travelId : Int, editRequest : EditLogRequest)
+    case editLog(travelId : Int, editRequest : EditLogRequest, image: UIImage)
     case joinLog(inviteCode : String)
     case getAllLogMemebers(travelId : Int)
     case getInviteCode(travelId : Int)
@@ -37,7 +38,7 @@ extension LogRouter : BaseRouter {
     
     var path: String {
         switch self{
-        case .deleteLog(let travelId), .editLog(let travelId,_) :
+        case .deleteLog(let travelId), .editLog(let travelId,_,_) :
             return "/\(travelId)"
         case .joinLog :
             return "/members"
@@ -56,18 +57,55 @@ extension LogRouter : BaseRouter {
         switch self{
         case .getAllLog:
             return .query(["localDate" : dateController.dateToSendServer()])
-        case .addLog(let log):
-            return .body(log.asLogRequest())
         case .joinLog(let code):
             return .body(["invitationCode" : code])
-        case . editLog(_,let editRequest):
-            return .body(editRequest)
-        case .deleteLog, .getInviteCode, .getAllLogMemebers, .leaveLog:
+        default:
             return .none
         }
     }
     
     var header: HeaderType {
-        return .withAuth
+        switch self{
+        case .addLog,.editLog:
+            return .multiPart
+        default:
+            return .withAuth
+        }
+    }
+    
+    var multipart: MultipartFormData{
+        switch self{
+        case .addLog(let log, let image):
+            let multiPart = MultipartFormData(boundary:"<calculated when request is sent>")
+            let LogRequesst = log.asLogRequest()
+            
+            var text = "\(LogRequesst)"
+            text = text.replacingOccurrences(of: "[", with: "{")
+            text = text.replacingOccurrences(of: "]", with: "}")
+            if let imageData = image.jpegData(compressionQuality: 0.5){
+                multiPart.append(imageData, withName: "bannerImage", fileName: "LogBannerImage.jpeg", mimeType: "image/jpeg")
+            }
+            
+            multiPart.append(text.data(using: .utf8)!, withName: "request", mimeType: "application/json")
+            
+            return multiPart
+            
+        case .editLog(_,let editRequest, let image):
+            let multiPart = MultipartFormData(boundary:"<calculated when request is sent>")
+            
+            var text = "\(editRequest.toDictionary())"
+            text = text.replacingOccurrences(of: "[", with: "{")
+            text = text.replacingOccurrences(of: "]", with: "}")
+            print(text.data(using: .utf8)!)
+            if let imageData = image.jpegData(compressionQuality: 0.5){
+                multiPart.append(imageData, withName: "bannerImage", fileName: "LogBannerImage2.jpeg", mimeType: "image/jpeg")
+            }
+            
+            multiPart.append(text.data(using: .utf8)!, withName: "request", mimeType: "application/json")
+            
+            return multiPart
+        default:
+            return MultipartFormData()
+        }
     }
 }

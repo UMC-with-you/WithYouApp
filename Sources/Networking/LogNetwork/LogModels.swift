@@ -28,6 +28,5 @@ struct EditLogRequest : Codable {
     var title : String
     var startDate : String
     var endDate : String
-    var url : String
     var localDate : String
 }

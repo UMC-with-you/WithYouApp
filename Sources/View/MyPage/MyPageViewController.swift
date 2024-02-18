@@ -6,6 +6,7 @@
 //  Copyright © 2024 withyou.org. All rights reserved.
 //
 
+import RxGesture
 import UIKit
 import SnapKit
 
@@ -14,30 +15,13 @@ final class MyPageViewController: UIViewController {
     let myPageCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-//        layout.minimumLineSpacing = 10
-//        layout.minimumInteritemSpacing = 10
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         return collectionView
     }()
     
-//    let tabCollectionView: UICollectionView = {
-//        let layout = UICollectionViewFlowLayout()
-//        layout.scrollDirection = .horizontal
-//        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-//        return collectionView
-//    }()
-//
-//    let highlightView: UIView = {
-//        let view = UIView()
-//        view.backgroundColor = .black
-//        return view
-//    }()
-    
     override func viewDidLoad() {
         view.backgroundColor = .white
-        
         setCollectionView()
-//        setTabBar()
     }
     
     private func setCollectionView() {
@@ -52,11 +36,6 @@ final class MyPageViewController: UIViewController {
             make.trailing.equalToSuperview().offset(-1)
         }
         
-//        highlightView.snp.makeConstraints { make in
-//            make.width.equalTo(80)
-//            make.height.equalTo(1)
-//        }
-        
         // 프로필
         myPageCollectionView.register(ProfileCollectionViewCell.self, forCellWithReuseIdentifier: ProfileCollectionViewCell.identifier)
         
@@ -66,14 +45,6 @@ final class MyPageViewController: UIViewController {
         // 포스트
         myPageCollectionView.register(PostCollectionViewCell.self, forCellWithReuseIdentifier: PostCollectionViewCell.identifier)
     }
-//
-//    func setTabBar() {
-//        let firstIndexPath = IndexPath(item: 0, section: 0)
-//        // delegate 호출
-//        collectionView(myPageCollectionView, didSelectItemAt: firstIndexPath)
-//        // cell select
-//        myPageCollectionView.selectItem(at: firstIndexPath, animated: false, scrollPosition: .right)
-//    }
     
 }
 
@@ -110,66 +81,6 @@ extension MyPageViewController: UICollectionViewDelegate, UICollectionViewDataSo
             return cell
         }
     }
-    
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        if collectionView == tabCollectionView {
-//            guard let cell = tabCollectionView.cellForItem(at: indexPath) as? TabBarCollectionViewCell else {
-//                NSLayoutConstraint.deactivate(constraints)
-//                constraints = [
-//                    highlightView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-//                    highlightView.widthAnchor.constraint(equalToConstant: 80)
-//                ]
-//                NSLayoutConstraint.activate(constraints)
-//                return
-//            }
-//
-//            NSLayoutConstraint.deactivate(constraints)
-//            highlightView.translatesAutoresizingMaskIntoConstraints = false
-//            constraints = [
-//                highlightView.leadingAnchor.constraint(equalTo: cell.leadingAnchor),
-//                highlightView.trailingAnchor.constraint(equalTo: cell.trailingAnchor)
-//            ]
-//            NSLayoutConstraint.activate(constraints)
-//
-//            UIView.animate(withDuration: 0.3) {
-//                self.view.layoutIfNeeded()
-//            }
-//            tabPageCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-//        }
-//    }
-    
-//    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-//        if scrollView == tabPageCollectionView {
-//            let index = Int(targetContentOffset.pointee.x / tabPageCollectionView.frame.width)
-//            let indexPath = IndexPath(item: index, section: 0)
-//
-//            tabCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .bottom)
-//            collectionView(tabCollectionView, didSelectItemAt: indexPath)
-//
-//            if direction > 0 {
-//                // >>>> 스와이프하면 스크롤은 중앙으로
-//                tabCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-//            } else {
-//                // <<<< 스와이프하면 스크롤은 왼쪽으로
-//                tabCollectionView.scrollToItem(at: indexPath, at: .left, animated: true)
-//            }
-//        }
-//    }
-    
-//    // 스크롤 방향을 알아내기 위한 함수
-//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//        let velocity = scrollView.panGestureRecognizer.velocity(in: scrollView)
-//        
-//        if velocity.x < 0 {
-//            // -: 오른쪽에서 왼쪽 <<<
-//            direction = -1
-//        } else if velocity.x > 0 {
-//            // +: 왼쪽에서 오른쪽 >>>
-//            direction = 1
-//        } else {
-//            
-//        }
-//    }
 }
 
 extension MyPageViewController: UICollectionViewDelegateFlowLayout {

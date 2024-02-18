@@ -5,14 +5,15 @@ import RxSwift
 import SnapKit
 import UIKit
 
-class CommentTestViewController : UIViewController {
+class CloudTestViewController : UIViewController {
     var bag = DisposeBag()
-    var postId = 3
-    var commnetId = 0
+    var replyId = 0
+    //Commnet 만들고 설정해주세요"
+    var commentId = 1
     
     var label = UILabel()
-    var button1 = WYButton("PostCommentTest")
-    var button2 = WYButton("PatchCommentTest")
+    var button1 = WYButton("add")
+    var button2 = WYButton("get")
     var button3 = WYButton("Delete")
  
     
@@ -50,25 +51,18 @@ class CommentTestViewController : UIViewController {
     private func setFunc(){
         button1.rx.tapGesture().when(.recognized)
             .subscribe { _ in
-                CommentService.shared.addComment(postId: self.postId, content: "테스트 대댓ㅅㅅㅅ글"){ response in
-                    self.commnetId = response.commentId
-                }
+                let request = CloudRequest(date: "2024-02-18", travelId: 12)
+                CloudService.shared.addCloud(cloudModel: request, images: UIImage(named: "InIcon")!){_ in}
             }
             .disposed(by: bag )
         
         button2.rx.tapGesture().when(.recognized)
             .subscribe { _ in
-                CommentService.shared.editComment(commentId: self.commnetId, content: "대댓글수ㅜㅜㅜㅅ정"){ _ in
+                CloudService.shared.getCloud(travelId: 4, logId: 4){ _ in
                     
                 }
             }
             .disposed(by: bag )
-        
-        button3.rx.tapGesture().when(.recognized)
-            .subscribe { _ in
-                CommentService.shared.deleteComment(commentId: self.commnetId){ _ in
-                }
-            }
-            .disposed(by: bag )
+    
     }
 }

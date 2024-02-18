@@ -14,7 +14,11 @@ class ProfileCollectionViewCell: UICollectionViewCell {
     
     var navigationController: UINavigationController?
     
-    let profileView = ProfileView(size: .small)
+    let profileView = {
+        let view = ProfileView(size: .small)
+        view.profileImage.image = UIImage(data:DataManager.shared.getUserImage())
+        return view
+    }()
     
     let titleLabel: UILabel = {
         let label = UILabel()
@@ -32,7 +36,7 @@ class ProfileCollectionViewCell: UICollectionViewCell {
     
     let nickNameLabel: UILabel = {
         let label = UILabel()
-        label.text = "이승진"
+        label.text = DataManager.shared.getUserName()
         label.textColor = .black
         label.numberOfLines = 0
         label.textAlignment = .center
@@ -96,12 +100,10 @@ class ProfileCollectionViewCell: UICollectionViewCell {
     
     private func setViews() {
         self.addSubview(profileView)
-//        self.addSubview(titleLabel)
-//        self.addSubview(nickNameLabel)
         self.addSubview(stackView)
         self.addSubview(editButton)
 
-        [titleLabel, nickNameLabel].map {
+        [titleLabel, nickNameLabel].forEach{
             self.stackView.addArrangedSubview($0)
         }
         
@@ -156,3 +158,4 @@ class ProfileCollectionViewCell: UICollectionViewCell {
         }
     }
 }
+

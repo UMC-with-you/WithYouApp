@@ -18,13 +18,13 @@ import UIKit
 
 class PostTestViewController : UIViewController {
     var bag = DisposeBag()
-    var postId = 0
-    var travelId = 5
+    var postId = 9
+    var travelId = 2
     
     var label = UILabel()
     var button1 = WYButton("AddPostTest")
     var button2 = WYButton("GetAllPostTest")
-    var button3 = WYButton("GetOnePostTest/보류")
+    var button3 = WYButton("GetOnePostTest")
     var button4 = WYButton("ScrapPost")
     var button5 = WYButton("DeletePost")
     var button6 = WYButton("EditPost")
@@ -77,7 +77,7 @@ class PostTestViewController : UIViewController {
     private func setFunc(){
         button1.rx.tapGesture().when(.recognized)
             .subscribe { _ in
-                let newPost = NewPostRequest(text: "포스트 테스트", urls: ["imgString","imgString"])
+                let newPost = NewPostStruct(text: "포스트 테스트", mediaList: [WithYouAsset.homeIcon.image,WithYouAsset.angry.image])
                 PostService.shared.addPost(travelId: self.travelId, newPost: newPost){ response in
                     self.postId = response.postId
                 }
@@ -86,7 +86,7 @@ class PostTestViewController : UIViewController {
         
         button2.rx.tapGesture().when(.recognized)
             .subscribe { _ in
-                PostService.shared.getAllPost(travelId: 5){ _ in
+                PostService.shared.getAllPost(travelId: self.travelId){ _ in
                     
                 }
             }
@@ -94,6 +94,7 @@ class PostTestViewController : UIViewController {
         
         button3.rx.tapGesture().when(.recognized)
             .subscribe { _ in
+                PostService.shared.getOnePost(postId: self.postId, travelId: self.travelId){ _ in}
             }
             .disposed(by: bag )
         
@@ -115,7 +116,11 @@ class PostTestViewController : UIViewController {
         
         button6.rx.tapGesture().when(.recognized)
             .subscribe{ _ in
-                PostService.shared.editPost(postId: self.postId, editContent: EditPostRequest(content: "수정함")){_ in
+                var positions = [
+                    "15" : 0,
+                    "16" : -1
+                ]
+                PostService.shared.editPost(postId: self.postId, editContent: EditPostRequest(text: "수정함",newPositions: positions)){_ in
                     
                 }
             }

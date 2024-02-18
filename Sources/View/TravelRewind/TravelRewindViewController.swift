@@ -247,7 +247,7 @@ class TravelRewindViewController: UIViewController{
             .subscribe{ _ in
                 var postQna = [RewindQnaPostRequest]()
                 [self.question2TextField,self.question3TextField,self.question4TextField,self.question5TextField].enumerated().forEach{ index , field in
-                    postQna.append(RewindQnaPostRequest(questionId: self.qnaList[index].questionId, answer: field.text!))
+                    postQna.append(RewindQnaPostRequest(qnaId: self.qnaList[index].questionId, answer: field.text!))
                 }
                 
                 var rewind = RewindPostRequest(day: dateController.daysAsInt(from: self.log!.startDate),

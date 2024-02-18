@@ -17,8 +17,8 @@ class AuthService : BaseService {
         authRequest( router: AuthRouter.kakao(authCode: authCode), completion: completion)
     }
     
-    func authWithApple(_ authCode : String, userName : String, email : String, _ completion : @escaping (AuthModelResponse)-> Void){
-        authRequest( router: AuthRouter.apple(authCode: authCode, email: email, userName: userName), completion: completion)
+    func authWithApple(_ authCode : String, userName : String, email : String,nonce : String, _ completion : @escaping (AuthModelResponse)-> Void){
+        authRequest( router: AuthRouter.apple(authCode: authCode, email: email, userName: userName,nonce: nonce), completion: completion)
     }
     
     func authWithGoogle(_ authCode : String, _ completion : @escaping (AuthModelResponse)-> Void){

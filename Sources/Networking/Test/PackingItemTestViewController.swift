@@ -7,7 +7,7 @@ import UIKit
 
 class PackingItemTestViewController : UIViewController {
     var bag = DisposeBag()
-    var travelId = 7
+    var travelId = 4
     
     var packingItemID = [Int]()
     
@@ -16,7 +16,7 @@ class PackingItemTestViewController : UIViewController {
     var button2 = WYButton("GetItemTest")
     var button3 = WYButton("SetItemResponsablityTest")
     var button4 = WYButton("Toggle")
-    var button5 = WYButton("Invitation")
+    var button5 = WYButton("Delete")
     
     override func viewDidLoad() {
         [label,button1,button2,button3,button4,button5].forEach{
@@ -61,7 +61,7 @@ class PackingItemTestViewController : UIViewController {
     private func setFunc(){
         button1.rx.tapGesture().when(.recognized)
             .subscribe { _ in
-                PackingItemService.shared.addItem(travelId: 7, itemName: "테스트 추가"){ response in
+                PackingItemService.shared.addItem(travelId: self.travelId, itemName: "테스트 추가"){ response in
                     self.packingItemID.append(response.packingItemId)
                 }
             }
@@ -77,9 +77,7 @@ class PackingItemTestViewController : UIViewController {
         
         button3.rx.tapGesture().when(.recognized)
             .subscribe { _ in
-                PackingItemService.shared.setItemMember(packingItemId: self.packingItemID[0], memberId: 0){ response in
-                    
-                    
+                PackingItemService.shared.setItemMember(packingItemId: self.packingItemID[0], memberId: 2){ response in
                 }
             }
             .disposed(by: bag )

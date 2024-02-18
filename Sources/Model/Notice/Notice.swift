@@ -14,14 +14,10 @@ struct Notice : Codable {
     var state : NoticeOptions
     var userName: String
     var noticeContent: String
+    var checkNum : Int
 }
 
 extension Notice {
-//    func responseToNotice(response : [NoticeListResponse]) -> [Notice]{
-//        return response.map{ _ in
-//            Notice(noticeID: <#T##Int#>, profileImage: <#T##String#>, state: <#T##NoticeOptions#>, userName: <#T##String#>, noticeContent: <#T##String#>)
-//        }
-//    }
     
     func asEditNoticeRequest() -> [String:Any]{
         let state = {

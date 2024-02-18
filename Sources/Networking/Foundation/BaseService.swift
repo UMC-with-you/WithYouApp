@@ -31,6 +31,17 @@ class BaseService {
         }
     }
     
+    func multipartRequest<T: Codable>(_ dataType: T.Type, router: BaseRouter,completion:@escaping (T) -> Void){
+        AFManager.upload(multipartFormData: router.multipart, with: router).responseDecodable(of: APIContainer<T>.self){ response in
+            switch response.result {
+            case .success(let container):
+                completion(container.result)
+            case .failure(let error ):
+                print(error)
+            }
+        }
+    }
+    
     func requestReturnsNoData(router : BaseRouter, completion : @escaping (Any) -> Void){
         AFManager.request(router).responseDecodable(of:APIContainer<[String:String]>.self){ reponse in
             
@@ -47,6 +58,7 @@ class BaseService {
             }
         }
     }
+    
 }
 
 

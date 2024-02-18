@@ -16,6 +16,7 @@ protocol BaseRouter : URLRequestConvertible {
     var path : String { get }
     var parameter : RequestParams { get }
     var header : HeaderType { get }
+    var multipart : MultipartFormData {get}
 }
 
 extension BaseRouter {
@@ -45,6 +46,9 @@ extension BaseRouter {
         case .basicHeader:
             request.setValue(Constants.ApplicationJson, forHTTPHeaderField: Constants.ContentType)
             return request
+        case .multiPart:
+            request.setValue("Bearer " + SecureDataManager.shared.getData(label: .accessToken), forHTTPHeaderField: Constants.Authorization)
+            return request
         case .noHeader :
             return request
         }
@@ -73,5 +77,20 @@ extension BaseRouter {
             break
         }
         return request
+    }
+}
+
+
+extension BaseRouter {
+    var baseURL: String {
+        return Constants.baseURL
+    }
+    
+    var header: HeaderType {
+        return HeaderType.withAuth
+    }
+    
+    var multipart: MultipartFormData {
+        return MultipartFormData()
     }
 }
