@@ -7,11 +7,13 @@
 //
 
 import UIKit
+import RxSwift
 import SnapKit
 
 class NameProfileViewController: UIViewController {
 
     var nickName: String?
+    var newImage : PublishSubject<UIImage> = PublishSubject()
     var selectedBackgroundColor: UIColor?
 
     let mainLabel: UILabel = {
@@ -40,8 +42,6 @@ class NameProfileViewController: UIViewController {
         return label
     }()
 
-    let doneButton = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(doneButtonTapped))
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -63,8 +63,12 @@ class NameProfileViewController: UIViewController {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(profileImageTapped))
         profileImageView.addGestureRecognizer(tapGestureRecognizer)
         profileImageView.isUserInteractionEnabled = true
-        
-        navigationItem.rightBarButtonItem = doneButton
+        let button = WYButton("완료")
+        button.backgroundColor = WithYouAsset.mainColorDark.color
+        button.frame = CGRect(x: 0, y: 0, width: 64, height: 30)
+        button.layer.cornerRadius = 15
+        button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: button)
     }
 
     private func setConstraints() {
@@ -85,7 +89,9 @@ class NameProfileViewController: UIViewController {
     }
 
     @objc func doneButtonTapped() {
-        // Handle done button action
+        // 닉네임 이미지로 만들어서 보내기
+        newImage.onNext(self.profileImageView.asImage())
+        self.navigationController?.popViewController(animated: true)
     }
 
     @objc func profileImageTapped() {
@@ -101,3 +107,5 @@ extension NameProfileViewController: UIColorPickerViewControllerDelegate {
         profileImageView.backgroundColor = selectedBackgroundColor
     }
 }
+
+

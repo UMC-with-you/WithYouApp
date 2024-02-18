@@ -11,26 +11,11 @@ import RxSwift
 import SnapKit
 import UIKit
 
-enum NoticeOptions  {
-    case before
-    case ing
-    case always
-    
-    var text : String {
-        switch self{
-        case .before:
-            return "여행 전에만"
-        case .ing:
-            return "여행 중"
-        case .always :
-            return "전체 기간"
-        }
-    }
-}
-
 class AddNoticeViewController: UIViewController {
     
     var noticeOption : NoticeOptions = .before
+    
+    var noticeAdder : PublishSubject<[String:Any]> = PublishSubject()
     
     //내용 담는 변수
     var noticeText = ""
@@ -218,7 +203,13 @@ class AddNoticeViewController: UIViewController {
     func addNotice(){
         self.view.endEditing(true)
         // Notice 처리
-        print(noticeText + noticeOption.text)
+        var dic = [
+            "content" : self.noticeText,
+            "state" : noticeOption.rawValue
+        ] as [String : Any]
+        
+        self.noticeAdder.onNext(dic)
+        self.dismiss(animated: true)
     }
 }
 
@@ -246,6 +237,10 @@ extension AddNoticeViewController : UITextViewDelegate {
         // 글자 수 제한
         if textView.text.count > 30 {
             textView.deleteBackward()
+        } else if textView.text.count > 0 {
+            self.addButton.backgroundColor = WithYouAsset.mainColorDark.color
+        } else if textView.text.count == 0 {
+            self.addButton.backgroundColor = WithYouAsset.subColor.color
         }
         // 글자수 변경
         characterCountLabel.text = "\(textView.text.count)/30"
@@ -257,9 +252,7 @@ extension AddNoticeViewController : UITextViewDelegate {
         if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || textView.text == textViewPlaceHolder{
             textView.text = textViewPlaceHolder
             textView.textColor = WithYouAsset.subColor.color
-            self.addButton.backgroundColor = WithYouAsset.subColor.color
-        } else {
-            self.addButton.backgroundColor = WithYouAsset.mainColorDark.color
+            
         }
         
         self.noticeText = textView.text

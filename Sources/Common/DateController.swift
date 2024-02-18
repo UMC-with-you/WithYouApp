@@ -15,6 +15,13 @@ open class DateController {
     
     public let dateFormatter = DateFormatter()
     
+    private init(){}
+    
+    func dateToSendServer() -> String{
+        dateFormatter.dateFormat = "yyyy.MM.dd"
+        return dateFormatter.string(from: Date()).replacingOccurrences(of: ".", with: "-")
+    }
+    
     func getDate(_ date : Date) -> String{
         dateFormatter.dateFormat = "yyyy.MM.dd"
         return dateFormatter.string(from: date)
@@ -31,7 +38,19 @@ open class DateController {
     }
     
     //dday계산 
-    func days(from date: Date) -> String {
-        return "D" + String(Calendar.current.dateComponents([.day], from: date, to: Date()).day! + 1)
+    func days(from date: String) -> String {
+        let date = Calendar.current.dateComponents([.day], from: dateController.strToDate(date), to: Date()).day! + 1
+        if date == 0 {
+            return "D-Day"
+        } else if date < 0 {
+            return "D\(date)"
+        } else {
+            return "Day \(date)"
+        }
+    }
+    
+    func daysAsInt(from date: String)-> Int {
+        let date = Calendar.current.dateComponents([.day], from: dateController.strToDate(date), to: Date()).day! + 1
+        return date
     }
 }

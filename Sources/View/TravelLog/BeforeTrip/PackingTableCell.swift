@@ -12,22 +12,15 @@ import RxGesture
 import RxSwift
 import UIKit
 
-class PackingTableCell: UICollectionViewCell {
-    
+class PackingTableCell: UICollectionViewListCell {
     static let cellId = "PackingTableCell"
     
-    var travlers = BehaviorRelay<[Traveler]>(value: [])
-    
+    var travelers = BehaviorRelay<[Traveler]>(value: [])
+    var packingItem : PackingItem?
+    var packingManager : PackingItemManager?
     var travelerImages = [ProfileView]()
     
-    var checkCircle = {
-       let circle = UIView()
-        circle.backgroundColor = .white
-        circle.layer.cornerRadius = 16
-        circle.layer.borderColor = WithYouAsset.subColor.color.cgColor
-        circle.layer.borderWidth = 2.0
-        return circle
-    }()
+    var checkCircle = UIImageView(image: WithYouAsset.iconCheckOff.image)
     
     var itemName = {
         let label = UILabel()
@@ -45,15 +38,21 @@ class PackingTableCell: UICollectionViewCell {
         super.init(frame: frame)
         setUp()
         setConst()
-        setRx()
+        
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func bindTravlers(travelers : [Traveler]){
-        self.travlers.accept(travelers)
+    public func bind(travelers : [Traveler], packingItem : PackingItem, manager : PackingItemManager){
+        self.travelers.accept(travelers)
+        self.packingItem = packingItem
+        self.itemName.text = packingItem.itemName
+        self.packingManager = manager
+        self.setRx()
+        self.checkPacker(packerId: packingItem.packerId)
+        self.checkCircle.image = packingItem.isChecked ? WithYouAsset.iconCheckOn.image : WithYouAsset.iconCheckOff.image
     }
     
     func setRx(){
@@ -62,45 +61,71 @@ class PackingTableCell: UICollectionViewCell {
             .tapGesture()
             .when(.recognized)
             .subscribe(onNext: { gesture in
-                //ApiManager -> tapped ->
-                print("Button Tapped")
+                PackingItemService.shared.checkItem(packingItemId: self.packingItem!.id){ response in
+                    self.packingManager?.itemChangedNotify.onNext(true)
+                    if self.checkCircle.image == WithYouAsset.iconCheckOn.image {
+                        self.checkCircle.image = WithYouAsset.iconCheckOff.image
+                    } else {
+                        self.checkCircle.image = WithYouAsset.iconCheckOff.image
+                    }
+                }
+                
             })
             .disposed(by: disposeBag)
+        
         //Image Binding
-        travlers.subscribe({ travler in
+        travelers.subscribe({ travler in
             self.setPic()
         })
         .disposed(by: disposeBag)
         
-        //
-        travelerImages.forEach{
-            $0.rx.tapGesture()
+        //짐 담당 회원 설정
+        travelerImages.forEach{ view in
+            view.rx.tapGesture()
                 .when(.recognized)
-                .subscribe(onNext: {_ in 
-                    print("Tapped")
+                .subscribe(onNext: {_ in
+                    PackingItemService.shared.setItemMember(packingItemId: self.packingItem!.id, memberId: view.traveler.id) { response in
+                        self.packingManager?.itemChangedNotify.onNext(true)
+                        self.checkPacker(packerId: response.packerId)
+                    }
                 })
                 .disposed(by: disposeBag)
         }
     }
     
+    private func checkPacker(packerId : Int?){
+        for image in travelerImages {
+            if let id = packerId {
+                if image.traveler.id == id {
+                    image.profileImage.alpha = 1
+                }
+            } else {
+                image.profileImage.alpha = 0.3
+            }
+        }
+    }
+    
     func setUp(){
-        
         [checkCircle, itemName, imageContainer].forEach{
             self.addSubview($0)
-        }
-        
-        for _ in 0..<4{
-            let pv = ProfileView(size: .small)
-            travelerImages.append(pv)
-            imageContainer.addArrangedSubview(pv)
         }
     }
     
     private func setPic(){
-        travelerImages.enumerated().forEach{ count, traveler  in
-            //API통해 이미지 받아오기
-            //traveler.profileImage.image = travlers.value[count].profilePicture
-            traveler.profileImage.image = WithYouAsset.homeIcon.image
+        // 프로파일 이미지 생성해서 container에 추가
+        var arr = [ProfileView]()
+        travelers.value.forEach{
+            arr.append(ProfileView(size: .small, traveler: $0))
+        }
+        self.travelerImages = arr
+        
+        //이미지 추가 전 기존 삭제
+        imageContainer.subviews.forEach{
+            $0.removeFromSuperview()
+        }
+        
+        travelerImages.forEach{
+            imageContainer.addArrangedSubview($0)
         }
     }
     

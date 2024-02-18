@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import KakaoSDKCommon
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -14,6 +15,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        KakaoSDK.initSDK(appKey: "1295c9d7651a86701ea8af72a43d8e3a")
+        let navigationBarAppearace = UINavigationBar.appearance()
+        navigationBarAppearace.tintColor = WithYouAsset.mainColorDark.color
         return true
     }
 

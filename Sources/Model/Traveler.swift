@@ -9,8 +9,14 @@
 import Foundation
 
 
-struct Traveler : Identifiable{
+struct Traveler : Codable{
     var id : Int
     var name : String
-    var profilePicture : String
+    var profilePicture : String?
+    
+    private enum CodingKeys : String, CodingKey{
+        case id  = "memberId"
+        case name
+        case profilePicture  = "imageUrl"
+    }
 }

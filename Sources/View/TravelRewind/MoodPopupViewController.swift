@@ -136,8 +136,6 @@ extension MoodPopupViewController: UICollectionViewDataSource, UICollectionViewD
             itemWidth = floor(collectionView.bounds.width / 3)
             itemHeight = floor(collectionView.bounds.height / 3)
         }
-        print(collectionView.bounds.width)
-        print("itemWidth = \(itemWidth), itemHeight = \(itemHeight)")
         return CGSize(width: itemWidth, height: itemHeight)
         //        return CGSize(width: 70, height: 70)
     }

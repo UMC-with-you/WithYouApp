@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-struct Comment {
+struct PostComment {
     let name: String
     let comment: String
     let image: UIImage
@@ -9,7 +9,7 @@ struct Comment {
 
 class ModalViewController: UIViewController {
     
-    var comments: [Comment]  = []
+    var comments: [PostComment]  = []
     
     private var refreshControl = UIRefreshControl()
     
@@ -59,7 +59,7 @@ class ModalViewController: UIViewController {
     
     func test() {
         for i in 1...40 {
-            comments.append(Comment(name: "test", comment: "\(i)test1111111323232323232323223232323232323323232323232323232323232322333232311111", image: WithYouAsset.myIcon.image))
+            comments.append(PostComment(name: "test", comment: "\(i)test1111111323232323232323223232323232323323232323232323232323232322333232311111", image: WithYouAsset.myIcon.image))
         }
     }
     
@@ -135,7 +135,7 @@ class ModalViewController: UIViewController {
         }
         
         // Add the new comment to the comments array
-        comments.insert(Comment(name: "경주", comment: commentTextView.text , image: WithYouAsset.myIcon.image), at: 0)
+        comments.insert(PostComment(name: "경주", comment: commentTextView.text , image: WithYouAsset.myIcon.image), at: 0)
         
         // Update the tableView
         tableView.beginUpdates()

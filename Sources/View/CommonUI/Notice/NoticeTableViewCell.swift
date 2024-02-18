@@ -6,11 +6,16 @@
 //  Copyright © 2024 withyou.org. All rights reserved.
 //
 
-
+import Kingfisher
+import RxGesture
+import RxSwift
 import SnapKit
 import UIKit
 
 class NoticeTableViewCell: UITableViewCell {
+    var notice : Notice?
+    
+    var logId : Int?
     
     let profileImageView: UIImageView = {
         let imageView = UIImageView()
@@ -41,6 +46,8 @@ class NoticeTableViewCell: UITableViewCell {
         button.layer.borderWidth = 1
         button.layer.borderColor = #colorLiteral(red: 0.6666666865, green: 0.6666666865, blue: 0.6666666865, alpha: 1)
         button.isEnabled = true
+        button.setImage(WithYouAsset.iconCheckOff.image, for: .normal)
+        button.setImage(WithYouAsset.iconCheckOn.image, for: .selected)
         return button
     }()
     
@@ -74,6 +81,24 @@ class NoticeTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier reuseIndetifier: String?) {
         super.init(style: .default, reuseIdentifier: reuseIndetifier)
         setupStackView()
+        
+        self.checkButton
+            .rx
+            .tapGesture()
+            .when(.recognized)
+            .subscribe{ _ in
+                LogService.shared.getAllMembers(logId: self.logId!){ response in
+                    for member in response {
+                        if member.name == DataManager.shared.getUserName() {
+                            NoticeCheckService.shared.checkNotice(noticeId: self.notice!.noticeID, memberId: member.id){ check in
+                            
+                            }
+                        }
+                    }
+                }
+               
+            }
+            .disposed(by: DisposeBag())
     }
     
     func setupStackView() {
@@ -99,6 +124,15 @@ class NoticeTableViewCell: UITableViewCell {
     override func updateConstraints() {
         setConstraints()
         super.updateConstraints()
+    }
+    
+    func bind(notice : Notice, logId : Int){
+        self.notice = notice
+        self.logId = logId
+        noticeLabel.text = notice.noticeContent
+        userNameLabel.text = notice.userName
+        checkLabel.text = String(notice.checkNum)
+        profileImageView.kf.setImage(with: URL(string:notice.profileImage))
     }
     
     private func setConstraints() {

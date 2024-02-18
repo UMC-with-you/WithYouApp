@@ -12,14 +12,14 @@ class TabBarViewController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.hidesBackButton = true
         
         tabBar.barTintColor = .white
         tabBar.tintColor = UIColor(named: "MainColorDark")
         tabBar.layer.borderWidth = 0.3
 
-        //let mainView = MainViewController()
         let mainView = MainViewController()
-        let logView = WithUViewController()
+        let logView = TravelLogViewController()
         let myView = MyPageViewController()
 
         
