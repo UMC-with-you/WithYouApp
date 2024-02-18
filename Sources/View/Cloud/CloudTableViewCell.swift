@@ -57,7 +57,7 @@ class CloudTableViewCell: UITableViewCell {
         
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = .blue
     
         setViews()
         setConstraints()
@@ -105,12 +105,6 @@ class CloudTableViewCell: UITableViewCell {
             setNeedsUpdateConstraints()
         }
     
-//    func setImages(_ selections: [String: PHPickerResult], _ selectedAssetIdentifiers: [String]) {
-//            self.selections = selections
-//            self.selectedAssetIdentifiers = selectedAssetIdentifiers
-//            collectionView.reloadData()
-//        }
-    
     func configure(with selections: [String: PHPickerResult], _ selectedAssetIdentifiers: [String]) {
            self.selections = selections
            self.selectedAssetIdentifiers = selectedAssetIdentifiers
@@ -157,11 +151,4 @@ extension CloudTableViewCell: UICollectionViewDelegateFlowLayout {
     }
 }
 
-//    func collectionView(_ collectionView: UICollectionView,
-//                        layout collectionViewLayout: UICollectionViewLayout,
-//                        sizeForItemAt indexPath: IndexPath) -> CGSize {
-////        let side = CGFloat((collectionView.frame.width / 3) - (4/3))
-//        let side = CGFloat((collectionView.frame.width / 5) - 1)
-//        return CGSize(width: side, height: side)
-//    }
 

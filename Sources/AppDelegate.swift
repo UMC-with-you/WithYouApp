@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Photos
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -14,6 +15,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        // 앱이 시작될 때 Photo Library 권한 요청
+        PHPhotoLibrary.requestAuthorization { status in
+            switch status {
+            case .authorized:
+                // 권한 획득 성공
+                print("Photo Library 권한이 허용되었습니다.")
+            case .denied, .restricted:
+                // 권한 거부 또는 제한됨
+                print("Photo Library 권한이 거부되었거나 제한되었습니다.")
+            case .notDetermined:
+                // 권한이 아직 결정되지 않음
+                print("Photo Library 권한이 아직 결정되지 않았습니다.")
+            @unknown default:
+                break
+            }
+        }
         return true
     }
 

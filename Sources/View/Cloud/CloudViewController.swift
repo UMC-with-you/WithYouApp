@@ -85,7 +85,7 @@ class CloudViewController: UIViewController {
     func setTableView() {
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.backgroundColor = .white
+        tableView.backgroundColor = .red
         tableView.reloadData()
         
     }
@@ -131,7 +131,7 @@ class CloudViewController: UIViewController {
         // 라이브러리에서 보여줄 Assets을 필터함 (기본값: 이미지, 비디오, 라이브포토)
         config.filter = PHPickerFilter.any(of: [.images])
         // 다중 선택 갯수 설정 (0 = 무제한)
-        config.selectionLimit = 3
+        config.selectionLimit = 6
         // 선택 동작을 나타냄
         config.selection = .ordered
         
@@ -184,13 +184,12 @@ class CloudViewController: UIViewController {
         }
     }
     
-    func processImage(_ image:UIImage) {
+    private func processImage(_ image:UIImage) {
         print("g")
         if let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? CloudTableViewCell {
-                    cell.configure(with: selections, selectedAssetIdentifiers)
-                }
-    }
-    
+            cell.configure(with: selections, selectedAssetIdentifiers)
+        }
+    }    
     
 //    private func addImage(_ image: UIImage) {
 //
@@ -215,7 +214,7 @@ class CloudViewController: UIViewController {
 
 extension CloudViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 2
+        return 4
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
