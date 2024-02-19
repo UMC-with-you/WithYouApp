@@ -1,5 +1,6 @@
 import UIKit
 class CommentTableViewCell: UITableViewCell {
+    static let cellId = "CommentTableViewCell"
     
     let nameLabel: UILabel = {
         let label = UILabel()

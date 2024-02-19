@@ -27,6 +27,10 @@ struct DataManager {
         defaults.set(true, forKey: "Login")
     }
     
+    func logout(){
+        defaults.set(false, forKey: "Login")
+    }
+    
     func getIsLogin() -> Bool {
         return defaults.bool(forKey: "Login")
     }
@@ -36,6 +40,31 @@ struct DataManager {
     }
     func getUserImage()->Data{
         return defaults.data(forKey: "ProfilePicture")!
+    }
+    
+    func setMyPost(myPosts : [LocalPostDTO]){
+        let encoder = JSONEncoder()
+        var list = [Data]()
+        for post in myPosts {
+            if let encoded = try? encoder.encode(post) {
+                list.append(encoded)
+            }
+        }
+        defaults.set(list, forKey: "myPosts")
+    }
+    
+    func getMyPost()->[LocalPostDTO] {
+        var list = [LocalPostDTO]()
+        if let savedData = defaults.array(forKey: "myPosts") as? [Data] {
+            let decoder = JSONDecoder()
+            for data in savedData {
+                if let savedObject = try? decoder.decode(LocalPostDTO.self, from: data) {
+                    list.append(savedObject)
+                }
+            }
+        }
+        
+        return list
     }
     
     func saveImage(image : UIImage, key: String){
@@ -48,3 +77,4 @@ struct DataManager {
         defaults.set(text, forKey: key)
     }
 }
+

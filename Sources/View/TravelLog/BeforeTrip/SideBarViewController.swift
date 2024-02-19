@@ -61,7 +61,7 @@ class SideBarViewController: UIViewController {
         return x
     }()
     
-    var members = BehaviorSubject<[Traveler]>(value:[])
+    var members = BehaviorRelay<[Traveler]>(value:[])
     
     var bag = DisposeBag()
     
@@ -77,7 +77,7 @@ class SideBarViewController: UIViewController {
     func bind(log: Log, members : [Traveler]){
         self.log = log
         label.text = log.title
-        self.members.onNext(members)
+        self.members.accept(members)
     }
     
     private func setFunction(){
@@ -131,15 +131,14 @@ class SideBarViewController: UIViewController {
         
     }
     private func leaveLog(){
-        var memberId = 0
         let name = DataManager.shared.getUserName()
-        _ = try! self.members.value().map{
-            if $0.name == name {
-                memberId = $0.id
+        for member in members.value {
+            if member.name == name {
+                LogService.shared.leaveLog(travelId: log!.id, memberId: member.id){ _ in
+                    
+                }
+                self.navigationController?.popToViewController(TabBarViewController(), animated: true)
             }
-        }
-        LogService.shared.leaveLog(travelId: log!.id, memberId: memberId){ _ in
-            self.navigationController?.popToRootViewController(animated: true)
         }
     }
     

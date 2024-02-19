@@ -308,8 +308,10 @@ class CreateTravelLogViewController: UIViewController, BottomSheetDelegate{
             
             LogService.shared.addLog(log: newLog,image: image){ logId in
                 print("LogId : \(logId) 생성 완료")
-                self.dismiss(animated: true)
+                
             }
+            
+            self.dismiss(animated: true)
         } else {
             print("텍스트 필드에 여행 제목을 입력하세요.")
         }

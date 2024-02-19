@@ -112,6 +112,19 @@ class MainViewController: UIViewController {
                 if index != self.previousIndex{
                     cell.transform = CGAffineTransform(scaleX: 1, y: 0.87)
                 }
+                
+                cell.rx.longPressGesture().when(.recognized)
+                    .subscribe{ _ in
+                        let alert = UIAlertController(title: "삭제", message: "셀을 삭제 하시겠습니까?", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "확인", style: .destructive,handler: { _ in
+                            LogService.shared.deleteLog(logId: item.id){ _ in
+                                self.loadLogs()
+                            }
+                        }))
+                        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+                        self.present(alert, animated: true)
+                    }
+                    .disposed(by: cell.bag)
             }
         .disposed(by: disposeBag)
         
@@ -337,8 +350,6 @@ extension MainViewController{
             nextVC.log = log
             self.navigationController?.pushViewController(nextVC, animated: true)
         }
-        
-       
     }
     
     // Upcoming Ing Label 클릭시

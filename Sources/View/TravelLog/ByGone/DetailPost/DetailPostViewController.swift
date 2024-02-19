@@ -7,19 +7,22 @@
 //
 
 import UIKit
+import Kingfisher
+import RxCocoa
+import RxSwift
 import SnapKit
 
 class DetailPostViewController: UIViewController {
     
-    var dataSource: [UIImage?] = []
     var likeCountValue:Int = 0
     
-    private func setupDataSource() {
-        for i in 1...5 {
-            dataSource.append(UIImage(named:"post\(i)"))
-        }
-        print(dataSource)
-    }
+    let navLabel = {
+        let label = UILabel()
+        label.text = "POST"
+        label.textColor = .black
+        label.font = WithYouFontFamily.Pretendard.semiBold.font(size: 20)
+        return label
+    }()
 
     lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -52,7 +55,6 @@ class DetailPostViewController: UIViewController {
     lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
         pageControl.hidesForSinglePage = true
-        pageControl.numberOfPages = dataSource.count
         pageControl.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
         pageControl.pageIndicatorTintColor = WithYouAsset.subColor.color
         pageControl.currentPageIndicatorTintColor = .black
@@ -124,20 +126,13 @@ class DetailPostViewController: UIViewController {
     
     lazy var contextLabel: UILabel = {
         let label = UILabel()
-        label.text = "이번 여행도 재밌었다!!이번 여행도 재밌었다!!이번 여행도 재밌었다!!v이번 여행도 재밌었다!!이번 여행도 재밌었다!!이번 여행도 재밌었다!!v이번 여행도 재밌었다!!이번 여행도 재밌이번 여행도 재밌었다!!이번 여행도 재밌었다!!이번 여행도 재밌었다!!v이번 여행도 재밌었다!!이번 여행도 재밌었다!!이번 여행도 재밌었다!!v이번 여행도 재밌었다!!이번 여행도 재밌이번 여행도 재밌었다!!이번 여행도 재밌었다!!이번 여행도 재밌었다!!v이번 여행도 재밌었다!!이번 여행도 재밌었다!!이번 여행도 재밌었다!!v이번 여행도 재밌었다!!이번 여행도 재밌이번 여행도 재밌었다!!이번 여행도 재밌었다!!이번 여행도 재밌었다!!v이번 여행도 재밌었다!!이번 여행도 재밌었다!!이번 여행도 재밌었다!!v이번 여행도 재밌었다!!이번 여행도 재밌이번 여행도 재밌었다!!이번 여행도 재밌었다!!이번 여행도 재밌었다!!v이번 여행"
+        label.text = "이이번 여밌었다!!v이번 여행"
         label.font = WithYouFontFamily.Pretendard.regular.font(size: 15)
         label.textColor = .black
         label.textAlignment = .left
         label.numberOfLines = 0
         return label
     }()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        setupDataSource()
-        setUI()
-    }
     
     lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -149,7 +144,51 @@ class DetailPostViewController: UIViewController {
         return view
     }()
     
+    var bag = DisposeBag()
+    
+    var post : Post?
+    var log : Log?
+    var postImage = PublishSubject<[String]>()
+    var imageUrls = [String]()
+    
+    var detailPost : OnePostResponse?
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setUI()
+        
+        postImage.subscribe{ images in
+            self.imageUrls = images
+        }
+        .disposed(by: bag)
+        
+        loadPost()
+    }
+    
+    private func loadPost(){
+        PostService.shared.getOnePost(postId: self.post!.postId, travelId: self.log!.id){ response in
+            self.detailPost = response
+            self.contextLabel.text = response.text
+            //이미지파일 가져오기
+            var responseUrls = [String]()
+            for media in response.postMediaDTO{
+                responseUrls.append(media.url)
+            }
+            self.imageUrls = responseUrls
+            self.postCollectionView.reloadData()
+            self.pageControl.numberOfPages = responseUrls.count
+        }
+    }
+
+    public func bind(post:Post, log : Log){
+        self.post = post
+        self.log = log
+        self.titleLabel.text = log.title
+        self.periodLabel.text = "\(log.startDate.replacingOccurrences(of: "-", with: ".")) - \(log.endDate.replacingOccurrences(of: "-", with: "."))"
+    }
+    
     private func setUI() {
+        self.navigationItem.titleView = navLabel
         view.addSubview(scrollView)
         scrollView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
@@ -284,15 +323,21 @@ class DetailPostViewController: UIViewController {
     }
     
     @objc func messageButtonTapped() {
-        let modalViewController = ModalViewController()
+        let modalViewController = CommentModalViewController()
+        modalViewController.post = self.post
+        if let comments = detailPost?.commentDTOs {
+            modalViewController.commentRelay.accept(comments.map{$0!})
+        }
+        
         self.present(modalViewController, animated: true)
     }
     
     @objc func bookMarkButtonTapped() {
         bookMarkButton.isSelected.toggle()
+        PostService.shared.scrapPost(postId: self.post!.postId){ _ in
+            
+        }
     }
-    
-    
 }
 
 extension UIButton {
@@ -315,15 +360,14 @@ extension DetailPostViewController: UICollectionViewDelegate, UICollectionViewDa
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return dataSource.count
+        return imageUrls.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PostCollectionViewCell.id, for: indexPath)
         if let cell = cell as? PostCollectionViewCell {
-            cell.model = dataSource[indexPath.item]
+            cell.postImageView.kf.setImage(with:URL(string: imageUrls[indexPath.row]))
         }
-
         return cell
     }
 }

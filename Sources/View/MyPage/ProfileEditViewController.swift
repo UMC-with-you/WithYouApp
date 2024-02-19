@@ -11,7 +11,7 @@ import SnapKit
 
 class ProfileEditViewController: UIViewController {
 
-    var nickName: String?
+    var nickName: String = ""
     
     let button = WYAddButton(.big)
     
@@ -192,16 +192,29 @@ class ProfileEditViewController: UIViewController {
     
     @objc func nickNameSetButtonTapped() {
         let nameProfileViewController = NameProfileViewController()
-        nameProfileViewController.nickName = nickName
+        nameProfileViewController.nickName = nickNameTextField.text
+        _ = nameProfileViewController.newImage.subscribe{ image in
+            self.profileImageView.image = image
+        }
         navigationController?.pushViewController(nameProfileViewController, animated: true)
     }
     
     @objc func logoutButtonTapped() {
-        
+        DataManager.shared.logout()
+        let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
+        guard let delegate = sceneDelegate else { return }
+        delegate.window?.rootViewController = LoginViewController()
     }
     
     @objc func doneButtonTapped() {
-
+        guard let image = profileImageView.image else {return}
+        guard let name = nickNameTextField.text else {return}
+        DataManager.shared.saveImage(image: image, key: "ProfilePicture")
+        DataManager.shared.saveText(text: name, key: "UserName")
+        
+        MemberService.shared.changeImage(profilePicture: image){}
+        MemberService.shared.changeName(name: name){}
+        self.navigationController?.popViewController(animated: true)
     }
 
 }

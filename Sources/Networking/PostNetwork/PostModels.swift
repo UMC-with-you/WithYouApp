@@ -29,8 +29,9 @@ struct PostIdResponse : Codable {
 }
 
 struct OnePostResponse :Codable{
+    var commentDTOs : [CommentDTO?]
     var postId : Int
-    var memberId : Int
+    var memberid : Int
     var text : String
     var postMediaDTO :[PostMediaDTO]
 }
@@ -39,4 +40,16 @@ struct PostMediaDTO : Codable {
     var postMediaId : Int
     var url : String
     var position : Int
+}
+
+struct CommentDTO : Codable{
+    var memberId  : Int?
+    var commentId : Int
+    var content : String
+    var replyDTOs : [ReplyDTO]
+}
+struct ReplyDTO : Codable {
+    var replyId : Int
+    var memberId : Int
+    var content : String
 }

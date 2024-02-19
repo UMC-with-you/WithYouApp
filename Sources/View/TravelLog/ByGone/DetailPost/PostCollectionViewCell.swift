@@ -1,3 +1,4 @@
+import Kingfisher
 import UIKit
 
 class PostCollectionViewCell: UICollectionViewCell {

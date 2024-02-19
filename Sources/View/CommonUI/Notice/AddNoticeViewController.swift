@@ -203,7 +203,7 @@ class AddNoticeViewController: UIViewController {
     func addNotice(){
         self.view.endEditing(true)
         // Notice 처리
-        var dic = [
+        let dic = [
             "content" : self.noticeText,
             "state" : noticeOption.rawValue
         ] as [String : Any]

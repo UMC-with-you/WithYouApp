@@ -13,4 +13,5 @@ enum HeaderType {
     case basicHeader
     case noHeader
     case multiPart
+    case onlyAuth
 }

@@ -13,6 +13,8 @@ class TravelRewindViewController: UIViewController{
     
     var log : Log?
     
+    var rewindId : Int?
+    
     lazy var moodPopup: MoodPopupViewController = {
         let popup = MoodPopupViewController()
         popup.modalPresentationStyle = .overFullScreen
@@ -211,15 +213,26 @@ class TravelRewindViewController: UIViewController{
     
     private func setQuestion(){
         self.qnaList = []
-        RewindService.shared.getQnaList{ response in
-            for _ in 0..<4{
-                let qna = response.randomElement()
-                self.qnaList.append(RewindQna(qnaId: 0, questionId: qna!.id, content: qna!.content, answer: ""))
+        print(rewindId)
+        if let id = rewindId {
+            RewindService.shared.getOneRewind(travelId: self.log!.id, rewindId: id){ response in
+                self.qnaList = response.rewindQnaList
+                [self.question2Label,self.question3Label,self.question4Label,self.question5Label].enumerated().forEach { (index,label) in
+                    label.text = "#\(index + 2) " + self.qnaList[index].content
+                }
             }
-            [self.question2Label,self.question3Label,self.question4Label,self.question5Label].enumerated().forEach { (index,label) in
-                label.text = "#\(index + 2) " + self.qnaList[index].content
+        } else {
+            RewindService.shared.getQnaList{ response in
+                for _ in 0..<4{
+                    let qna = response.randomElement()
+                    self.qnaList.append(RewindQna(qnaId: 0, questionId: qna!.id, content: qna!.content, answer: ""))
+                }
+                [self.question2Label,self.question3Label,self.question4Label,self.question5Label].enumerated().forEach { (index,label) in
+                    label.text = "#\(index + 2) " + self.qnaList[index].content
+                }
             }
         }
+       
     }
     
     private func bindInfo(){
@@ -265,7 +278,8 @@ class TravelRewindViewController: UIViewController{
                                                qnaList: postQna,
                                                comment: "")
                 
-                RewindService.shared.postRewind(rewindPostRequest: rewind, travelId: self.log!.id){ _ in
+                RewindService.shared.postRewind(rewindPostRequest: rewind, travelId: self.log!.id){ response in
+                    self.rewindId = response.rewindId
                     self.navigationController?.popViewController(animated: true)
                 }
             }

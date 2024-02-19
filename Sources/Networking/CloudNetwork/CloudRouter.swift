@@ -11,7 +11,7 @@ import Foundation
 import UIKit
 
 enum CloudRouter {
-    case addCloud(cloudModel : CloudRequest, images : UIImage)
+    case addCloud(cloudModel : CloudRequest, images : [UIImage])
     case getCloud(travelId : Int, logId : Int)
 }
 
@@ -52,21 +52,26 @@ extension CloudRouter : BaseRouter {
     
     var multipart: MultipartFormData{
         switch self{
-        case .addCloud(let request , let image):
+        case .addCloud(let request , let images):
             let multiPart = MultipartFormData(boundary: "<calculated when request is sent>")
             
-            var text = "\(request.toDictionary())"
-            print(text)
+            let dic = [
+                "date" : request.date,
+                "travelId" : request.travelId
+            ] as [String : Any]
+            
+            var text = "\(dic)"
             text = text.replacingOccurrences(of: "[", with: "{")
             text = text.replacingOccurrences(of: "]", with: "}")
             print(text)
             multiPart.append(text.data(using: .utf8)!, withName: "request", mimeType: "application/json")
             
-            if let imageData = image.jpegData(compressionQuality: 0.1){
-                print(imageData)
-                multiPart.append(imageData, withName: "image", fileName: "image.jpeg", mimeType: "image/jpeg")
+            for (index, image) in images.enumerated() {
+                if let imageData = image.jpegData(compressionQuality: 0.1){
+                    print(imageData)
+                    multiPart.append(imageData, withName: "cloudImage", fileName: "image\(index).jpeg", mimeType: "image/jpeg")
+                }
             }
-            //print(String(decoding: try! multiPart.encode()., as: UTF8.self))
             return multiPart
         default:
             return MultipartFormData()

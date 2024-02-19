@@ -14,7 +14,7 @@ class CloudService : BaseService {
     static let shared = CloudService()
     override private init(){}
     
-    func addCloud(cloudModel : CloudRequest, images: UIImage,_ completion : @escaping (String)->Void){
+    func addCloud(cloudModel : CloudRequest, images: [UIImage],_ completion : @escaping (String)->Void){
         let router = CloudRouter.addCloud(cloudModel: cloudModel, images: images)
         multipartRequest(String.self, router: router, completion: completion)
     }

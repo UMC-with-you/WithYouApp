@@ -1,3 +1,4 @@
+import Kingfisher
 import UIKit
 
 
@@ -55,6 +56,11 @@ class MemberCell: UICollectionViewCell {
             profileImageView.image = UIImage(data: DataManager.shared.getUserImage())!
         }
         titleLabel.text = traveler.name
+        if let url = traveler.profilePicture {
+            profileImageView.kf.setImage(with: URL(string:url))
+        } else {
+            profileImageView.image = WithYouAsset.heart.image
+        }
         self.traveler = traveler
     }
 

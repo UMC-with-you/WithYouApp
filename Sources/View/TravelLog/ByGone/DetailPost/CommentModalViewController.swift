@@ -1,4 +1,6 @@
 import UIKit
+import RxCocoa
+import RxSwift
 import SnapKit
 
 struct PostComment {
@@ -7,9 +9,11 @@ struct PostComment {
     let image: UIImage
 }
 
-class ModalViewController: UIViewController {
+class CommentModalViewController: UIViewController {
     
     var comments: [PostComment]  = []
+    
+    var keyHeight: CGFloat?
     
     private var refreshControl = UIRefreshControl()
     
@@ -45,7 +49,6 @@ class ModalViewController: UIViewController {
        let tableView = UITableView()
         tableView.backgroundColor = .white
         tableView.separatorStyle = .none
-        tableView.dataSource = self // 데이터 소스 설정
         tableView.delegate = self // 델리게이트 설정
         return tableView
     }()
@@ -56,28 +59,83 @@ class ModalViewController: UIViewController {
         button.addTarget(self, action: #selector(sendButtonTapped), for: .touchUpInside)
         return button
     }()
+    var post : Post?
     
-    func test() {
-        for i in 1...40 {
-            comments.append(PostComment(name: "test", comment: "\(i)test1111111323232323232323223232323232323323232323232323232323232322333232311111", image: WithYouAsset.myIcon.image))
+    var commentRelay = BehaviorRelay<[CommentDTO]>(value: [])
+    
+    var members = [Traveler]()
+    
+    var bag = DisposeBag()
+    
+    private func setData(){
+        commentRelay.bind(to: tableView.rx.items(cellIdentifier: CommentTableViewCell.cellId, cellType: CommentTableViewCell.self)){index, item, cell in
+            cell.commentLabel.text = item.content
+            //ID 가지고
+            cell.nameLabel.text = "김테스트"
+            cell.profileImage.kf.setImage(with: URL(string:""))
         }
+        .disposed(by:bag)
     }
+    private func getDatas(){
     
+    }
+   
     override func viewDidLoad() {
         super.viewDidLoad()
+        setUp()
+        setConst()
+        setNavBar()
+        setData()
+        commentRelay.accept([CommentDTO(memberId: 2, commentId: 0, content: "asdfsdf", replyDTOs: [])])
         
-        test()
+        tableView.refreshControl = refreshControl
+        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
         
+        if let sheetPresentationController = sheetPresentationController {
+            sheetPresentationController.detents = [.medium(), .large()]
+            sheetPresentationController.prefersGrabberVisible = true
+        }
+        
+        // 키보드가 나타날 때와 사라질 때의 알림(Notification)을 등록
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    @objc func refresh() {
+            // 리프레시 액션에서 서버 데이터를 다시 로드하고 테이블 뷰를 다시 로드합니다.
+            refreshControl.endRefreshing() // 리프레시 종료
+        }
+    
+    @objc func sendButtonTapped() {
+        // Check if textView contains text
+        guard let commentText = commentTextView.text, !commentText.isEmpty else {
+            // Handle case where textView is empty
+            return
+        }
+        
+        // Add the new comment to the comments array
+        CommentService.shared.addComment(postId: self.post!.postId, content: commentText){ _ in
+            
+        }
+        
+        // Clear the textView after sending
+        commentTextView.text = ""
+        placeholder.isHidden = false // Show the placeholder label again
+        
+        // Dismiss the keyboard
+        commentTextView.resignFirstResponder()
+    }
+    
+    private func setUp(){
+        tableView.register(CommentTableViewCell.self, forCellReuseIdentifier: CommentTableViewCell.cellId)
         view.backgroundColor = .white
         view.addSubview(navigationBar)
         view.addSubview(commentTextView)
         view.addSubview(tableView)
         view.addSubview(sendButton)
         view.addSubview(placeholder)
-        
-        tableView.refreshControl = refreshControl
-        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
-        
+    }
+    private func setConst(){
         placeholder.snp.makeConstraints { make in
             make.centerY.equalTo(commentTextView.snp.centerY)
             make.leading.equalTo(commentTextView.snp.leading).offset(10)
@@ -98,62 +156,23 @@ class ModalViewController: UIViewController {
             // 텍스트뷰가 내용에 따라 자동으로 늘어나도록 높이 제약을 추가하지 않음
             make.leading.equalTo(20)
         }
-        
+    }
+    private func setNavBar(){
         let navItem = UINavigationItem(title: "댓글")
         let rightButton = UIBarButtonItem(image: UIImage(named: "xmark")?.withRenderingMode(.alwaysTemplate), style: .plain, target: self, action: #selector(tapDisMissButton))
         rightButton.tintColor = .black
         navigationBar.setItems(([navItem]), animated: true)
-        
         navigationBar.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
         }
-        
         navItem.rightBarButtonItem = rightButton
-        
-        if let sheetPresentationController = sheetPresentationController {
-            sheetPresentationController.detents = [.medium(), .large()]
-            sheetPresentationController.prefersGrabberVisible = true
-        }
-        
-        // 키보드가 나타날 때와 사라질 때의 알림(Notification)을 등록
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
-    @objc func refresh() {
-            // 리프레시 액션에서 서버 데이터를 다시 로드하고 테이블 뷰를 다시 로드합니다.
-            tableView.reloadData()
-//        comments.insert(Comment(name: "경주", comment: "refresh", image: WithYouAsset.myIcon.image), at: 0)
-//        
-            refreshControl.endRefreshing() // 리프레시 종료
-        }
-    
-    @objc func sendButtonTapped() {
-        // Check if textView contains text
-        guard let commentText = commentTextView.text, !commentText.isEmpty else {
-            // Handle case where textView is empty
-            return
-        }
-        
-        // Add the new comment to the comments array
-        comments.insert(PostComment(name: "경주", comment: commentTextView.text , image: WithYouAsset.myIcon.image), at: 0)
-        
-        // Update the tableView
-        tableView.beginUpdates()
-        let indexPath = IndexPath(row: 0, section: 0)
-        tableView.insertRows(at: [indexPath], with: .top)
-        tableView.endUpdates()
-        
-        // Clear the textView after sending
-        commentTextView.text = ""
-        placeholder.isHidden = false // Show the placeholder label again
-        
-        // Dismiss the keyboard
-        commentTextView.resignFirstResponder()
+}
+// MARK: - UITextViewDelegate
+extension CommentModalViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        placeholder.isHidden = !textView.text.isEmpty
     }
-
-
-    // MARK: - UITextViewDelegate
-    
     
     @objc func tapDisMissButton(){
         dismiss(animated: true)
@@ -174,13 +193,11 @@ class ModalViewController: UIViewController {
         self.view.endEditing(true)
         return true
     }
-    
-    var keyHeight: CGFloat?
+   
     @objc func keyboardWillShow(_ sender: Notification) {
         guard keyHeight == nil else {
             return
         }
-        
         let userInfo = sender.userInfo
         let keyboardFrame = userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue
         let keyboardRectangle = keyboardFrame?.cgRectValue
@@ -199,30 +216,8 @@ class ModalViewController: UIViewController {
         keyHeight = nil
     }
 
-    
 }
 
-extension ModalViewController: UITextViewDelegate {
-    func textViewDidChange(_ textView: UITextView) {
-        placeholder.isHidden = !textView.text.isEmpty
-    }
-}
-
-extension ModalViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return comments.count // 댓글의 수 반환
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = CommentTableViewCell(style: .default, reuseIdentifier: "Cell")
-        // 셀에 댓글 내용 표시
-        cell.commentLabel.text = comments[indexPath.row].comment
-        cell.profileImage.image = comments[indexPath.row].image
-        cell.nameLabel.text = comments[indexPath.row].name
-        return cell
-    }
-}
-
-extension ModalViewController: UITableViewDelegate {
+extension CommentModalViewController: UITableViewDelegate {
     // Additional delegate methods can be implemented here if needed
 }

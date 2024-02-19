@@ -91,6 +91,7 @@ class NameProfileViewController: UIViewController {
     @objc func doneButtonTapped() {
         // 닉네임 이미지로 만들어서 보내기
         newImage.onNext(self.profileImageView.asImage())
+        newImage.onCompleted()
         self.navigationController?.popViewController(animated: true)
     }
 

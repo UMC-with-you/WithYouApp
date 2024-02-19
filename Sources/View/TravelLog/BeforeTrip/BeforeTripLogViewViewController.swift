@@ -150,7 +150,6 @@ class BeforeTripLogViewViewController: UIViewController {
                 self.present(alert, animated: true)
             })
             .disposed(by: disposeBag)
-        
     }
     
     private func setFunc(){
@@ -215,7 +214,6 @@ class BeforeTripLogViewViewController: UIViewController {
         
         sideMenu.snp.makeConstraints{
             $0.width.height.equalTo(30)
-            
         }
         
         logTitle.snp.makeConstraints{

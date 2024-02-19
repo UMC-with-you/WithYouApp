@@ -45,7 +45,7 @@ class PostService : BaseService {
     }
     
     //스크랩 게시글 모두 조회
-    func getScrapedPost(_ completion: @escaping (Any)-> Void){
+    func getScrapedPost(_ completion: @escaping ([Post])-> Void){
         requestReturnsData([Post].self, router: PostRouter.getScrapedPost, completion: completion)
     }
 }

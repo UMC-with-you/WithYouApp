@@ -161,6 +161,17 @@ class ByGoneTripLogViewController: UIViewController {
         }
         .disposed(by: bag)
         
+        //포스트 보기
+        postBookView.rx
+            .tapGesture()
+            .when(.recognized)
+            .subscribe{ _ in
+                let newVC = TravelPostViewViewController()
+                newVC.bindLog(log: self.log!)
+                self.navigationController?.pushViewController(newVC, animated: true)
+            }
+            .disposed(by: bag)
+        
         sideMenu.rx
             .tapGesture()
             .when(.recognized)

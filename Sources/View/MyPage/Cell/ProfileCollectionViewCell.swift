@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import RxSwift
+import RxGesture
 import SnapKit
 
 class ProfileCollectionViewCell: UICollectionViewCell {
@@ -88,10 +90,64 @@ class ProfileCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
+    var bag = DisposeBag()
+    var labelConst : Constraint?
+    var myViewGridData = PublishSubject<[Post]>()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.setViews()
         self.setConstraints()
+    }
+    
+    private func setRx(){
+        scrapLabel
+            .rx
+            .tapGesture()
+            .when(.recognized)
+            .subscribe{ [weak self]_ in
+                self?.scrapLabel.tintColor = WithYouAsset.mainColorDark.color
+                self?.myLabel.tintColor = .lightGray
+                self?.scrapPosts()
+                self?.labelConst?.deactivate()
+                self?.underlineView.snp.makeConstraints{
+                    self?.labelConst = $0.centerX.equalTo(self?.scrapLabel.snp.centerX ?? 0).constraint
+                }
+            }
+            .disposed(by: bag)
+        
+        myLabel
+            .rx
+            .tapGesture()
+            .when(.recognized)
+            .subscribe{ [weak self] _ in
+                self?.scrapLabel.tintColor = .lightGray
+                self?.myLabel.tintColor = WithYouAsset.mainColorDark.color
+                self?.myPosts()
+                self?.labelConst?.deactivate()
+                self?.underlineView.snp.makeConstraints{
+                    self?.labelConst = $0.centerX.equalTo(self?.myLabel.snp.centerX ?? 0).constraint
+                }
+            }
+            .disposed(by: bag)
+    }
+    
+    private func scrapPosts(){
+        PostService.shared.getScrapedPost{ response in
+            self.myViewGridData.onNext(response)
+        }
+    }
+    
+    private func myPosts(){
+        var localPost = DataManager.shared.getMyPost()
+        var newPosts = [Post]()
+        for post in localPost{
+            PostService.shared.getOnePost(postId: post.postId, travelId: post.travelId){ response in
+                newPosts.append(Post(postId: response.postId, thumbnailUrl: response.postMediaDTO.first!.url))
+            }
+        }
+        self.myViewGridData.onNext(newPosts)
+        
     }
     
     required init?(coder: NSCoder) {
@@ -146,7 +202,7 @@ class ProfileCollectionViewCell: UICollectionViewCell {
         
         underlineView.snp.makeConstraints { make in
             make.top.equalTo(scrapLabel.snp.bottom).offset(1)
-            make.leading.trailing.equalTo(scrapLabel)
+            labelConst = make.centerX.equalTo(scrapLabel.snp.centerX).constraint
             make.height.equalTo(3)
         }
     }

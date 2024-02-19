@@ -13,6 +13,7 @@ enum ProfileSizeOption : Int{
     case big = 70
     case medium = 40
     case small = 32
+    case my = 60
 }
 
 class ProfileView: UIView {

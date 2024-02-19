@@ -51,15 +51,23 @@ class CloudTestViewController : UIViewController {
     private func setFunc(){
         button1.rx.tapGesture().when(.recognized)
             .subscribe { _ in
-                let request = CloudRequest(date: "2024-02-18", travelId: 12)
-                CloudService.shared.addCloud(cloudModel: request, images: UIImage(named: "InIcon")!){_ in}
+                MemberService.shared.changeName(name: "박복동"){
+                    
+                }
             }
             .disposed(by: bag )
         
         button2.rx.tapGesture().when(.recognized)
             .subscribe { _ in
-                CloudService.shared.getCloud(travelId: 4, logId: 4){ _ in
-                    
+                MemberService.shared.changeImage(profilePicture: WithYouAsset.angry.image){
+                }
+            }
+            .disposed(by: bag )
+        
+        button3.rx.tapGesture().when(.recognized)
+            .subscribe { _ in
+                MemberService.shared.getInfo { Member in
+                    print(Member)
                 }
             }
             .disposed(by: bag )

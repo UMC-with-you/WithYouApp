@@ -51,6 +51,10 @@ extension BaseRouter {
             return request
         case .noHeader :
             return request
+        case .onlyAuth:
+            //request.setValue("application/json", forHTTPHeaderField: Constants.ContentType)
+            request.setValue("Bearer " + SecureDataManager.shared.getData(label: .accessToken), forHTTPHeaderField: Constants.Authorization)
+            return request
         }
     }
      

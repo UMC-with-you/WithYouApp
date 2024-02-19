@@ -9,7 +9,17 @@
 import Foundation
 
 
-struct Post : Codable {
+struct Post : Codable, Equatable {
     var postId : Int
     var thumbnailUrl : String
+}
+
+struct LocalPostDTO : Codable {
+    var postId : Int
+    var travelId : Int
+}
+
+struct PostWithLogId : Codable {
+    var post : Post
+    var travelId : Int
 }

@@ -13,7 +13,7 @@ class RewindService : BaseService {
     override private init(){}
     
     //Rewind 리스트 조회
-    func getAllRewind(travelId : Int, day : Int, _ completion : @escaping (Any)->Void){
+    func getAllRewind(travelId : Int, day : Int, _ completion : @escaping ([Rewind])->Void){
         requestReturnsData([Rewind].self, router: RewindRouter.getAllRewind(travelId: travelId, day: day), completion: completion)
     }
     
@@ -23,7 +23,7 @@ class RewindService : BaseService {
     }
     
     //Rewind 단건 조회
-    func getOneRewind(travelId : Int, rewindId : Int,_ completion : @escaping (Any)->Void){
+    func getOneRewind(travelId : Int, rewindId : Int,_ completion : @escaping (Rewind)->Void){
         requestReturnsData(Rewind.self, router: RewindRouter.getOneRewind(travelId: travelId, rewindId: rewindId), completion: completion)
     }
     
