@@ -15,20 +15,27 @@ class RewindBookViewController: UIViewController, UITableViewDelegate {
     var dataSource3: [String?] = []
     var dataSource4: [String?] = []
     
+    var todayMoodImages: [UIImageView?] = []
+    
     var likeCountValue:Int = 0
     var totalHeight: CGFloat = 150
     
     private func setupDataSource() {
         for i in 1...4 {
-            dataSource2.append("1111212121212121212121221212testtestsetstetsetsteteststsetestsettsetsetestestestestesteststsetteestestestesteststsetteestestestesteststsetteestttestetstestsetsetestsetsetsetses\(i)")
+            dataSource2.append("테스트 중입니다~~~~~~~~~~~~~\(i)")
         }
         for i in 1...2 {
-            dataSource3.append("1111212121212121212121221212testtestsetstetsetsteteststsetestsettsetsetestestestestesteststsetteestestestesteststsetteestestestesteststsetteestttestetstestsetsetestsetsetsetses\(i)")
+            dataSource3.append("가나다라마바사아자차카타파하\(i)")
         }
         
         
         dataSource4.append("1111212121212121212121221212testtestsetstetsetsteteststsetestsettsetsetestestestestesteststsetteestestestesteststsetteestestestesteststsetteestttestetstestsetsetestsetsetsetses")
         
+        todayMoodImages.append(UIImageView(image: WithYouAsset.sad.image))
+        todayMoodImages.append(UIImageView(image: WithYouAsset.angry.image))
+        todayMoodImages.append(UIImageView(image: WithYouAsset.heart.image))
+        todayMoodImages.append(UIImageView(image: WithYouAsset.sunny.image))
+    
     }
     
     lazy var titleLabel: UILabel = {
@@ -39,13 +46,31 @@ class RewindBookViewController: UIViewController, UITableViewDelegate {
         return label
     }()
     
+    lazy var leftButton: UIButton = {
+        let button = UIButton()
+        button.setImage(systemName: "chevron.left")
+        return button
+    }()
+    
+    lazy var rightButton: UIButton = {
+        let button = UIButton()
+        button.setImage(systemName: "chevron.right")
+        return button
+    }()
+    
     lazy var periodLabel: UILabel = {
         let label = UILabel()
         label.text = "2023.11.16 - 2023.11.20"
         label.font = WithYouFontFamily.Pretendard.light.font(size: 12)
-        label.textColor = WithYouAsset.gray2.color
+        label.textColor = WithYouAsset.logoColor.color
         
         return label
+    }()
+    
+    lazy var divider: UIView = {
+        let view = UIView()
+        view.backgroundColor = WithYouAsset.subColor.color
+        return view
     }()
     
     lazy var dayLabel: UILabel = {
@@ -66,6 +91,7 @@ class RewindBookViewController: UIViewController, UITableViewDelegate {
         return label
     }()
     
+    
     let todaysMoodLabel: UILabel = {
         let label = UILabel()
         label.text = "오늘의 기분"
@@ -74,17 +100,6 @@ class RewindBookViewController: UIViewController, UITableViewDelegate {
         return label
     }()
     
-    lazy var moodCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 0
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .clear
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.showsHorizontalScrollIndicator = false
-        return collectionView
-    }()
     
     let question1Label: UILabel = {
         let label = UILabel()
@@ -191,11 +206,29 @@ class RewindBookViewController: UIViewController, UITableViewDelegate {
         view.backgroundColor = WithYouAsset.backgroundColor.color
         
         contentView.addSubview(titleLabel)
+        contentView.addSubview(leftButton)
+        contentView.addSubview(rightButton)
         contentView.addSubview(periodLabel)
+        contentView.addSubview(divider)
         contentView.addSubview(dayLabel)
         contentView.addSubview(dateLabel)
         contentView.addSubview(todaysMoodLabel)
-        contentView.addSubview(moodCollectionView)
+        var temp: UIImageView = todayMoodImages[0]!
+        for i in todayMoodImages {
+            contentView.addSubview(i!)
+            i!.snp.makeConstraints { make in
+                make.top.equalTo(todaysMoodLabel.snp.bottom).offset(5)
+                make.width.height.equalTo(37)
+                if i == temp{
+                    make.trailing.equalTo(todaysMoodLabel.snp.trailing)
+                }
+                else{
+                    make.trailing.equalTo(temp.snp.leading).offset(13)
+                    temp = i!
+                }
+            }
+        }
+        
         contentView.addSubview(question1Label)
         contentView.addSubview(mvpImageView)
         contentView.addSubview(mvpNameLabel)
@@ -209,9 +242,25 @@ class RewindBookViewController: UIViewController, UITableViewDelegate {
             make.centerX.equalToSuperview()
         }
         
+        leftButton.snp.makeConstraints { make in
+            make.centerY.equalTo(titleLabel.snp.bottom)
+            make.trailing.equalTo(titleLabel.snp.leading).offset(-20)
+        }
+        
+        rightButton.snp.makeConstraints { make in
+            make.centerY.equalTo(titleLabel.snp.bottom)
+            make.leading.equalTo(titleLabel.snp.trailing).offset(20)
+        }
+        
         periodLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(5)
             make.centerX.equalTo(titleLabel)
+        }
+        
+        divider.snp.makeConstraints { make in
+            make.height.equalTo(1)
+            make.leading.trailing.equalToSuperview()
+            make.top.equalTo(periodLabel.snp.bottom).offset(25)
         }
         
         dayLabel.snp.makeConstraints { make in
@@ -250,36 +299,12 @@ class RewindBookViewController: UIViewController, UITableViewDelegate {
             make.leading.trailing.equalTo(dayLabel)
             make.top.equalTo(mvpNameLabel.snp.bottom).offset(20)
         }
-        //
-        //        question2TableView.snp.makeConstraints { make in
-        //            make.width.equalToSuperview().multipliedBy(0.8)
-        //            make.leading.equalTo(dayLabel).offset(10)
-        //            make.top.equalTo(question2Label.snp.bottom).offset(10)
-        //            make.bottom.equalTo(question3Label.snp.top).offset(-10)
-        //
-        //        }
-        //
-        //        question3Label.snp.makeConstraints { make in
-        //            make.leading.equalTo(dayLabel)
-        //            make.top.equalTo(question2TableView.snp.bottom).offset(20)
-        //        }
-        //
-        //        question3TableView.snp.makeConstraints { make in
-        //            make.width.equalToSuperview().multipliedBy(0.8)
-        //            make.leading.equalTo(dayLabel).offset(10)
-        //            make.top.equalTo(question3Label.snp.bottom)
-        //            make.bottom.lessThanOrEqualToSuperview().offset(-15)
-        //        }
-        //        contentView.layoutIfNeeded()
-        //
-        //        scrollView.contentSize = CGSize(width: scrollView.frame.width, height: contentView.frame.height)
-        // 셀의 높이를 동적으로 계산하여 총합을 구합니다
-
+        
         question2TableView.snp.makeConstraints { make in
             make.width.equalToSuperview().multipliedBy(0.9)
             make.leading.equalTo(dayLabel)
-            make.height.equalTo(80*dataSource2.count)
-            print("\(totalHeight) tableView make Constraints ")// 총합을 적용합니다
+            make.height.equalTo(70*dataSource2.count)
+            print("\(totalHeight) tableView make Constraints ")// 총합을 적용
             make.top.equalTo(question2Label.snp.bottom).offset(20)
         }
         
@@ -294,7 +319,7 @@ class RewindBookViewController: UIViewController, UITableViewDelegate {
             make.width.equalToSuperview().multipliedBy(0.9)
             make.leading.equalTo(dayLabel)
             make.top.equalTo(question3Label.snp.bottom).offset(20)
-            make.height.equalTo(80*dataSource3.count)
+            make.height.equalTo(70*dataSource3.count)
             make.bottom.lessThanOrEqualToSuperview().offset(-15)
         }
         //
@@ -332,18 +357,8 @@ extension RewindBookViewController: UITableViewDataSource {
         return UITableViewCell()
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 80
+        return 70
     }
 
 }
 
-extension RewindBookViewController: UICollectionViewDataSource, UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return dataSource2.count
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = UICollectionViewCell()
-        return cell
-    }
-}
