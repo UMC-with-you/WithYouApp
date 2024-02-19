@@ -13,7 +13,7 @@ final class OnBoardingView: UIView {
     
     let mainLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont(name: "Pretendard-Regular", size: 20)
+        label.font = UIFont(name: "Pretendard-Medium", size: 20)
         label.text = "우리 여행의 한 페이지"
         label.textColor = UIColor(red: 0.584, green: 0.741, blue: 0.824, alpha: 1)
         label.textAlignment = .center
