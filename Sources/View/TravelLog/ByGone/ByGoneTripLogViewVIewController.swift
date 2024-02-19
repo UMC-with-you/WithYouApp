@@ -179,7 +179,7 @@ class ByGoneTripLogViewController: UIViewController {
             .subscribe{ _ in
                 let newVC = RewindBookViewController()
                 newVC.log = self.log
-                newVc.members = self.travelMembers
+                newVC.members = try! self.travelMembers.value()
                 self.navigationController?.pushViewController(newVC, animated: true)
             }
             .disposed(by: bag)

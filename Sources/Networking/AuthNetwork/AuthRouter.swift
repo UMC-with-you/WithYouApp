@@ -33,11 +33,11 @@ extension AuthRouter : BaseRouter {
     var parameter: RequestParams {
         switch self {
         case .kakao(let code):
-                .body(AuthModelRequest(accessToken: code, provider: "kakao"))
+            return .body(AuthModelRequest(accessToken: code, provider: "kakao"))
         case .apple(let code, let email, let userName, let nonce):
-                .body(AppleAuthModel(accessToken: code, userName: userName, email: email, provider: "apple",nonce: nonce))
+            return .body(AppleAuthModel(accessToken: code, userName: userName, email: email, provider: "apple",nonce: nonce))
         case .google(let code):
-                .body(AuthModelRequest(accessToken: code, provider: "google"))
+            return .body(AuthModelRequest(accessToken: code, provider: "google"))
         }
     }
     
