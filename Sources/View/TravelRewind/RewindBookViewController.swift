@@ -139,6 +139,7 @@ class RewindBookViewController: UIViewController, UITableViewDelegate {
     lazy var question2TableView:UITableView = {
         let tableView = UITableView()
         tableView.isScrollEnabled = false
+        tableView.allowsSelection = false
         tableView.separatorStyle = .none
         return tableView
     }()
@@ -157,6 +158,7 @@ class RewindBookViewController: UIViewController, UITableViewDelegate {
         let tableView = UITableView()
         tableView.separatorStyle = .none
         tableView.isScrollEnabled = false
+        tableView.allowsSelection = false
         return tableView
     }()
     
