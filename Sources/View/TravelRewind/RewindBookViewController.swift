@@ -10,6 +10,8 @@ import UIKit
 import SnapKit
 
 class RewindBookViewController: UIViewController, UITableViewDelegate {
+    var log : Log?
+    var members : [Traveler]?
     
     var dataSource2: [String?] = []
     var dataSource3: [String?] = []

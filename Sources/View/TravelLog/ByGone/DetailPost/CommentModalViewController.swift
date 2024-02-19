@@ -11,8 +11,6 @@ struct PostComment {
 
 class CommentModalViewController: UIViewController {
     
-    var comments: [PostComment]  = []
-    
     var keyHeight: CGFloat?
     
     private var refreshControl = UIRefreshControl()
@@ -60,25 +58,12 @@ class CommentModalViewController: UIViewController {
         return button
     }()
     var post : Post?
-    
+    var log : Log?
     var commentRelay = BehaviorRelay<[CommentDTO]>(value: [])
     
     var members = [Traveler]()
     
     var bag = DisposeBag()
-    
-    private func setData(){
-        commentRelay.bind(to: tableView.rx.items(cellIdentifier: CommentTableViewCell.cellId, cellType: CommentTableViewCell.self)){index, item, cell in
-            cell.commentLabel.text = item.content
-            //ID 가지고
-            cell.nameLabel.text = "김테스트"
-            cell.profileImage.kf.setImage(with: URL(string:""))
-        }
-        .disposed(by:bag)
-    }
-    private func getDatas(){
-    
-    }
    
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -86,7 +71,7 @@ class CommentModalViewController: UIViewController {
         setConst()
         setNavBar()
         setData()
-        commentRelay.accept([CommentDTO(memberId: 2, commentId: 0, content: "asdfsdf", replyDTOs: [])])
+        getDatas()
         
         tableView.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
@@ -99,6 +84,29 @@ class CommentModalViewController: UIViewController {
         // 키보드가 나타날 때와 사라질 때의 알림(Notification)을 등록
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    private func setData(){
+        LogService.shared.getAllMembers(logId: self.log!.id) { travelers in
+            self.members = travelers
+        }
+        
+        commentRelay.bind(to: tableView.rx.items(cellIdentifier: CommentTableViewCell.cellId, cellType: CommentTableViewCell.self)){ index, item , cell in
+            cell.commentLabel.text = item.content
+            print(self.members)
+            for member in self.members {
+                if item.memberId == member.id {
+                    cell.nameLabel.text = member.name
+                    cell.profileImage.kf.setImage(with: URL(string: member.profilePicture!))
+                }
+            }
+        }
+        .disposed(by: bag)
+    }
+    private func getDatas(){
+        PostService.shared.getOnePost(postId: self.post!.postId, travelId: self.log!.id) { response in
+            self.commentRelay.accept(response.commentDTOs.map{$0!})
+        }
     }
     
     @objc func refresh() {
@@ -115,7 +123,7 @@ class CommentModalViewController: UIViewController {
         
         // Add the new comment to the comments array
         CommentService.shared.addComment(postId: self.post!.postId, content: commentText){ _ in
-            
+            self.getDatas()
         }
         
         // Clear the textView after sending
@@ -124,6 +132,7 @@ class CommentModalViewController: UIViewController {
         
         // Dismiss the keyboard
         commentTextView.resignFirstResponder()
+
     }
     
     private func setUp(){

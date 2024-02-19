@@ -172,6 +172,18 @@ class ByGoneTripLogViewController: UIViewController {
             }
             .disposed(by: bag)
         
+        //RewindBook
+        rewindBookView.rx
+            .tapGesture()
+            .when(.recognized)
+            .subscribe{ _ in
+                let newVC = RewindBookViewController()
+                newVC.log = self.log
+                newVc.members = self.travelMembers
+                self.navigationController?.pushViewController(newVC, animated: true)
+            }
+            .disposed(by: bag)
+        
         sideMenu.rx
             .tapGesture()
             .when(.recognized)

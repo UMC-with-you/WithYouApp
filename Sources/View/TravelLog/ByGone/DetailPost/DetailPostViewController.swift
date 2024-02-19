@@ -325,10 +325,7 @@ class DetailPostViewController: UIViewController {
     @objc func messageButtonTapped() {
         let modalViewController = CommentModalViewController()
         modalViewController.post = self.post
-        if let comments = detailPost?.commentDTOs {
-            modalViewController.commentRelay.accept(comments.map{$0!})
-        }
-        
+        modalViewController.log = self.log
         self.present(modalViewController, animated: true)
     }
     
