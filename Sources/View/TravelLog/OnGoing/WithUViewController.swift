@@ -105,7 +105,7 @@ class WithUViewController: UIViewController {
         self.navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: sideMenu), UIBarButtonItem(customView: ProfileView(size: .small, traveler: Traveler(id: 0, name: DataManager.shared.getUserName())))]
         
         noticeView.delegate = self
-        
+        noticeView.bindLog(log: self.log!)
         //멤버 정보 가져오기
         LogService.shared.getAllMembers(logId: log!.id){ response in
             self.travelMembers.onNext(response)

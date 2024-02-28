@@ -74,7 +74,6 @@ final class NoticeView: UIView {
         setConstraints()
         setupTableView()
         setRx()
-       
     }
 
     required init?(coder aDecoder: NSCoder) {
