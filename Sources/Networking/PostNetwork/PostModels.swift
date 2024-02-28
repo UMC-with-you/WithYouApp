@@ -7,17 +7,49 @@
 //
 
 import Foundation
+import UIKit
 
 
+struct NewPostStruct  {
+    var text : String
+    var mediaList : [UIImage]
+}
 struct NewPostRequest : Codable {
     var text : String
-    var urls : [String]
+    var mediaList : [String]
 }
 
 struct EditPostRequest : Codable {
-    var content : String
+    var text : String
+    var newPositions : [String :  Int]
 }
 
-struct OnePostResponse :Codable{ 
-    
+struct PostIdResponse : Codable {
+    var postId : Int
+}
+
+struct OnePostResponse :Codable{
+    var commentDTOs : [CommentDTO?]
+    var postId : Int
+    var memberid : Int
+    var text : String
+    var postMediaDTO :[PostMediaDTO]
+}
+
+struct PostMediaDTO : Codable {
+    var postMediaId : Int
+    var url : String
+    var position : Int
+}
+
+struct CommentDTO : Codable{
+    var memberId  : Int?
+    var commentId : Int
+    var content : String
+    var replyDTOs : [ReplyDTO]
+}
+struct ReplyDTO : Codable {
+    var replyId : Int
+    var memberId : Int
+    var content : String
 }

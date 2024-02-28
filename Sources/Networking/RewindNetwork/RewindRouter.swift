@@ -14,7 +14,8 @@ enum RewindRouter {
     case postRewind(rewindPostRequest: RewindPostRequest,travelId : Int)
     case getOneRewind(travelId : Int, rewindId : Int)
     case deleteRewind(travelId : Int, rewindId : Int)
-    case editRewind(rewindPostRequest: RewindPostRequest,travelId : Int, rewindId : Int)
+    case editRewind(rewindPostRequest: RewindEditRequest,travelId : Int, rewindId : Int)
+    case getQnaList
 }
 
 extension RewindRouter : BaseRouter {
@@ -24,7 +25,7 @@ extension RewindRouter : BaseRouter {
     
     var method: HTTPMethod {
         switch self{
-        case .getAllRewind, .getOneRewind:  return .get
+        case .getAllRewind, .getOneRewind, .getQnaList:  return .get
         case .postRewind : return .post
         case .deleteRewind : return .delete
         case .editRewind : return .patch
@@ -34,9 +35,11 @@ extension RewindRouter : BaseRouter {
     var path: String {
         switch self{
         case .getAllRewind(let id , _), .postRewind(_,let id):
-            return "/\(id)/rewinds"
+            return "/travels/\(id)/rewinds"
         case .deleteRewind(let travelId, let rewindId), .getOneRewind(let travelId, let rewindId), .editRewind(_,let travelId, let rewindId) :
-            return "/\(travelId)/rewinds/\(rewindId)"
+            return "/travels/\(travelId)/rewinds/\(rewindId)"
+        case .getQnaList:
+            return "/rewindQuestions"
         }
     }
     
@@ -44,9 +47,11 @@ extension RewindRouter : BaseRouter {
         switch self{
         case .getAllRewind(_, let day):
             return .query(["day" : day ])
-        case .postRewind(let rewindRequest, _), .editRewind(let rewindRequest, _,_):
+        case .postRewind(let rewindRequest, _):
             return .body(rewindRequest)
-        case .getOneRewind, .deleteRewind:
+        case .editRewind(let rewindEditRequest, _, _):
+            return .body(rewindEditRequest)
+        case .getOneRewind, .deleteRewind, .getQnaList:
             return .none
         }
     }
@@ -54,6 +59,4 @@ extension RewindRouter : BaseRouter {
     var header: HeaderType {
         return .withAuth
     }
-    
-    
 }

@@ -11,7 +11,7 @@ import Foundation
 
 enum PostRouter {
     case getAllPost(travelId : Int)
-    case addPost(travelId : Int, newPost : Codable)
+    case addPost(travelId : Int, newPost : NewPostStruct)
     case getOnePost(postId : Int, travelId : Int)
     case scrapPost(postId : Int)
     case deletePost(postId : Int)
@@ -55,12 +55,12 @@ extension PostRouter : BaseRouter{
     
     var parameter: RequestParams {
         switch self {
-        case .getAllPost, .scrapPost,.deletePost, .getScrapedPost :
-            return .none
-        case .addPost(_,let param), .editPost(_,let param):
-            return .body(param)
         case .getOnePost(_,let travelId):
             return .query(["travelId":travelId])
+        case .editPost(_, let editContent):
+            return .body(editContent)
+        default:
+            return .none
         }
     }
     
@@ -70,6 +70,32 @@ extension PostRouter : BaseRouter{
             return .basicHeader
         case .addPost, .scrapPost, .deletePost, .editPost, .getScrapedPost :
             return .withAuth
+        }
+    }
+    
+    var multipart: MultipartFormData{
+        switch self {
+        case .addPost(_, let newPost):
+            let multiPart = MultipartFormData(boundary:"<calculated when request is sent>")
+            let dic = [
+                "text" : newPost.text
+            ]
+            var text = "\(dic)"
+            text = text.replacingOccurrences(of: "[", with: "{")
+            text = text.replacingOccurrences(of: "]", with: "}")
+            
+            for (index, image) in newPost.mediaList.enumerated(){
+                print(image)
+                if let imageData = image.jpegData(compressionQuality: 0.1){
+                    multiPart.append(imageData, withName: "mediaList", fileName: "Post\(index).jpeg", mimeType: "image/jpeg")
+                }
+            }
+
+            multiPart.append(text.data(using: .utf8)!, withName: "request", mimeType: "application/json")
+            
+            return multiPart
+        default:
+            return MultipartFormData()
         }
     }
 }

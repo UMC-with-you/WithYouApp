@@ -38,14 +38,19 @@ open class DateController {
     }
     
     //dday계산 
-    func days(from date: Date) -> String {
-        var date = Calendar.current.dateComponents([.day], from: date, to: Date()).day! + 1
+    func days(from date: String) -> String {
+        let date = Calendar.current.dateComponents([.day], from: dateController.strToDate(date), to: Date()).day! + 1
         if date == 0 {
             return "D-Day"
         } else if date < 0 {
             return "D\(date)"
         } else {
-            return "D+\(date)"
+            return "Day \(date)"
         }
+    }
+    
+    func daysAsInt(from date: String)-> Int {
+        let date = Calendar.current.dateComponents([.day], from: dateController.strToDate(date), to: Date()).day! + 1
+        return date
     }
 }

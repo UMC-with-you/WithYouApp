@@ -13,14 +13,17 @@ enum ProfileSizeOption : Int{
     case big = 70
     case medium = 40
     case small = 32
+    case my = 60
 }
 
 class ProfileView: UIView {
     
     var size : ProfileSizeOption
     
-    let profileImage = {
-       let image = UIImageView()
+    var traveler : Traveler
+    
+    var profileImage = {
+       var image = UIImageView()
         image.layer.cornerRadius = 15
         image.layer.borderWidth = 1
         image.layer.borderColor = WithYouAsset.subColor.color.cgColor
@@ -29,6 +32,10 @@ class ProfileView: UIView {
     
     init( size : ProfileSizeOption, traveler : Traveler = Traveler(id: 0, name: "김아무개", profilePicture: "없음")){
         self.size = size
+        self.traveler = traveler
+        if traveler.name == DataManager.shared.getUserName(){
+            self.profileImage.image = UIImage(data:DataManager.shared.getUserImage())
+        }
         super.init(frame: .zero)
         
         //API 연동 후

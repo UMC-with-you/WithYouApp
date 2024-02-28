@@ -6,6 +6,7 @@
 //  Copyright © 2024 withyou.org. All rights reserved.
 //
 
+import Kingfisher
 import SnapKit
 import RxSwift
 import RxGesture
@@ -42,6 +43,8 @@ class LogCollectionViewCell: UICollectionViewCell {
         return button
     }()
     
+    var bag = DisposeBag()
+    
     override init(frame : CGRect){
         super.init(frame: frame)
         setUp()
@@ -50,11 +53,11 @@ class LogCollectionViewCell: UICollectionViewCell {
     public func bind(log: Log, isBigCell : Bool){
         self.title.text = log.title
         self.date.text = log.getTravelPeriod()
-        dDay.setTitle(dateController.days(from: dateController.strToDate(log.startDate)), for: .normal)
+        dDay.setTitle(dateController.days(from:log.startDate), for: .normal)
         
-        // Testing Code
-        self.backImage.image = UIImage(named: "LogModel\(Int.random(in: 1...3))")
-        
+        self.backImage.kf.setImage(with: URL(string: log.imageUrl))
+        self.backImage.alpha = 0.5
+    
         setConst(isBigCell)
         setSize(isBigCell)
     }
@@ -80,13 +83,13 @@ class LogCollectionViewCell: UICollectionViewCell {
         }
         
         title.snp.makeConstraints{
-            $0.leading.equalToSuperview().offset(20)
-            $0.bottom.equalTo(date).offset(-20)
+            $0.leading.equalToSuperview().offset(isBigCell ? 20: 10)
+            $0.bottom.equalTo(date).offset(isBigCell ? -20 : -15)
         }
         
         date.snp.makeConstraints{
             $0.leading.equalTo(title)
-            $0.bottom.equalToSuperview().offset(-20)
+            $0.bottom.equalToSuperview().offset(isBigCell ? -20 : -10)
         }
         
         if isBigCell {

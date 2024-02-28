@@ -11,7 +11,7 @@ import SnapKit
 
 class ProfileEditViewController: UIViewController {
 
-    var nickName: String?
+    var nickName: String = ""
     
     let button = WYAddButton(.big)
     
@@ -116,6 +116,7 @@ class ProfileEditViewController: UIViewController {
         view.backgroundColor = .white
         navigationItem.rightBarButtonItem = doneButton
         navigationItem.title = "프로필 수정"
+        nickNameTextField.delegate = self
         setViews()
         setConstraints()
     }
@@ -191,44 +192,31 @@ class ProfileEditViewController: UIViewController {
     
     @objc func nickNameSetButtonTapped() {
         let nameProfileViewController = NameProfileViewController()
-        nameProfileViewController.nickName = nickName
+        nameProfileViewController.nickName = nickNameTextField.text
+        _ = nameProfileViewController.newImage.subscribe{ image in
+            self.profileImageView.image = image
+        }
         navigationController?.pushViewController(nameProfileViewController, animated: true)
     }
     
     @objc func logoutButtonTapped() {
-        
+        DataManager.shared.logout()
+        let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
+        guard let delegate = sceneDelegate else { return }
+        delegate.window?.rootViewController = LoginViewController()
     }
     
     @objc func doneButtonTapped() {
-
+        guard let image = profileImageView.image else {return}
+        guard let name = nickNameTextField.text else {return}
+        DataManager.shared.saveImage(image: image, key: "ProfilePicture")
+        DataManager.shared.saveText(text: name, key: "UserName")
+        
+        MemberService.shared.changeImage(profilePicture: image){}
+        MemberService.shared.changeName(name: name){}
+        self.navigationController?.popViewController(animated: true)
     }
 
-}
-
-extension ProfileEditViewController {
-    // log 만드는 옵션
-    func popUpLogOption(){
-        let modalVC = NewLogSheetView()
-        //모달 사이즈 설정
-        let smallDetentId = UISheetPresentationController.Detent.Identifier("small")
-        let smallDetent = UISheetPresentationController.Detent.custom(identifier: smallDetentId) { context in
-            
-            return UIScreen.main.bounds.height / 3.5
-        }
-        
-        if let sheet = modalVC.sheetPresentationController{
-            sheet.detents = [smallDetent]
-            sheet.prefersGrabberVisible = true
-            sheet.preferredCornerRadius = 30
-        }
-        
-        _ =  modalVC.commander.subscribe(onCompleted: {
-            let newLogVC = CreateTravelLogViewController()
-            self.navigationController?.pushViewController(newLogVC, animated: true)
-        })
-        
-        present(modalVC, animated: true)
-    }
 }
 
 // 도경 : Delegate 관련 extension으로 빼고 함수 정렬
@@ -260,5 +248,17 @@ extension ProfileEditViewController : UIImagePickerControllerDelegate, UINavigat
         profileImageView.image = UIImage()
         cancelImageButton.isHidden = true
         selectImageButton.isHidden = false
+    }
+}
+
+
+extension ProfileEditViewController : UITextFieldDelegate {
+    //화면 터치시 키보드 내림
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
     }
 }

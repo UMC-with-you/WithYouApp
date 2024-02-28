@@ -12,21 +12,39 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
     
-    var isLogin : Bool = false
-    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        
+        //로그인화면 부터 실행하고 싶을 시
+//        for key in UserDefaults.standard.dictionaryRepresentation().keys {
+//            UserDefaults.standard.removeObject(forKey: key.description)
+//        }
+        
         
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = .init(windowScene: windowScene)
         print("SD: isFirstTime : \(DataManager.shared.getIsFirstTime())")
-        if !DataManager.shared.getIsFirstTime() {
-            window?.rootViewController = OnBoardingViewController()
+//        window?.rootViewController = TestTabbarViewController()
+//       window?.makeKeyAndVisible()
+        if DataManager.shared.getIsLogin() {
+            //로그인 기록 있을 시
+            //Tabbar는 NavigationView로 할당하면 안됌
+            window?.rootViewController = TabBarViewController()
+            window?.makeKeyAndVisible()
         } else {
-            window?.rootViewController = LoginViewController()
+            //로그인 기록 없을 시
+            if !DataManager.shared.getIsFirstTime() {
+                //앱 처음 실행시
+                changeRootViewController(newVC: OnBoardingViewController())
+            } else {
+                changeRootViewController(newVC: LoginViewController())
+            }
         }
-        window?.rootViewController = TabBarViewController()
+    }
+    
+    func changeRootViewController(newVC : UIViewController){
+        let newVC = UINavigationController(rootViewController: newVC)
+        window?.rootViewController = newVC
         window?.makeKeyAndVisible()
-        
     }
     
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {

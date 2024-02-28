@@ -85,8 +85,9 @@ class MainViewController: UIViewController {
     var ingLogs : [Log] = []
     var logs : BehaviorRelay<[Log]> = BehaviorRelay(value: [])
     var previousIndex : Int?
-    
+    var previousLogCount = 0
     override func viewDidLoad() {
+        print("viewdidload")
         super.viewDidLoad()
         view.backgroundColor = .white
         self.navigationItem.backButtonTitle = "Home"
@@ -94,27 +95,45 @@ class MainViewController: UIViewController {
         //로그 가져오기
         loadLogs()
         
-        // 2. if logs.count != 0 ? 여행중인지 아닌지 판단 후 표시 / default는 여행 중 아님
         setViews()
         setConst()
         setFuncs()
         setSubscribes()
-        
-        //
-        //로그 존재 여부에 따른 화면 표시
-        countLogs()
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        loadLogs()
     }
     
-    func setSubscribes(){
+    private func setSubscribes(){
         //로그 데이터 CollectionView 연결
         logs
             .bind(to: logCollectionView.rx.items(cellIdentifier: LogCollectionViewCell.cellId, cellType: LogCollectionViewCell.self)){ index, item, cell in
                 cell.bind(log: item, isBigCell: true)
-                if index != 0{
+                if index != self.previousIndex{
                     cell.transform = CGAffineTransform(scaleX: 1, y: 0.87)
                 }
+                
+                cell.rx.longPressGesture().when(.recognized)
+                    .subscribe{ _ in
+                        let alert = UIAlertController(title: "삭제", message: "셀을 삭제 하시겠습니까?", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "확인", style: .destructive,handler: { _ in
+                            LogService.shared.deleteLog(logId: item.id){ _ in
+                                self.loadLogs()
+                            }
+                        }))
+                        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+                        self.present(alert, animated: true)
+                    }
+                    .disposed(by: cell.bag)
             }
         .disposed(by: disposeBag)
+        
+        //LogCell 터치 navigation
+        logCollectionView.rx.modelSelected(Log.self)
+            .subscribe{ log in
+                self.navigateToLog(log: log)
+            }
+            .disposed(by: disposeBag)
         
         //터치에 따른 ING or UPCOMING 색 변경
         isUpcoming.subscribe(onNext: {
@@ -158,23 +177,28 @@ class MainViewController: UIViewController {
     }
     
     private func loadLogs(){
-        //LogManager.shared.updateLogsFromServer()
-        //self.logs.accept(LogManager.shared.getLogs())
-        self.upcomingLogs = [
-            Log(id: 0, title: "친구들과 좋은시간", startDate: "2024.02.08", endDate: "2024.02.010", status: "여행 중", imageUrl: "이미지"),
-            Log(id: 1, title: "서울 테스트 아아", startDate: "2024.02.22", endDate: "2024.02.25", status: "여행 전", imageUrl: "이미지"),
-            Log(id: 2, title: "배고픈 모임 당산", startDate: "2024.03.01", endDate: "2024.03.06", status: "여행 전", imageUrl: "이미지"),
-            Log(id: 3, title: "이태원 뿌시기 모임 가보자", startDate: "2024.03.09", endDate: "2024.03.13", status: "여행 전", imageUrl: "이미지"),
-            Log(id: 4, title: "아주좋아 아주좋아", startDate: "2024.03.16", endDate: "2024.03.18", status: "여행 전", imageUrl: "이미지")
-        ]
-        
-        self.ingLogs = [Log(id: 0, title: "친구들과 좋은시간", startDate: "2024.02.08", endDate: "2024.02.010", status: "여행 중", imageUrl: "이미지")]
-        
-        if ingLogs.count != 0 {
-            logs.accept(ingLogs)
-        } else {
-            logs.accept(upcomingLogs)
-            isUpcoming.accept(true)
+        LogManager.shared.updateLogsFromServer { logs in
+            if self.previousLogCount != logs.count {
+                self.ingLogs = []
+                self.upcomingLogs = []
+                self.previousIndex = logs.count
+                logs.forEach{ log in
+                    if log.status == "ONGOING"{
+                        self.ingLogs.append(log)
+                    } else if log.status == "UPCOMING" {
+                        self.upcomingLogs.append(log)
+                    }
+                }
+                
+                if self.ingLogs.count != 0 {
+                    self.logs.accept(self.ingLogs)
+                    self.isUpcoming.accept(false)
+                } else {
+                    self.logs.accept(self.upcomingLogs)
+                    self.isUpcoming.accept(true)
+                }
+                self.countLogs()
+            }
         }
     }
     
@@ -288,7 +312,7 @@ class MainViewController: UIViewController {
 
 extension MainViewController{
     // log 만드는 옵션
-    func popUpLogOption(){
+    private func popUpLogOption(){
         let modalVC = NewLogSheetView()
         
         //모달 사이즈 설정
@@ -303,7 +327,8 @@ extension MainViewController{
             sheet.preferredCornerRadius = 30
         }
       
-        _ =  modalVC.commander.subscribe({ event in
+        // Log 만들기로 Navigate
+        _ = modalVC.commander.subscribe({ event in
             let newLogVC = CreateTravelLogViewController()
             self.navigationController?.pushViewController(newLogVC, animated: true)
         })
@@ -312,20 +337,27 @@ extension MainViewController{
     }
     
     // 로그 터치시 해당 로그 상세 페이지로 이동
-   func navigateToLog(){
+    private func navigateToLog(log : Log){
         // 클릭한 log의 정보를 가져와서 열어야함
         // 백엔드측에서는 id로 가져올 수 있음
         // rx사용하면 가능함!
-        let logVC = BeforeTripLogViewViewController() // 1.  여기에 ID를 넣어서 controller가 가져오게 하는 방법 ?
-        self.navigationController?.pushViewController(logVC, animated: true)
+        if log.status == "UPCOMING"{
+            let logVC = BeforeTripLogViewViewController() // 1.  여기에 ID를 넣어서 controller가 가져오게 하는 방법 ?
+            logVC.log = log
+            self.navigationController?.pushViewController(logVC, animated: true)
+        } else {
+            let nextVC = WithUViewController()
+            nextVC.log = log
+            self.navigationController?.pushViewController(nextVC, animated: true)
+        }
     }
     
     // Upcoming Ing Label 클릭시
-    func upcomingClicked(){
+    private func upcomingClicked(){
         self.isUpcoming.accept(true)
     }
     
-    func ingClicked(){
+    private func ingClicked(){
         self.isUpcoming.accept(false)
     }
 }

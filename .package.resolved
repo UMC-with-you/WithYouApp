@@ -21,7 +21,7 @@
     {
       "identity" : "googlesignin-ios",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/google/GoogleSignIn-iOS",
+      "location" : "https://github.com/google/GoogleSignIn-iOS.git",
       "state" : {
         "revision" : "7932d33686c1dc4d7df7a919aae47361d1cdfda4",
         "version" : "7.0.0"
@@ -52,6 +52,15 @@
       "state" : {
         "revision" : "ae3c60cbd4e3b348775f8c766e5b908fa1e66c5a",
         "version" : "2.20.0"
+      }
+    },
+    {
+      "identity" : "kingfisher",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/onevcat/Kingfisher.git",
+      "state" : {
+        "revision" : "5b92f029fab2cce44386d28588098b5be0824ef5",
+        "version" : "7.11.0"
       }
     },
     {

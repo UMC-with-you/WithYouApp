@@ -14,12 +14,12 @@ import UIKit
 
 
 final class NoticeView: UIView {
-    
+    var log : Log?
     var delegate : NoticeViewDelegate?
     
-    var noticeArray: [Notice] = []
+    var notices = BehaviorSubject<[Notice]>(value: [])
     
-    var noticeDataManager = NoticeDataManager()
+    var members = [Traveler]()
     
     private let checkImage: UIImageView = {
         let imageView = UIImageView()
@@ -30,7 +30,7 @@ final class NoticeView: UIView {
     
     let mainLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont(name: "Pretendard-Regular", size: 18)
+        label.font = WithYouFontFamily.Pretendard.semiBold.font(size: 18)
         label.text = "NOTICE"
         label.textColor = UIColor(named: "MainColorDark")
         label.textAlignment = .center
@@ -71,12 +71,24 @@ final class NoticeView: UIView {
         backgroundColor = .white
         self.layer.masksToBounds = true
         layer.cornerRadius = 10
-        
-        
-        setupTableView()
-        setupDatas()
         setConstraints()
-        
+        setupTableView()
+        setRx()
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    public func bindLog(log:Log){
+        self.log = log
+        //NOtice 불러오기
+        NoticeService.shared.getAllNoticByLog(travelId: log.id){ response in
+            self.notices.onNext(NoticeDataManager.shared.responseToNotice(response: response, day: dateController.daysAsInt(from: log.startDate)))
+        }
+    }
+    
+    private func setRx(){
         //버튼 매핑 (도경)
         addButton.rx.tapGesture()
             .when(.recognized)
@@ -84,27 +96,22 @@ final class NoticeView: UIView {
                 self.addButtonTapped()
             })
             .disposed(by: bag)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        
+        notices
+            .bind(to: tableView.rx.items(cellIdentifier: "NoticeViewCell", cellType: NoticeTableViewCell.self)){ index,item,cell in
+                cell.bind(notice: item, logId: self.log!.id)
+            }
+            .disposed(by: bag)
+        
     }
     
-    func setupTableView() {
-        // 델리게이트 패턴 대리자 설정
-        tableView.dataSource = self
-        tableView.delegate = self
+    private func setupTableView() {
         // 셀의 높이 설정
         tableView.rowHeight = 70
         tableView.separatorStyle = .none
-        
-        // 셀의 등록 과정(스토리보드 사용시에는 스토리보드에서 자동 등록)
+        tableView.delegate = self
+        // 셀의 등록
         tableView.register(NoticeTableViewCell.self, forCellReuseIdentifier: "NoticeViewCell")
-    }
-    
-    func setupDatas() {
-        noticeDataManager.makeNoticeData() // 일반적으로는 서버에 요청
-        noticeArray = noticeDataManager.getNoticeData() // 데이터 받아서 뷰컨의 배열에 저장
     }
     
     private func setConstraints() {
@@ -142,28 +149,18 @@ final class NoticeView: UIView {
     }
 }
 
-extension NoticeView: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return noticeDataManager.getNoticeData().count
+extension NoticeView : UITableViewDelegate {
+    // Row Editable true
+    private func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
     }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "NoticeViewCell", for: indexPath) as! NoticeTableViewCell
-        
-        let array = noticeDataManager.getNoticeData()
-        let notice = array[indexPath.row]
-        
-        //cell.profileImageView.image = notice.profileImage
-        cell.userNameLabel.text = notice.userName
-        //cell.noticeLabel.text = notice.noticeString
-        cell.selectionStyle = .none
-
-        return cell
-    }
-    
-    // 셀이 선택되었을 때 어떤 동작을 할 것인지 뷰컨트롤러에게 물어봄
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+    // Swipe Right-to-left
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if (editingStyle == .delete) {
+           let list = try? notices.value()
+            if var noticeList = list {
+            }
+        }
     }
 }
 

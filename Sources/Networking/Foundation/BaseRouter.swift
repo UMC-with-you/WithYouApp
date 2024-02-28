@@ -16,12 +16,20 @@ protocol BaseRouter : URLRequestConvertible {
     var path : String { get }
     var parameter : RequestParams { get }
     var header : HeaderType { get }
+    var multipart : MultipartFormData {get}
 }
 
 extension BaseRouter {
     func asURLRequest() throws -> URLRequest {
-        let url = try baseURL.asURL()
-        var urlRequest = try URLRequest(url: url.appendingPathComponent(path), method : method)
+        var url : URL
+        var urlRequest : URLRequest
+        if path == "" {
+            url = try String(baseURL+path).asURL()
+            urlRequest = try URLRequest(url: url, method : method)
+        } else {
+            url = try baseURL.asURL()
+            urlRequest = try URLRequest(url: url.appendingPathComponent(path), method : method)
+        }
         urlRequest = self.makeHeaderForRequest(to: urlRequest)
         return try self.makePrameterForRequest(to: urlRequest, with: url)
     }
@@ -32,12 +40,20 @@ extension BaseRouter {
         case .withAuth :
             // 추후 Access Token 불러오기로 변환
             request.setValue(Constants.ApplicationJson, forHTTPHeaderField: Constants.ContentType)
-            request.setValue("1", forHTTPHeaderField: Constants.Authorization)
+            request.setValue("Bearer " + SecureDataManager.shared.getData(label: .accessToken), forHTTPHeaderField: Constants.Authorization)
+            //request.setValue("1", forHTTPHeaderField: Constants.Authorization)
             return request
         case .basicHeader:
             request.setValue(Constants.ApplicationJson, forHTTPHeaderField: Constants.ContentType)
             return request
+        case .multiPart:
+            request.setValue("Bearer " + SecureDataManager.shared.getData(label: .accessToken), forHTTPHeaderField: Constants.Authorization)
+            return request
         case .noHeader :
+            return request
+        case .onlyAuth:
+            //request.setValue("application/json", forHTTPHeaderField: Constants.ContentType)
+            request.setValue("Bearer " + SecureDataManager.shared.getData(label: .accessToken), forHTTPHeaderField: Constants.Authorization)
             return request
         }
     }
@@ -48,7 +64,12 @@ extension BaseRouter {
         case .query(let parameters):
             let params = parameters?.toDictionary() ?? [:]
             let queryParams = params.map { URLQueryItem(name: $0.key, value: "\($0.value)") }
-            var components = URLComponents(string: url.appendingPathComponent(path).absoluteString)
+            var components : URLComponents?
+            if path == "" {
+                components = URLComponents(string: url.absoluteString)
+            } else {
+                components = URLComponents(string: url.appendingPathComponent(path).absoluteString)
+            }
             components?.queryItems = queryParams
             request.url = components?.url
         case .body(let parameters):
@@ -60,5 +81,20 @@ extension BaseRouter {
             break
         }
         return request
+    }
+}
+
+
+extension BaseRouter {
+    var baseURL: String {
+        return Constants.baseURL
+    }
+    
+    var header: HeaderType {
+        return HeaderType.withAuth
+    }
+    
+    var multipart: MultipartFormData {
+        return MultipartFormData()
     }
 }

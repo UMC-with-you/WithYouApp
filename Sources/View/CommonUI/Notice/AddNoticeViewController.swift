@@ -11,11 +11,11 @@ import RxSwift
 import SnapKit
 import UIKit
 
-
-
 class AddNoticeViewController: UIViewController {
     
     var noticeOption : NoticeOptions = .before
+    
+    var noticeAdder : PublishSubject<[String:Any]> = PublishSubject()
     
     //내용 담는 변수
     var noticeText = ""
@@ -203,7 +203,13 @@ class AddNoticeViewController: UIViewController {
     func addNotice(){
         self.view.endEditing(true)
         // Notice 처리
-        print(noticeText + noticeOption.text)
+        let dic = [
+            "content" : self.noticeText,
+            "state" : noticeOption.rawValue
+        ] as [String : Any]
+        
+        self.noticeAdder.onNext(dic)
+        self.dismiss(animated: true)
     }
 }
 
@@ -231,6 +237,10 @@ extension AddNoticeViewController : UITextViewDelegate {
         // 글자 수 제한
         if textView.text.count > 30 {
             textView.deleteBackward()
+        } else if textView.text.count > 0 {
+            self.addButton.backgroundColor = WithYouAsset.mainColorDark.color
+        } else if textView.text.count == 0 {
+            self.addButton.backgroundColor = WithYouAsset.subColor.color
         }
         // 글자수 변경
         characterCountLabel.text = "\(textView.text.count)/30"
@@ -243,8 +253,6 @@ extension AddNoticeViewController : UITextViewDelegate {
             textView.text = textViewPlaceHolder
             textView.textColor = WithYouAsset.subColor.color
             
-        } else {
-            self.addButton.backgroundColor = WithYouAsset.mainColorDark.color
         }
         
         self.noticeText = textView.text

@@ -37,10 +37,14 @@ extension Log {
             "title" : title,
             "startDate" : startDate,
             "endDate" : endDate,
-            "url" : imageUrl,
             "localDate" : dateController.dateToSendServer()
         ]
         return dic
+    }
+    
+    //본인 여행중
+    func checkStatus(){
+        
     }
 }
 

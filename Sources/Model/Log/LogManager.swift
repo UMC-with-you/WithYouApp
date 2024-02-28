@@ -7,25 +7,31 @@
 //
 
 import Foundation
+import UIKit
 
 class LogManager {
     static let shared = LogManager()
     private init(){}
     
-    var logs = [Log]()
+   var logs = [Log]()
     
     func getLogs() -> [Log]{
         return self.logs
     }
     
-    func updateLogsFromServer(){
+    func setLogs(logs : [Log]){
+        self.logs = logs
+    }
+    
+    func updateLogsFromServer(_ completion : @escaping ([Log])-> ()){
         LogService.shared.getAllLogs(){ logs in
-            self.logs = logs as! [Log]
+            self.logs = logs
+            completion(self.logs)
         }
     }
     
-    func addLog(with log : Log){
-        LogService.shared.addLog(log: log){ response in
+    func addLog(with log : Log,image : UIImage){
+        LogService.shared.addLog(log: log,image: image){ response in
             print(response)
         }
     }

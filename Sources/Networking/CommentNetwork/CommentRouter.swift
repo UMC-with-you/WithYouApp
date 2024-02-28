@@ -36,7 +36,7 @@ extension CommentRouter : BaseRouter {
         case .addComment(let postId,_) :
             return "/\(postId)/comments"
         case .deleteComment(let commentId),.editComment(let commentId, _):
-            return "/comments/\(commentId)"
+            return "/\(commentId)"
         }
     }
     

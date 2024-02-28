@@ -59,7 +59,7 @@ class LogView: UIView {
     
         title.text = log?.title
         date.text = log?.getTravelPeriod()
-        dDay.setTitle(dateController.days(from: dateController.strToDate("2024.02.12")), for: .normal)
+        dDay.setTitle(dateController.days(from: log?.startDate ?? "오류"), for: .normal)
         dDay.titleLabel?.font = WithYouFontFamily.Pretendard.bold.font(size: 15)
         
         // Testing Code

@@ -13,6 +13,13 @@ struct RewindResponse : Codable {
     var createdAt : String
 }
 
+struct RewindEditRequest : Codable {
+    var mvpCandidateId : Int
+    var mood : String
+    var qnaList :[RewindQnaPostRequest]
+    var comment : String
+}
+
 struct RewindEditResponse : Codable {
     var rewindId : Int
     var createdAt : String
@@ -24,10 +31,15 @@ struct RewindPostRequest : Codable{
     var mvpCandidateId : Int
     var mood : String
     var qnaList :[RewindQnaPostRequest]
-    var commnet : String
+    var comment : String
 }
 
 struct RewindQnaPostRequest : Codable {
-    var quetionId : Int
+    var questionId : Int
     var answer : String
+}
+
+struct RewindQnaListResponse : Codable {
+    var id : Int
+    var content : String
 }

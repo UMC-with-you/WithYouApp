@@ -10,11 +10,17 @@ import Foundation
 
 struct NoticeResponse : Codable {
     var noticeId : Int
-        var date : String
+    var createdAt : String
 }
 
+struct EditNoiceRequest : Codable {
+    var noticeId: Int
+    var state : Int
+    var content : String
+}
 struct NoticeListResponse : Codable {
-    var url : String
+    var noticeId : Int
+    var url : String?
     var name : String
     var content : String
     var checkNum : Int

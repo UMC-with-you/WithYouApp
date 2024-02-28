@@ -20,6 +20,6 @@ struct PackingItemCheckResponse : Codable {
 
 struct PackingItemSetResponse : Codable {
     var packingItemId : Int
-    var packerId : Int
+    var packerId : Int?
     var checkboxState: Bool
 }

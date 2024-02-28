@@ -14,4 +14,6 @@ struct Constants {
     static let Authorization = "Authorization"
     static let ApplicationJson = "Application/json"
     static let ContentType = "Content-Type"
+    
+    static let MultiPart = "multipart/form-data"
 }

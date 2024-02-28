@@ -11,11 +11,11 @@ import Foundation
 
 enum NoticeRouter {
     case createNotice(notice : Dictionary<String, Any>)
-    case editNotice(notice : Dictionary<String, Any>)
+    case editNotice(notice : EditNoiceRequest)
     case getOneNotice(noticeId : Int)
     case deleteNotice(noticeId : Int)
-    case getAllNoticeByLog(travelId : Int, logId : Int)
-    case getAllNoticeByDate(travelId : Int, logId : Int)
+    case getAllNoticeByLog(travelId : Int)
+    case getAllNoticeByDate(travelId : Int)
 }
 
 extension NoticeRouter : BaseRouter {
@@ -38,9 +38,9 @@ extension NoticeRouter : BaseRouter {
             return ""
         case .deleteNotice(let id), .getOneNotice(let id) :
             return "/\(id)"
-        case .getAllNoticeByLog(let travelId, _) :
+        case .getAllNoticeByLog(let travelId) :
             return "/logs/\(travelId)"
-        case .getAllNoticeByDate(let travelId, _) :
+        case .getAllNoticeByDate(let travelId) :
             return "/date/\(travelId)"
         }
 
@@ -48,11 +48,11 @@ extension NoticeRouter : BaseRouter {
     
     var parameter: RequestParams {
         switch self {
-        case .createNotice(let notice),.editNotice(let notice):
+        case .createNotice(let notice):
             return .bodyFromDictionary(notice)
-        case .getAllNoticeByLog(_,let logId),.getAllNoticeByDate(_, let logId):
-            return .query(["logId":logId])
-        case .getOneNotice, .deleteNotice:
+        case .editNotice(let notice):
+            return .body(notice)
+        case .getOneNotice, .deleteNotice, .getAllNoticeByLog, .getAllNoticeByDate :
             return .none
         }
     }
