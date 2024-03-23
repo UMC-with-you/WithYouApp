@@ -18,6 +18,7 @@ struct ImageFile {
 
 class LogService : BaseService {
     static let shared = LogService()
+    
     private override init(){}
     
     //로그 추가
@@ -32,7 +33,6 @@ class LogService : BaseService {
             }
         }
     }
-    
     
     //모든 여행 로그 조회
     public func getAllLogs(_ completion: @escaping ([Log])-> ()) {
@@ -105,8 +105,4 @@ class LogService : BaseService {
 
         return body
     }
-    
 }
-
-
-

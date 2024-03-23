@@ -25,20 +25,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         print("SD: isFirstTime : \(DataManager.shared.getIsFirstTime())")
 //        window?.rootViewController = TestTabbarViewController()
 //       window?.makeKeyAndVisible()
-        if DataManager.shared.getIsLogin() {
-            //로그인 기록 있을 시
-            //Tabbar는 NavigationView로 할당하면 안됌
-            window?.rootViewController = TabBarViewController()
-            window?.makeKeyAndVisible()
-        } else {
-            //로그인 기록 없을 시
-            if !DataManager.shared.getIsFirstTime() {
-                //앱 처음 실행시
-                changeRootViewController(newVC: OnBoardingViewController())
-            } else {
-                changeRootViewController(newVC: LoginViewController())
-            }
-        }
+//        if DataManager.shared.getIsLogin() {
+//            //로그인 기록 있을 시
+//            //Tabbar는 NavigationView로 할당하면 안됌
+//            window?.rootViewController = TabBarViewController()
+//            window?.makeKeyAndVisible()
+//        } else {
+//            //로그인 기록 없을 시
+//            if !DataManager.shared.getIsFirstTime() {
+//                //앱 처음 실행시
+//                changeRootViewController(newVC: MyPageViewController())
+//            } else {
+//                changeRootViewController(newVC: LoginViewController())
+//            }
+//        }
+        changeRootViewController(newVC: MyPageViewController())
     }
     
     func changeRootViewController(newVC : UIViewController){

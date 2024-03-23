@@ -11,9 +11,8 @@ import RxSwift
 import UIKit
 
 
-class MainViewController: UIViewController {
+class MainViewController: BaseViewController {
     let header = TopHeader()
-
     let button = WYAddButton(.big)
     
     ///Log가 있을 때 보여지는 뷰
@@ -80,12 +79,13 @@ class MainViewController: UIViewController {
     private var eclipseConstraint: Constraint?
     var isLogEmpty : BehaviorRelay<Bool> = BehaviorRelay(value: true)
     var isUpcoming : BehaviorRelay<Bool> = BehaviorRelay(value: false)
-    var disposeBag = DisposeBag()
+    //var disposeBag = DisposeBag()
     var upcomingLogs : [Log] = []
     var ingLogs : [Log] = []
     var logs : BehaviorRelay<[Log]> = BehaviorRelay(value: [])
     var previousIndex : Int?
     var previousLogCount = 0
+    
     override func viewDidLoad() {
         print("viewdidload")
         super.viewDidLoad()
@@ -94,7 +94,6 @@ class MainViewController: UIViewController {
         logViewContainer.backgroundColor = .systemBackground
         //로그 가져오기
         loadLogs()
-        
         setViews()
         setConst()
         setFuncs()

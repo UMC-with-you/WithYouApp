@@ -38,6 +38,7 @@ struct DataManager {
     func getUserName()->String {
         return defaults.string(forKey: "UserName") ?? "Error"
     }
+    
     func getUserImage()->Data{
         return defaults.data(forKey: "ProfilePicture")!
     }

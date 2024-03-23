@@ -12,7 +12,6 @@ class OnBoardingViewController: UIViewController {
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         self.pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         
-        
         let page1 = ViewController1()
         let page2 = ViewController2()
         let page3 = ViewController3()
@@ -47,6 +46,7 @@ class OnBoardingViewController: UIViewController {
 
         addChild(pageViewController)
         view.addSubview(pageViewController.view)
+        
         pageViewController.didMove(toParent: self)
 
         pageViewController.dataSource = self
