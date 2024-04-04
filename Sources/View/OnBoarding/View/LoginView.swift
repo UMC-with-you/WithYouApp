@@ -9,7 +9,7 @@
 import UIKit
 import SnapKit
 
-final class LoginView: UIView {
+final class LoginView: BaseUIView {
     
     let logoImageView: UIImageView = {
         let imageView = UIImageView()
@@ -42,23 +42,27 @@ final class LoginView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-//        backgroundColor = .white
-        backgroundColor = UIColor(red: 0.969, green: 0.969, blue: 0.969, alpha: 1)
-        
-        addSubview(logoImageView)
-        addSubview(appleLoginButton)
-        addSubview(googleLoginButton)
-        addSubview(kakaoLoginButton)
-    
-        setConstraints()
+        setUpViewProperty()
+//        setUp()
+//        setLayout()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    private func setConstraints() {
-        
+    
+    func setUpViewProperty() {
+        backgroundColor = UIColor(red: 0.969, green: 0.969, blue: 0.969, alpha: 1)
+    }
+    
+    override func initUI() {
+        addSubview(logoImageView)
+        addSubview(appleLoginButton)
+        addSubview(googleLoginButton)
+        addSubview(kakaoLoginButton)
+    }
+    
+    override func initLayout() {
         logoImageView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.centerY.equalToSuperview().offset(-20)
