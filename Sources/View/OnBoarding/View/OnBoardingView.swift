@@ -9,7 +9,7 @@
 import UIKit
 import SnapKit
 
-final class OnBoardingView: UIView, BaseViewProtocol {
+final class OnBoardingView: BaseUIView {
     
     let mainLabel: UILabel = {
         let label = UILabel()
@@ -43,8 +43,8 @@ final class OnBoardingView: UIView, BaseViewProtocol {
         super.init(frame: frame)
         
         setUpViewProperty()
-        setUp()
-        setLayout()
+//        setUp()
+//        setLayout()
     }
     
     required init?(coder: NSCoder) {
@@ -55,13 +55,13 @@ final class OnBoardingView: UIView, BaseViewProtocol {
         backgroundColor = UIColor(red: 0.969, green: 0.969, blue: 0.969, alpha: 1)
     }
     
-    func setUp() {
+    override func initUI() {
         addSubview(mainLabel)
         addSubview(subLabel)
         addSubview(mockUpImageView)
     }
     
-    func setLayout() {
+    override func initLayout() {
         mainLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.bottom.equalTo(subLabel.snp.top).offset(-10)
@@ -76,9 +76,5 @@ final class OnBoardingView: UIView, BaseViewProtocol {
             make.centerX.equalToSuperview()
             make.bottom.equalToSuperview()
         }
-    }
-    
-    func setDelegate() {
-        //
     }
 }

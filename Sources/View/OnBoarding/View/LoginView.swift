@@ -9,7 +9,7 @@
 import UIKit
 import SnapKit
 
-final class LoginView: UIView, BaseViewProtocol {
+final class LoginView: BaseUIView {
     
     let logoImageView: UIImageView = {
         let imageView = UIImageView()
@@ -43,8 +43,8 @@ final class LoginView: UIView, BaseViewProtocol {
         super.init(frame: frame)
         
         setUpViewProperty()
-        setUp()
-        setLayout()
+//        setUp()
+//        setLayout()
     }
     
     required init?(coder: NSCoder) {
@@ -55,14 +55,14 @@ final class LoginView: UIView, BaseViewProtocol {
         backgroundColor = UIColor(red: 0.969, green: 0.969, blue: 0.969, alpha: 1)
     }
     
-    func setUp() {
+    override func initUI() {
         addSubview(logoImageView)
         addSubview(appleLoginButton)
         addSubview(googleLoginButton)
         addSubview(kakaoLoginButton)
     }
     
-    func setLayout() {
+    override func initLayout() {
         logoImageView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.centerY.equalToSuperview().offset(-20)
@@ -88,10 +88,6 @@ final class LoginView: UIView, BaseViewProtocol {
             make.width.equalTo(360)
             make.height.equalTo(60)
         }
-    }
-    
-    func setDelegate() {
-        
     }
     
     @objc private func loginButtonTapped() {

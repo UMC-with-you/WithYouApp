@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-class OnBoardingViewController: UIViewController, BaseViewProtocol {
+class OnBoardingViewController: BaseViewController {
     
     let pageViewController: UIPageViewController
     var pages = [UIViewController]()
@@ -48,24 +48,21 @@ class OnBoardingViewController: UIViewController, BaseViewProtocol {
         setUpPageViewController()
     }
     
-    func setUpViewProperty() {
+    override func setUpViewProperty() {
         view.backgroundColor = UIColor(red: 0.969, green: 0.969, blue: 0.969, alpha: 1)
     }
     
-    func setUp() {
+    override func setUp() {
         addChild(pageViewController)
         view.addSubview(pageViewController.view)
     }
     
-    func setLayout() {
+    override func setLayout() {
         pageViewController.view.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
     }
     
-    func setDelegate() {
-        //
-    }
     
     func setUpPageViewController() {
         pageViewController.didMove(toParent: self)
