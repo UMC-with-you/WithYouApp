@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import SnapKit
 
-class NameProfileViewController: UIViewController {
+class NameProfileViewController: BaseViewController {
 
     var nickName: String?
     var newImage : PublishSubject<UIImage> = PublishSubject()
@@ -45,17 +45,20 @@ class NameProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .white
-
-        setViews()
-        setConstraints()
+        setUpViewProperty()
+        setUp()
+        setLayout()
 
         if let nickName = nickName {
             textLabel.text = nickName
         }
     }
+    
+    override func setUpViewProperty() {
+        view.backgroundColor = .white
+    }
 
-    private func setViews() {
+    override func setUp() {
         view.addSubview(mainLabel)
         view.addSubview(profileImageView)
         profileImageView.addSubview(textLabel)
@@ -71,7 +74,7 @@ class NameProfileViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: button)
     }
 
-    private func setConstraints() {
+    override func setLayout() {
         mainLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.centerY.equalToSuperview().offset(-200)
@@ -108,5 +111,3 @@ extension NameProfileViewController: UIColorPickerViewControllerDelegate {
         profileImageView.backgroundColor = selectedBackgroundColor
     }
 }
-
-
