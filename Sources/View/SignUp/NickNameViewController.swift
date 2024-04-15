@@ -9,7 +9,7 @@
 import UIKit
 import SnapKit
 
-class NickNameViewController: UIViewController {
+final class NickNameViewController: BaseViewController {
     
     let logoImageView: UIImageView = {
         let imageView = UIImageView()
@@ -50,21 +50,27 @@ class NickNameViewController: UIViewController {
         button.addTarget(self, action: #selector(checkButtonTapped), for: .touchUpInside)
         return button
     }()
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         //self.navigationController?.setNavigationBarHidden(true, animated: true)
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
-        navigationItem.hidesBackButton = true
-        nickNameTextField.delegate = self
         
-        setViews()
-        setConstraints()
+        setUpViewProperty()
+        setUp()
+        setLayout()
+        setDelegate()
     }
     
-    private func setViews() {
+    override func setUpViewProperty() {
+        view.backgroundColor = .white
+        navigationItem.hidesBackButton = true
+    }
+    
+    override func setUp() {
         view.addSubview(logoImageView)
         view.addSubview(mainLabel)
         view.addSubview(nickNameTextField)
@@ -72,7 +78,7 @@ class NickNameViewController: UIViewController {
         view.addSubview(checkButton)
     }
     
-    private func setConstraints() {
+    override func setLayout() {
         logoImageView.snp.makeConstraints { make in
             make.width.equalTo(120)
             make.height.equalTo(40)
@@ -104,6 +110,10 @@ class NickNameViewController: UIViewController {
             make.width.equalToSuperview().multipliedBy(0.9)
             make.height.equalTo(40)
         }
+    }
+    
+    override func setDelegate() {
+        nickNameTextField.delegate = self
     }
     
     @objc func checkButtonTapped() {
