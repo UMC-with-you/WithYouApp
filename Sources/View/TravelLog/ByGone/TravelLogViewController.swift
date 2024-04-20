@@ -104,7 +104,7 @@ class TravelLogViewController: UIViewController {
     }
     
     private func popUpLogOption(){
-        let modalVC = NewLogSheetView()
+        let modalVC = NewLogSheetViewController()
         
         //모달 사이즈 설정
         let smallDetentId = UISheetPresentationController.Detent.Identifier("small")
@@ -118,11 +118,11 @@ class TravelLogViewController: UIViewController {
             sheet.preferredCornerRadius = 30
         }
       
-        // Log 만들기로 Navigate
-        _ = modalVC.commander.subscribe({ event in
-            let newLogVC = CreateTravelLogViewController()
-            self.navigationController?.pushViewController(newLogVC, animated: true)
-        })
+//        // Log 만들기로 Navigate
+//        _ = modalVC.commander.subscribe({ event in
+//            let newLogVC = CreateTravelLogViewController()
+//            self.navigationController?.pushViewController(newLogVC, animated: true)
+//        })
 
         present(modalVC, animated: true)
     }
