@@ -114,7 +114,6 @@ class LoginViewController: UIViewController {
         GIDSignIn.sharedInstance.signIn(withPresenting: self) { [weak self] signInResult, _ in
             guard let self,
                   let result = signInResult else { return }
-            
             // 서버에 토큰을 보내기
             AuthService.shared.authWithGoogle(result.user.accessToken.tokenString){ response in
                 print(response)

@@ -15,6 +15,18 @@ class LogManager {
     
    var logs = [Log]()
     
+    func getMockLogs() -> [Log]{
+        return [
+            Log(id: 0, title: "테스트1", startDate: "2024.03.05", endDate: "2024.04.30", status: "ONGOING", imageUrl: ""),
+            Log(id: 1, title: "테스트2", startDate: "2024.04.05", endDate: "2024.04.07", status: "BEFORE", imageUrl: ""),
+            Log(id: 2, title: "테스트3", startDate: "2024.04.05", endDate: "2024.04.13", status: "BEFORE", imageUrl: ""),
+            Log(id: 3, title: "테스트4", startDate: "2024.03.05", endDate: "2024.03.06", status: "BYGONE", imageUrl: ""),
+            Log(id: 4, title: "테스트5", startDate: "2024.03.07", endDate: "2024.03.09", status: "BYGONE", imageUrl: ""),
+            Log(id: 5, title: "테스트6", startDate: "2024.03.25", endDate: "2024.03.27", status: "BYGONE", imageUrl: "")
+            
+        ]
+    }
+    
     func getLogs() -> [Log]{
         return self.logs
     }

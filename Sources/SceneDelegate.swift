@@ -39,7 +39,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //                changeRootViewController(newVC: LoginViewController())
 //            }
 //        }
-        changeRootViewController(newVC: TabBarViewController())
+        changeRootViewController(newVC: LoginViewController())
     }
     
     func changeRootViewController(newVC : UIViewController){
