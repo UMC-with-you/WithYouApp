@@ -21,6 +21,7 @@ public extension Project {
                                 bundleId: "WithYou.app",
                                 deploymentTargets: deploymentTarget,
                                 sources: sources,
+                                resources: resources,
                                 dependencies: dependencies
             )
 
@@ -28,7 +29,6 @@ public extension Project {
                 name: name,
                 organizationName: organizationName,
                 packages: packages,
-
                 targets: [target]
             )
         }

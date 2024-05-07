@@ -55,6 +55,11 @@ class APIEventLogger: EventMonitor {
         
         print("----------------------------------------------------")
         print("4️⃣ Data 확인하기")
+        
+        if let header = response.response?.headers.dictionary {
+            print(header)
+        }
+        
         if let response = response.data?.toPrettyPrintedString {
             print(response)
         } else { print("❗데이터가 없거나, Encoding에 실패했습니다.")}

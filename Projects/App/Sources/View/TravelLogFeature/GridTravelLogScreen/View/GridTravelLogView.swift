@@ -1,16 +1,14 @@
 //
-//  TravelLogViewController.swift
+//  GridTravelLogView.swift
 //  WithYou
 //
-//  Created by 김도경 on 1/23/24.
+//  Created by 김도경 on 5/3/24.
 //  Copyright © 2024 withyou.org. All rights reserved.
 //
-import SnapKit
-import RxSwift
+
 import UIKit
 
-class TravelLogViewController: BaseViewController{
-    
+class GridTravelLogView : BaseUIView {
     let header = TopHeader()
     
     let searchBar = {
@@ -46,93 +44,18 @@ class TravelLogViewController: BaseViewController{
         return grid
     }()
     
-    var logs = BehaviorSubject<[Log]>(value: [])
-    
     let button = WYAddButton()
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        loadLogs()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        loadLogs()
-    }
-    
-   
-    
-    private func loadLogs(){
-        //여기 로그는 여행이 끝난 로그만
-        logs.onNext(LogManager.shared.getFinishedLogs())
-    }
-    
-    override func setFunc(){
-        logs
-            .bind(to: gridView.rx.items(cellIdentifier: LogCollectionViewCell.cellId, cellType: LogCollectionViewCell.self)) { index, item, cell in
-                cell.bind(log: item, isBigCell: false)
-            }
-            .disposed(by: disposeBag)
-        
-        gridView.rx
-            .modelSelected(Log.self)
-            .subscribe{ log in
-                self.navigateToWithYou(log: log)
-            }
-            .disposed(by: disposeBag)
-        
-        button
-            .rx
-            .tap
-            .subscribe { _ in
-                self.popUpLogOption()
-            }
-            .disposed(by: disposeBag)
-    }
-    
-    private func popUpLogOption(){
-        let modalVC = NewLogSheetViewController()
-        
-        //모달 사이즈 설정
-        let smallDetentId = UISheetPresentationController.Detent.Identifier("small")
-        let smallDetent = UISheetPresentationController.Detent.custom(identifier: smallDetentId) { context in
-            return UIScreen.main.bounds.height / 3.5
-        }
-        
-        if let sheet = modalVC.sheetPresentationController{
-            sheet.detents = [smallDetent]
-            sheet.prefersGrabberVisible = true
-            sheet.preferredCornerRadius = 30
-        }
-      
-//        // Log 만들기로 Navigate
-//        _ = modalVC.commander.subscribe({ event in
-//            let newLogVC = CreateTravelLogViewController()
-//            self.navigationController?.pushViewController(newLogVC, animated: true)
-//        })
-
-        present(modalVC, animated: true)
-    }
-    
-    private func navigateToWithYou(log : Log){
-        let logVC = ByGoneTripLogViewController()
-        logVC.bindLog(log: log)
-        self.navigationController?.pushViewController(logVC, animated: true)
-    }
-    
-    override func setUp(){
+    override func initUI() {
         [header,searchBar,sortIcon,gridView,button].forEach {
-            view.addSubview($0)
+            self.addSubview($0)
         }
         [searchIcon,searchField].forEach{
             searchBar.addSubview($0)
         }
     }
     
-    override func setUpViewProperty() {
-        view.backgroundColor = .white
-    }
-    
-    override func setLayout(){
+    override func initLayout() {
         header.snp.makeConstraints{
             $0.top.equalToSuperview()
             $0.width.equalToSuperview()
@@ -164,12 +87,13 @@ class TravelLogViewController: BaseViewController{
             $0.leading.equalToSuperview().offset(15)
             $0.trailing.equalToSuperview().offset(-15)
             $0.top.equalTo(searchBar.snp.bottom).offset(15)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.bottom.equalTo(self.safeAreaLayoutGuide)
         }
         
         button.snp.makeConstraints{
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-15)
+            $0.bottom.equalTo(self.safeAreaLayoutGuide).offset(-15)
             $0.trailing.equalToSuperview().offset(-15)
         }
     }
+    
 }

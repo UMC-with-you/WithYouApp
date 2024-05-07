@@ -6,6 +6,7 @@
 //  Copyright © 2024 withyou.org. All rights reserved.
 //
 
+import Domain
 import RxGesture
 import RxSwift
 import RxCocoa
