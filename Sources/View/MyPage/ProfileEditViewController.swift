@@ -9,7 +9,7 @@
 import UIKit
 import SnapKit
 
-class ProfileEditViewController: UIViewController {
+class ProfileEditViewController: BaseViewController {
 
     var nickName: String = ""
     
@@ -108,33 +108,35 @@ class ProfileEditViewController: UIViewController {
         return view
     }()
     
-    let doneButton = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(doneButtonTapped))
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setUpViewProperty()
+        setUp()
+        setLayout()
+        setDelegate()
+    }
+    
+    override func setUpViewProperty() {
         view.backgroundColor = .white
-        navigationItem.rightBarButtonItem = doneButton
         navigationItem.title = "프로필 수정"
-        nickNameTextField.delegate = self
-        setViews()
-        setConstraints()
+        
+        // 네비게이션 버튼 설정
+        let button = WYButton("완료")
+        button.backgroundColor = WithYouAsset.mainColorDark.color
+        button.frame = CGRect(x: 0, y: 0, width: 64, height: 30)
+        button.layer.cornerRadius = 15
+        button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: button)
     }
     
-    private func setViews() {
-        view.addSubview(profileImageView)
-        view.addSubview(selectImageButton)
-        view.addSubview(cancelImageButton)
-        view.addSubview(mainLabel)
-        view.addSubview(nickNameTextField)
-        view.addSubview(nameLineView)
-        view.addSubview(nickNameSelectButton)
-        view.addSubview(nickNameLineView)
-        view.addSubview(logoutButton)
-        view.addSubview(logoutLineView)
+    override func setUp() {
+        [profileImageView,selectImageButton,cancelImageButton,mainLabel,nickNameTextField, nameLineView,nickNameSelectButton,nickNameLineView, logoutButton, logoutLineView].forEach{
+            view.addSubview($0)
+        }
     }
     
-    private func setConstraints() {
+    override func setLayout() {
         mainLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview().offset(-60)
             make.leading.equalToSuperview().offset(25)
@@ -188,6 +190,10 @@ class ProfileEditViewController: UIViewController {
             make.leading.trailing.equalTo(logoutButton)
             make.height.equalTo(1)
         }
+    }
+    
+    override func setDelegate() {
+        nickNameTextField.delegate = self
     }
     
     @objc func nickNameSetButtonTapped() {
