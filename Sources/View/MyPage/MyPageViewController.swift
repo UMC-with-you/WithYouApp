@@ -13,16 +13,17 @@ import RxCocoa
 import UIKit
 import SnapKit
 
-final class MyPageViewController: UIViewController {
+final class MyPageViewController: BaseViewController {
     
     //UI Components
     let topLabel = {
-       let label = UILabel()
+        let label = UILabel()
         label.text = "MY"
         label.font = WithYouFontFamily.Pretendard.semiBold.font(size: 20)
         label.textAlignment = .center
         label.textColor = WithYouAsset.mainColorDark.color
         return label
+        
     }()
     let myPageCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -107,7 +108,7 @@ final class MyPageViewController: UIViewController {
         label.font = UIFont(name: "Pretendard-Medium", size: 18)
         return label
     }()
-
+    
     var bag = DisposeBag()
     
     var underLineConst : Constraint?
@@ -125,14 +126,13 @@ final class MyPageViewController: UIViewController {
     }
     
     override func viewDidLoad() {
-        view.backgroundColor = .white
         self.navigationItem.titleView = topLabel
+        setUpViewProperty()
         setUp()
-        setConst()
+        setLayout()
         setRx()
         setCollectionView()
         loadPosts()
-        
     }
     
     private func loadPosts(){
@@ -154,7 +154,7 @@ final class MyPageViewController: UIViewController {
             }
         }
         
-        //My
+        // My
         myPost = []
         let localPostDTO = DataManager.shared.getMyPost()
         let travelSet = Set<Int>(localPostDTO.map{$0.travelId})
@@ -168,7 +168,6 @@ final class MyPageViewController: UIViewController {
                 }
             }
         }
-        
         
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 5) {
             if self.linePosition.value {
@@ -205,24 +204,24 @@ final class MyPageViewController: UIViewController {
                 }
                 
             })
-        .disposed(by: bag)
+            .disposed(by: bag)
     }
     
     private func setRx(){
         scrapLabel.rx.tapGesture()
             .when(.recognized)
             .subscribe{ [unowned self] _ in
-            linePosition.accept(true)
+                linePosition.accept(true)
                 
-        }
-        .disposed(by: bag)
+            }
+            .disposed(by: bag)
         
         myLabel.rx.tapGesture()
             .when(.recognized)
             .subscribe{ [unowned self] _ in
-            linePosition.accept(false)
-        }
-        .disposed(by: bag)
+                linePosition.accept(false)
+            }
+            .disposed(by: bag)
         
         linePosition.subscribe { [unowned self] _ in
             self.underLineConst?.deactivate()
@@ -239,13 +238,17 @@ final class MyPageViewController: UIViewController {
         .disposed(by:bag)
     }
     
-    private func setUp(){
+    override func setUpViewProperty() {
+        view.backgroundColor = .white
+    }
+    
+    override func setUp() {
         [profileView,titleLabel,nickNameLabel,editButton,scrapLabel, myLabel,underlineView,myPageCollectionView].forEach{
             view.addSubview($0)
         }
     }
     
-    private func setConst(){
+    override func setLayout() {
         profileView.snp.makeConstraints{
             $0.leading.equalToSuperview().offset(20)
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(30)
@@ -261,7 +264,7 @@ final class MyPageViewController: UIViewController {
             $0.top.equalTo(titleLabel.snp.bottom).offset(5)
             $0.leading.equalTo(titleLabel.snp.leading)
         }
-
+        
         editButton.snp.makeConstraints{
             $0.centerY.equalTo(profileView.snp.centerY)
             $0.trailing.equalToSuperview().offset(-15)
@@ -295,8 +298,8 @@ final class MyPageViewController: UIViewController {
     func configureRefreshControl () {
         myPageCollectionView.refreshControl = UIRefreshControl()
         myPageCollectionView.refreshControl?.addTarget(self, action:
-                                                    #selector(handleRefreshControl),
-                                                 for: .valueChanged)
+                                                        #selector(handleRefreshControl),
+                                                       for: .valueChanged)
     }
     
     @objc func handleRefreshControl() {
