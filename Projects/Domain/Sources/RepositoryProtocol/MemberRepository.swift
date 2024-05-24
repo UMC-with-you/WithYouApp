@@ -6,11 +6,11 @@
 //  Copyright © 2024 withyou.org. All rights reserved.
 //
 
+import Foundation
 import RxSwift
-import UIKit
 
 public protocol MemberRepository {
-    func changeName(name : String) -> Single<Void>
-    func changeProfilePic(image : UIImage) -> Single<Void>
+    func changeName(name : String) -> Single<String>
+    func changeProfilePic(image : Data) -> Single<String>
     func getMemberInfo() -> Single<Member>
 }

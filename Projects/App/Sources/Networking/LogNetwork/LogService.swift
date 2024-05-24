@@ -9,6 +9,7 @@
 import Alamofire
 import Foundation
 import UIKit
+import Domain
 
 struct ImageFile {
     let filename: String

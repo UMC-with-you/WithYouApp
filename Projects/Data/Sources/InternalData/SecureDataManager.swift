@@ -1,10 +1,12 @@
 //
 //  SecureDataManager.swift
-//  WithYou
+//  Data
 //
-//  Created by 김도경 on 2/8/24.
+//  Created by 김도경 on 5/14/24.
 //  Copyright © 2024 withyou.org. All rights reserved.
 //
+
+import Foundation
 
 import Foundation
 import Security

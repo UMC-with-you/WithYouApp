@@ -213,7 +213,6 @@ class TravelRewindViewController: UIViewController{
     
     private func setQuestion(){
         self.qnaList = []
-        print(rewindId)
         if let id = rewindId {
             RewindService.shared.getOneRewind(travelId: self.log!.id, rewindId: id){ response in
                 self.qnaList = response.rewindQnaList

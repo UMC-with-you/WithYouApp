@@ -9,8 +9,12 @@
 import Foundation
 import RxSwift
 
-protocol AuthRepository {
-    func authWithKakao(authCode : String) -> Single<AuthModelResponse>
-    func authWithApple(authCode : String) -> Single<AuthModelResponse>
-    func authWithGoogle(authCode : String) -> Single<AuthModelResponse>
+public protocol AuthRepository {
+    func authWithKakao(authCode : String) -> Single<AuthToken>
+    func authWithApple(accessToken : String,
+                       userName : String,
+                       email : String,
+                       provider : String,
+                       nonce : String) -> Single<AuthToken>
+    func authWithGoogle(authCode : String) -> Single<AuthToken>
 }

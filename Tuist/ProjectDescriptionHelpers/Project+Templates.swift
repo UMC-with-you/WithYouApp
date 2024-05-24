@@ -6,6 +6,7 @@ public extension Project {
             name: String,
             platform: Platform = .iOS,
             product: Product,
+            includeTest : Bool = false,
             organizationName: String = "withyou.org.",
             packages: [Package] = [],
             deploymentTarget: DeploymentTargets = .iOS("16.0"),
@@ -15,21 +16,34 @@ public extension Project {
             infoPlist: InfoPlist = .default
         ) -> Project {
             
-            let target = Target(name: name,
+            var target = [Target(name: name,
                                 destinations: .iOS,
                                 product: product,
                                 bundleId: "WithYou.app",
                                 deploymentTargets: deploymentTarget,
+                                 infoPlist: infoPlist,
                                 sources: sources,
                                 resources: resources,
-                                dependencies: dependencies
-            )
-
+                                 dependencies: dependencies)]
+            
+            if includeTest{
+                let testTarget = Target(name: "\(name)Tests",
+                                        destinations: .iOS,
+                                        product: .unitTests,
+                                        bundleId: "WithYou.app.Tests",
+                                        deploymentTargets: deploymentTarget,
+                                        infoPlist: .default,
+                                        sources: "Tests/**",
+                                        dependencies: [.target(name: name)]
+                )
+                target.append(testTarget)
+            }
+            
             return Project(
                 name: name,
                 organizationName: organizationName,
                 packages: packages,
-                targets: [target]
+                targets: target
             )
         }
 }

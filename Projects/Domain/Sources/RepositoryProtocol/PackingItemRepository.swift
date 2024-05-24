@@ -10,8 +10,8 @@ import RxSwift
 
 public protocol PackingItemRepository {
     func getItemList(travelId : Int) -> Single<[PackingItem]>
-    func addItem(travelId : Int, itemName : String) -> Single<Void>
-    func deleteItem(packingItemId : Int) -> Single<Void>
-    func checkItem(packingItemId: Int) -> Single<PackingItemCheckResponse>
-    func setItemMember(packingItemId : Int, memberId : Int) -> Single<PackingItemSetResponse>
+    func addItem(travelId : Int, itemName : String) -> Single<Int>
+    func deleteItem(packingItemId : Int) -> Single<Int>
+    func checkItem(packingItemId: Int) -> Single<Bool>
+    func setItemMember(packingItemId : Int, memberId : Int) -> Single<Bool>
 }

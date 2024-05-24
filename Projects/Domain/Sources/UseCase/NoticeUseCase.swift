@@ -9,12 +9,12 @@
 import RxSwift
 
 public protocol NoticeUseCase {
-    func createNotice(info: Dictionary<String,Any>, memberId : Int, logId: Int) -> Single<Void>
-    func editNotice(notice: EditNoiceRequest) -> Single<Void>
-    func getOneNotice(noticeId : Int) -> Single<Void>
-    func deleteNotice(noticeId : Int) -> Single<Void>
-    func getAllNoticeByLog(travelId : Int) -> Single<Void>
-    func getAllNoticeByDate(travelId : Int) -> Single<Void>
+    func createNotice(state: Int, content: String, memberId: Int, logId: Int) -> Single<Int>
+    func editNotice(noticeId : Int, state: Int, content : String) -> Single<Int>
+    func getOneNotice(noticeId : Int) -> Single<Int>
+    func deleteNotice(noticeId : Int) -> Single<Int>
+    func getAllNotice(travelId : Int, day : Int) -> Single<[Notice]>
+    func checkNotice(noticeId : Int, memberId : Int) -> Single<Int>
 }
 
 final public class DefaultNoticeUseCase : NoticeUseCase {
@@ -24,31 +24,27 @@ final public class DefaultNoticeUseCase : NoticeUseCase {
         self.repository = repository
     }
     
-    public func createNotice(info: Dictionary<String, Any>, memberId: Int, logId: Int) -> Single<Void> {
-        repository.createNotice(info: info, memberId: memberId, logId: logId)
+    public func createNotice(state: Int, content: String, memberId: Int, logId: Int) -> Single<Int> {
+        repository.createNotice(state: state, content: content, memberId: memberId, logId: logId)
     }
     
-    public func editNotice(notice: EditNoiceRequest) -> Single<Void> {
-        repository.editNotice(notice: notice)
+    public func editNotice(noticeId : Int, state: Int, content : String) -> Single<Int> {
+        repository.editNotice(noticeId: noticeId, state: state, content: content)
     }
     
-    public func getOneNotice(noticeId: Int) -> Single<Void> {
+    public func getOneNotice(noticeId: Int) -> Single<Int> {
         repository.getOneNotice(noticeId: noticeId)
     }
     
-    public func deleteNotice(noticeId: Int) -> Single<Void> {
+    public func deleteNotice(noticeId: Int) -> Single<Int> {
         repository.deleteNotice(noticeId: noticeId)
     }
     
-    public func getAllNoticeByLog(travelId: Int) -> Single<Void> {
-        repository.getAllNoticeByLog(travelId: travelId)
+    public func getAllNotice(travelId: Int, day : Int) -> Single<[Notice]> {
+        repository.getAllNotice(travelId: travelId, day : day)
     }
     
-    public func getAllNoticeByDate(travelId: Int) -> Single<Void> {
-        repository.getAllNoticeByDate(travelId: travelId)
-    }
-    
-    public func checkNotice() -> Single<Void>{
-        repository.checkNotice()
+    public func checkNotice(noticeId : Int, memberId : Int) -> Single<Int>{
+        repository.checkNotice(noticeId: noticeId, memberId: memberId)
     }
 }

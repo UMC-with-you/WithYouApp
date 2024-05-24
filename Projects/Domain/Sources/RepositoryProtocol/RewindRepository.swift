@@ -10,9 +10,18 @@ import RxSwift
 
 public protocol RewindRepository {
     func getAllRewind(travelId : Int, day : Int) -> Single<[Rewind]>
-    func createRewind(rewindPostRequest : RewindPostRequest, travelId : Int) -> Single<Void>
+    func createRewind(day: Int,
+                      mvpCandidateId: Int,
+                      mood: String,
+                      qnaList: [RewindQna],
+                      comment: String,
+                      travelId: Int) -> Single<Int>
     func getOneRewind(travelId : Int, rewindId : Int) -> Single<Rewind>
-    func deleteRewind(travelId : Int, rewindId : Int) -> Single<Void>
-    func editRewind(rewindEditRequest: RewindEditRequest, travelId: Int) -> Single<Void>
-    func getQnaList() -> Single<[RewindQnaListResponse]>
+    func deleteRewind(travelId : Int, rewindId : Int) -> Single<String>
+    func editRewind(mvpCandidateId: Int,
+                    mood: String,
+                    qnaList: [RewindQna],
+                    comment: String,
+                    travelId: Int, rewindId: Int) -> Single<String>
+    func getQnaList() -> Single<[RewindQna]>
 }

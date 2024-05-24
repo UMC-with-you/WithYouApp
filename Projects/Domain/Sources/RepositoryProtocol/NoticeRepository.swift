@@ -9,11 +9,10 @@
 import RxSwift
 
 public protocol NoticeRepository {
-    func createNotice(info: Dictionary<String,Any>, memberId : Int, logId: Int) -> Single<Void>
-    func editNotice(notice: EditNoiceRequest) -> Single<Void>
-    func getOneNotice(noticeId : Int) -> Single<Void>
-    func deleteNotice(noticeId : Int) -> Single<Void>
-    func getAllNoticeByLog(travelId : Int) -> Single<Void>
-    func getAllNoticeByDate(travelId : Int) -> Single<Void>
-    func checkNotice() -> Single<Void>
+    func createNotice(state: Int, content: String, memberId: Int, logId: Int) -> Single<Int>
+    func editNotice(noticeId : Int, state: Int, content : String) -> Single<Int>
+    func getOneNotice(noticeId : Int) -> Single<Int>
+    func deleteNotice(noticeId : Int) -> Single<Int>
+    func getAllNotice(travelId : Int, day : Int) -> Single<[Notice]>
+    func checkNotice(noticeId : Int, memberId : Int) -> Single<Int>
 }

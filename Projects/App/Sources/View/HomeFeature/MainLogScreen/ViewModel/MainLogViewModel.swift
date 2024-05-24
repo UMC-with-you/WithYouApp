@@ -7,6 +7,7 @@
 //
 
 import RxCocoa
+import Domain
 import RxSwift
 
 class MainLogViewModel {

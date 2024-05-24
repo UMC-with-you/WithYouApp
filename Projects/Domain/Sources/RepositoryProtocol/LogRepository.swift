@@ -7,16 +7,15 @@
 //
 
 import Foundation
-import UIKit
 import RxSwift
 
-protocol LogRepository {
-    func addLog(title:String, startDate:String, endDate: String, localDate:Date, image : UIImage) -> Single<Void>
-    func deleteLog(travelId : Int) -> Single<Void>
-    func editLog(travelId : Int, title:String?, startDate:String?, endDate: String?, localDate:Date?, image : UIImage?) -> Single<Void>
+public protocol LogRepository {
+    func getAllLogs() -> Single<[Log]>
+    func addLog(title:String, startDate:String, endDate: String, localDate:Date, image : Data?) -> Single<Int>
+    func deleteLog(travelId : Int) -> Single<Int>
+    func editLog(travelId : Int, title:String?, startDate:String?, endDate: String?, localDate:Date?, image : Data?) -> Single<Int>
     func joinLog(inviteCode : String) -> Single<Void>
     func getAllLogMembers(travelId : Int) -> Single<[Traveler]>
-    func getInviteCode(travelId : Int) -> Single<InviteCodeResponse>
-    func leaveLog(travelId : Int , memberId : Int) -> Single<Void>
+    func getInviteCode(travelId : Int) -> Single<String>
+    func leaveLog(travelId : Int , memberId : Int) -> Single<Int>
 }
-

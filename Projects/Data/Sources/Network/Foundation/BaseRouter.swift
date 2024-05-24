@@ -20,10 +20,13 @@ protocol BaseRouter : URLRequestConvertible {
 }
 
 extension BaseRouter {
-    func asURLRequest() throws -> URLRequest {
+    public func asURLRequest() throws -> URLRequest {
         var url : URL
         var urlRequest : URLRequest
+        
         if path == "" {
+            // path가 공백인 경우 , appendingPathComponent를 사용하면 "/"가 하나 더 생기는 문제가 있음
+            // 따로 ""인 경우로 나눠서 생성
             url = try String(baseURL+path).asURL()
             urlRequest = try URLRequest(url: url, method : method)
         } else {
@@ -38,7 +41,6 @@ extension BaseRouter {
         var request = request
         switch header {
         case .withAuth :
-            // 추후 Access Token 불러오기로 변환
             request.setValue(Constants.ApplicationJson, forHTTPHeaderField: Constants.ContentType)
             request.setValue("Bearer " + SecureDataManager.shared.getData(label: .accessToken), forHTTPHeaderField: Constants.Authorization)
             //request.setValue("1", forHTTPHeaderField: Constants.Authorization)
@@ -62,8 +64,7 @@ extension BaseRouter {
         var request = request
         switch parameter {
         case .query(let parameters):
-            let params = parameters?.toDictionary() ?? [:]
-            let queryParams = params.map { URLQueryItem(name: $0.key, value: "\($0.value)") }
+            let queryParams = parameters.map { URLQueryItem(name: $0.key, value: "\($0.value)") }
             var components : URLComponents?
             if path == "" {
                 components = URLComponents(string: url.absoluteString)
@@ -73,8 +74,9 @@ extension BaseRouter {
             components?.queryItems = queryParams
             request.url = components?.url
         case .body(let parameters):
-            let params = parameters?.toDictionary() ?? [:]
-            request.httpBody = try JSONSerialization.data(withJSONObject: params, options: [])
+            //request = JSONParameterEncoder.default.encode(parameters, into: request)
+            let body = try JSONEncoder().encode(parameters)
+            request.httpBody = body
         case .bodyFromDictionary(let parameter):
             request.httpBody = try JSONSerialization.data(withJSONObject: parameter, options: [])
         case .none:

@@ -9,8 +9,8 @@
 import Foundation
 
 enum RequestParams {
-    case body(_ parameter: Encodable?)
+    case body(_ parameter: Encodable)
     case bodyFromDictionary(_ parameter : Dictionary<String, Any>)
-    case query(_ parameter: Encodable?)
+    case query(_ parameter: Dictionary<String, Any>)
     case none
 }

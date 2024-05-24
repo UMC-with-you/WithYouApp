@@ -9,29 +9,19 @@
 import UIKit
 
 public struct Notice : Codable {
-    var noticeID : Int
-    var profileImage: String
-    var state : NoticeOptions
-    var userName: String
-    var noticeContent: String
-    var checkNum : Int
-}
-
-extension Notice {
+    public let noticeID : Int
+    public let profileImage: String
+    public let state : NoticeOptions
+    public let userName: String
+    public let noticeContent: String
+    public let checkNum : Int
     
-    func asEditNoticeRequest() -> [String:Any]{
-        let state = {
-            switch self.state{
-            case .before : return 0
-            case .ing : return 1
-            case .always : return 2
-            }
-        }
-        let dic = [
-            "noticeId" : noticeID,
-            "state" : state,
-            "content" : noticeContent
-        ] as [String : Any]
-        return dic
+    public init(noticeID: Int, profileImage: String, state: NoticeOptions, userName: String, noticeContent: String, checkNum: Int) {
+        self.noticeID = noticeID
+        self.profileImage = profileImage
+        self.state = state
+        self.userName = userName
+        self.noticeContent = noticeContent
+        self.checkNum = checkNum
     }
 }

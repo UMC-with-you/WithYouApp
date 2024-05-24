@@ -8,18 +8,18 @@
 
 import Foundation
 
-
-public struct Post : Codable, Equatable {
-    var postId : Int
-    var thumbnailUrl : String
-}
-
-struct LocalPostDTO : Codable {
-    var postId : Int
-    var travelId : Int
-}
-
-struct PostWithLogId : Codable {
-    var post : Post
-    var travelId : Int
+public struct Post {
+    public var postId : Int
+    public var memberId : Int
+    public var text : String
+    public var comments : [Comment?]
+    public var images : [PostImage]
+    
+    public init(postId: Int, memberId: Int, text: String, comments: [Comment], images: [PostImage]) {
+        self.postId = postId
+        self.memberId = memberId
+        self.text = text
+        self.comments = comments
+        self.images = images
+    }
 }

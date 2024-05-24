@@ -7,17 +7,17 @@
 //
 
 import Foundation
-import UIKit
 import RxSwift
 
 public protocol LogUseCase {
-    func addLog(title:String, startDate:String, endDate: String, localDate:Date, image : UIImage) -> Single<Void>
-    func deleteLog(travelId : Int) -> Single<Void>
-    func editLog(travelId : Int, title:String?, startDate:String?, endDate: String?, localDate:Date?, image : UIImage?) -> Single<Void>
+    func getAllLogs() -> Single<[Log]>
+    func addLog(title:String, startDate:String, endDate: String, localDate:Date, image : Data?) -> Single<Int>
+    func deleteLog(travelId : Int) -> Single<Int>
+    func editLog(travelId : Int, title:String?, startDate:String?, endDate: String?, localDate:Date?, image : Data?) -> Single<Int>
     func joinLog(inviteCode : String) -> Single<Void>
     func getAllLogMembers(travelId : Int) -> Single<[Traveler]>
-    func getInviteCode(travelId : Int) -> Single<InviteCodeResponse>
-    func leaveLog(travelId : Int , memberId : Int) -> Single<Void>
+    func getInviteCode(travelId : Int) -> Single<String>
+    func leaveLog(travelId : Int , memberId : Int) -> Single<Int>
 }
 
 public final class DefaultLogUseCase : LogUseCase {
@@ -28,15 +28,19 @@ public final class DefaultLogUseCase : LogUseCase {
         self.repository = repository
     }
     
-    public func addLog(title: String, startDate: String, endDate: String, localDate: Date, image: UIImage) -> Single<Void> {
+    public func getAllLogs() -> Single<[Log]> {
+        repository.getAllLogs()
+    }
+    
+    public func addLog(title: String, startDate: String, endDate: String, localDate: Date, image: Data?) -> Single<Int> {
         repository.addLog(title: title, startDate: startDate, endDate: endDate, localDate: localDate, image: image)
     }
     
-    public func deleteLog(travelId: Int) -> Single<Void> {
+    public func deleteLog(travelId: Int) -> Single<Int> {
         repository.deleteLog(travelId: travelId)
     }
     
-    public func editLog(travelId: Int, title: String?, startDate: String?, endDate: String?, localDate: Date?, image: UIImage?) -> Single<Void> {
+    public func editLog(travelId: Int, title: String?, startDate: String?, endDate: String?, localDate: Date?, image: Data?) -> Single<Int> {
         repository.editLog(travelId: travelId, title: title, startDate: startDate, endDate: endDate, localDate: localDate, image: image)
     }
     
@@ -44,18 +48,15 @@ public final class DefaultLogUseCase : LogUseCase {
         repository.joinLog(inviteCode: inviteCode)
     }
     
-    public func getInviteCode(travelId: Int) -> Single<InviteCodeResponse> {
+    public func getInviteCode(travelId: Int) -> Single<String> {
         repository.getInviteCode(travelId: travelId)
     }
-    
     
     public func getAllLogMembers(travelId: Int) -> Single<[Traveler]> {
         repository.getAllLogMembers(travelId: travelId)
     }
     
-    public func leaveLog(travelId: Int, memberId: Int) -> Single<Void> {
+    public func leaveLog(travelId: Int, memberId: Int) -> Single<Int> {
         repository.leaveLog(travelId: travelId, memberId: memberId)
     }
-    
-   
 }

@@ -10,7 +10,7 @@ import Alamofire
 import Foundation
 
 
-enum AuthRouter {
+public enum AuthRouter {
     case kakao(authCode : String)
     case apple(authCode : String, email: String, userName : String, nonce : String)
     case google(authCode : String)
@@ -19,7 +19,7 @@ enum AuthRouter {
 extension AuthRouter : BaseRouter {
     
     var baseURL: String {
-        Constants.baseURL
+        Constants.
     }
     
     var method: HTTPMethod {

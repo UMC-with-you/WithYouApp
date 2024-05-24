@@ -10,9 +10,13 @@ import Foundation
 import RxSwift
 
 public protocol AuthUseCase {
-    func authWithKakao(authCode : String) -> Single<AuthModelResponse>
-    func authWithApple(authCode : String) -> Single<AuthModelResponse>
-    func authWithGoogle(authCode : String) -> Single<AuthModelResponse>
+    func authWithKakao(authCode : String) -> Single<AuthToken>
+    func authWithApple(accessToken : String,
+                       userName : String,
+                       email : String,
+                       provider : String,
+                       nonce : String) -> Single<AuthToken>
+    func authWithGoogle(authCode : String) -> Single<AuthToken>
 }
 
 final public class DefaultAuthUseCase : AuthUseCase {
@@ -23,15 +27,23 @@ final public class DefaultAuthUseCase : AuthUseCase {
         self.repository = repository
     }
     
-    public func authWithKakao(authCode: String) -> Single<AuthModelResponse> {
+    public func authWithKakao(authCode: String) -> Single<AuthToken> {
         repository.authWithKakao(authCode: authCode)
     }
     
-    public func authWithApple(authCode: String) -> Single<AuthModelResponse> {
-        repository.authWithApple(authCode: authCode)
+    public func authWithApple(accessToken : String,
+                              userName : String,
+                              email : String,
+                              provider : String,
+                              nonce : String) -> Single<AuthToken> {
+        repository.authWithApple(accessToken: accessToken,
+                                 userName: userName,
+                                 email: email,
+                                 provider: provider,
+                                 nonce: nonce)
     }
     
-    public func authWithGoogle(authCode: String) -> Single<AuthModelResponse> {
+    public func authWithGoogle(authCode: String) -> Single<AuthToken> {
         repository.authWithGoogle(authCode: authCode)
     }
 }

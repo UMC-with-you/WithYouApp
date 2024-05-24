@@ -9,10 +9,10 @@
 import Foundation
 
 public struct PackingItem : Codable, Equatable, Identifiable {
-    var id : Int
-    var itemName : String
-    var packerId : Int?
-    var isChecked : Bool
+    public var id : Int
+    public var itemName : String
+    public var packerId : Int?
+    public var isChecked : Bool
     
     private enum CodingKeys : String, CodingKey{
         case id = "itemId"

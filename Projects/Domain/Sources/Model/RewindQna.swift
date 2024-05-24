@@ -9,8 +9,15 @@
 import Foundation
 
 public struct RewindQna : Codable {
-    var qnaId : Int
-    var questionId : Int
-    var content : String
-    var answer : String
+    public var qnaId : Int
+    public var questionId : Int
+    public var content : String
+    public var answer : String
+    
+    public init(qnaId: Int, questionId: Int, content: String, answer: String) {
+        self.qnaId = qnaId
+        self.questionId = questionId
+        self.content = content
+        self.answer = answer
+    }
 }

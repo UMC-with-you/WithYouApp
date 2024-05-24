@@ -1,5 +1,5 @@
 //
-//  ResponseContainer.swift
+//  APIContainer.swift
 //  WithYou
 //
 //  Created by 김도경 on 1/31/24.
@@ -8,11 +8,11 @@
 
 import Foundation
 
-
-struct ResponseContainer<T: Codable> : Codable{
+struct APIContainer<T: Decodable> : Decodable{
     var message : String
     var code : String
     var isSuccess : Bool
     var result : T
 }
+
 

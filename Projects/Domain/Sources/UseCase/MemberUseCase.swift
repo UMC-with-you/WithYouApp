@@ -6,12 +6,12 @@
 //  Copyright © 2024 withyou.org. All rights reserved.
 //
 
+import Foundation
 import RxSwift
-import UIKit
 
 public protocol MemberUseCase {
-    func changeName(name : String) -> Single<Void>
-    func changeProfilePic(image : UIImage) -> Single<Void>
+    func changeName(name : String) -> Single<String>
+    func changeProfilePic(image : Data) -> Single<Void>
     func getMemberInfo() -> Single<Member>
 }
 
@@ -23,11 +23,11 @@ final public class DefaultMemberUseCase : MemberUseCase {
         self.repository = repository
     }
     
-    public func changeName(name: String) -> Single<Void> {
+    public func changeName(name: String) -> Single<String> {
         repository.changeName(name: name)
     }
     
-    public func changeProfilePic(image: UIImage) -> Single<Void> {
+    public func changeProfilePic(image: Data) -> Single<Void> {
         repository.changeProfilePic(image: image)
     }
     

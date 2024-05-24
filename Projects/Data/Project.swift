@@ -11,6 +11,7 @@ import ProjectDescriptionHelpers
 let project = Project.makeModule(
     name: "Data", 
     product: .staticFramework,
+    includeTest: true,
     dependencies: [
         .project(target: "Domain", path: .relativeToRoot("Projects/Domain")),
         .external(name: "Alamofire"),

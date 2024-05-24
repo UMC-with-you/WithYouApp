@@ -116,8 +116,8 @@ class AddPostViewController: UIViewController {
                 let newPost = NewPostStruct(text: self.textField.text ?? "", mediaList: self.images)
                 PostService.shared.addPost(travelId: self.log!.id, newPost: newPost){response in
                     var myPosts = DataManager.shared.getMyPost()
-                    myPosts.append(LocalPostDTO(postId: response.postId, travelId: self.log!.id))
-                    DataManager.shared.setMyPost(myPosts: myPosts)
+//                    myPosts.append(LocalPostDTO(postId: response.postId, travelId: self.log!.id))
+//                    DataManager.shared.setMyPost(myPosts: myPosts)
                     self.navigationController?.popViewController(animated: true)
                 }
             }

@@ -48,6 +48,7 @@ struct CommentDTO : Codable{
     var content : String
     var replyDTOs : [ReplyDTO]
 }
+
 struct ReplyDTO : Codable {
     var replyId : Int
     var memberId : Int
