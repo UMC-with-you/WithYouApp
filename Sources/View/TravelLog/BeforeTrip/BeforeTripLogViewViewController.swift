@@ -374,7 +374,6 @@ extension BeforeTripLogViewViewController : NoticeViewDelegate {
                    
                 }
             }
-            
         })
         .disposed(by: disposeBag)
         

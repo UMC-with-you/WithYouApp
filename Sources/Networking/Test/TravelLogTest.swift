@@ -84,7 +84,7 @@ class TravelLogTest : UIViewController {
         
         button3.rx.tapGesture().when(.recognized)
             .subscribe { _ in
-                LogService.shared.editLog(logId: self.travelId, editRequest: EditLogRequest(title: "수정 테스트", startDate: "2024-03-03", endDate: "2024-03-07",localDate: dateController.dateToSendServer()), image: UIImage(named: "InIcon")!){_ in 
+                LogService.shared.editLog(logId: self.travelId, editRequest: EditLogRequest(title: "수정 테스트", startDate: "2024-03-03", endDate: "2024-03-07",localDate: dateController.currentDateToSendServer()), image: UIImage(named: "InIcon")!){_ in 
                     
                 }
             }

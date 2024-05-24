@@ -56,7 +56,7 @@ extension LogRouter : BaseRouter {
     var parameter: RequestParams {
         switch self{
         case .getAllLog:
-            return .query(["localDate" : dateController.dateToSendServer()])
+            return .query(["localDate" : dateController.currentDateToSendServer()])
         case .joinLog(let code):
             return .body(["invitationCode" : code])
         default:

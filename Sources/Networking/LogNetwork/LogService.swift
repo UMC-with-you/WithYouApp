@@ -18,7 +18,19 @@ struct ImageFile {
 
 class LogService : BaseService {
     static let shared = LogService()
+    
     private override init(){}
+    
+    //For Test
+    public func mockLog() -> [Log]{
+        return [
+        Log(id: 0, title: "테스트1", startDate: "2024.04.01", endDate: "2024.04.03", status: "ONGOING", imageUrl: ""),
+        Log(id: 0, title: "테스트2", startDate: "2024.03.01", endDate: "2024.03.03", status: "BYGONE", imageUrl: ""),
+        Log(id: 0, title: "테스트3", startDate: "2024.04.20", endDate: "2024.04.23", status: "UPCOMING", imageUrl: ""),
+        Log(id: 0, title: "테스트4", startDate: "2024.04.20", endDate: "2024.04.23", status: "ONGOING", imageUrl: ""),
+        Log(id: 0, title: "테스트5", startDate: "2024.04.20", endDate: "2024.04.23", status: "ONGOING", imageUrl: ""),
+        ]
+    }
     
     //로그 추가
     public func addLog(log : Log, image : UIImage, _ completion: @escaping (LogIDResponse)-> ()){
@@ -32,7 +44,6 @@ class LogService : BaseService {
             }
         }
     }
-    
     
     //모든 여행 로그 조회
     public func getAllLogs(_ completion: @escaping ([Log])-> ()) {
@@ -105,8 +116,4 @@ class LogService : BaseService {
 
         return body
     }
-    
 }
-
-
-

@@ -17,7 +17,7 @@ open class DateController {
     
     private init(){}
     
-    func dateToSendServer() -> String{
+    func currentDateToSendServer() -> String{
         dateFormatter.dateFormat = "yyyy.MM.dd"
         return dateFormatter.string(from: Date()).replacingOccurrences(of: ".", with: "-")
     }
