@@ -16,9 +16,7 @@ import KakaoSDKUser
 import UIKit
 import SnapKit
 
-
-
-class LoginViewController: UIViewController {
+final class LoginViewController: BaseViewController {
 
     fileprivate var currentNonce: String?
     
@@ -53,21 +51,23 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //        backgroundColor = .white
-        view.backgroundColor = UIColor(red: 0.969, green: 0.969, blue: 0.969, alpha: 1)
-        setViews()
-        setConstraints()
+        setUpViewProperty()
+        setUp()
+        setLayout()
     }
     
-    private func setViews() {
+    override func setUpViewProperty() {
+        view.backgroundColor = UIColor(red: 0.969, green: 0.969, blue: 0.969, alpha: 1)
+    }
+    
+    override func setUp() {
         view.addSubview(logoImageView)
         view.addSubview(appleLoginButton)
         view.addSubview(googleLoginButton)
         view.addSubview(kakaoLoginButton)
     }
     
-    private func setConstraints() {
-        
+    override func setLayout() {
         logoImageView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.centerY.equalToSuperview().offset(-20)

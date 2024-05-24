@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import SnapKit
 
-class ProfileSetViewController: UIViewController {
+final class ProfileSetViewController: BaseViewController {
     
     var bag = DisposeBag()
     
@@ -86,27 +86,32 @@ class ProfileSetViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
-        let button = WYButton("완료")
-        button.backgroundColor = WithYouAsset.mainColorDark.color
-        button.frame = CGRect(x: 0, y: 0, width: 64, height: 30)
-        button.layer.cornerRadius = 15
-        button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: button)
-        setViews()
-        setConstraints()
+        setUpViewProperty()
+        setUp()
+        setLayout()
     }
     
-    private func setViews() {
+    override func setUpViewProperty() {
+        view.backgroundColor = .white
+    }
+    
+    override func setUp() {
         view.addSubview(mainLabel)
         view.addSubview(profileImageView)
         view.addSubview(selectImageButton)
         view.addSubview(cancelImageButton)
         view.addSubview(nickNameSelectButton)
         view.addSubview(underlineView)
+        
+        let button = WYButton("완료")
+        button.backgroundColor = WithYouAsset.mainColorDark.color
+        button.frame = CGRect(x: 0, y: 0, width: 64, height: 30)
+        button.layer.cornerRadius = 15
+        button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: button)
     }
     
-    private func setConstraints() {
+    override func setLayout() {
         mainLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.centerY.equalToSuperview().offset(-200)

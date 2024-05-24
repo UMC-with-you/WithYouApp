@@ -1,7 +1,8 @@
 import UIKit
 import SnapKit
 
-class OnBoardingViewController: UIViewController {
+class OnBoardingViewController: BaseViewController {
+    
     let pageViewController: UIPageViewController
     var pages = [UIViewController]()
     var currentVC: UIViewController {
@@ -16,7 +17,7 @@ class OnBoardingViewController: UIViewController {
         let page2 = ViewController2()
         let page3 = ViewController3()
         let page4 = ViewController4()
-        let page5 = loginView
+        let page5 = LoginViewController()
         
         pages.append(page1)
         pages.append(page2)
@@ -40,25 +41,33 @@ class OnBoardingViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        setUpViewProperty()
+        setUp()
+        setLayout()
+        setUpPageViewController()
+    }
+    
+    override func setUpViewProperty() {
         view.backgroundColor = UIColor(red: 0.969, green: 0.969, blue: 0.969, alpha: 1)
-       
-
+    }
+    
+    override func setUp() {
         addChild(pageViewController)
         view.addSubview(pageViewController.view)
-        
+    }
+    
+    override func setLayout() {
+        pageViewController.view.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+    
+    
+    func setUpPageViewController() {
         pageViewController.didMove(toParent: self)
-
         pageViewController.dataSource = self
         pageViewController.view.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            view.topAnchor.constraint(equalTo: pageViewController.view.topAnchor),
-            view.leadingAnchor.constraint(equalTo: pageViewController.view.leadingAnchor),
-            view.trailingAnchor.constraint(equalTo: pageViewController.view.trailingAnchor),
-            view.bottomAnchor.constraint(equalTo: pageViewController.view.bottomAnchor),
-        ])
-
         pageViewController.setViewControllers([pages.first!], direction: .forward, animated: false, completion: nil)
         currentVC = pages.first!
     }
@@ -97,38 +106,32 @@ extension OnBoardingViewController: UIPageViewControllerDataSource {
     }
 }
 
-// MARK: - ViewControllers
-private let onBoardingView = OnBoardingView()
-private let onBoarding1 = OnBoarding1()
-private let onBoarding2 = OnBoarding2()
-private let onBoarding3 = OnBoarding3()
-private let loginView = LoginViewController()
-
+// MARK: - ViewControllers\
 class ViewController1: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        view = onBoardingView
+        view = OnBoardingView()
     }
 }
 
 class ViewController2: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        view = onBoarding1
+        view = OnBoarding1()
     }
 }
 
 class ViewController3: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        view = onBoarding2
+        view = OnBoarding2()
     }
 }
 
 class ViewController4: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        view = onBoarding3
+        view = OnBoarding3()
     }
 }
 
