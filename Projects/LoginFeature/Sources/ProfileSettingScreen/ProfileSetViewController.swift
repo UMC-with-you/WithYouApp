@@ -162,8 +162,8 @@ class ProfileSetViewController: UIViewController {
 //        DataManager.shared.setIsLogin()
         
         // 메인 화면으로 가기
-        let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
-        guard let delegate = sceneDelegate else { return }
+//        let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
+//        guard let delegate = sceneDelegate else { return }
 //        delegate.window?.rootViewController = TabBarViewController()
     }
 }

@@ -7,7 +7,7 @@
 
 //import GoogleSignIn
 import UIKit
-
+import LoginFeature
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
@@ -16,48 +16,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         
-        //로그인화면 부터 실행하고 싶을 시
-//        for key in UserDefaults.standard.dictionaryRepresentation().keys {
-//            UserDefaults.standard.removeObject(forKey: key.description)
-//        }
-        
-        
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = .init(windowScene: windowScene)
+        
         let navigationController = UINavigationController()
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
         
-        
         appCoordinator = AppCoordinator(navigationController: navigationController)
         appCoordinator?.start()
-        
-        
-        
-        //print("SD: isFirstTime : \(DataManager.shared.getIsFirstTime())")
-//        window?.rootViewController = TestTabbarViewController()
-//       window?.makeKeyAndVisible()
-//        if DataManager.shared.getIsLogin() {
-//            //로그인 기록 있을 시
-//            //Tabbar는 NavigationView로 할당하면 안됌
-//            window?.rootViewController = TabBarViewController()
-//            window?.makeKeyAndVisible()
-//        } else {
-//            //로그인 기록 없을 시
-//            if !DataManager.shared.getIsFirstTime() {
-//                //앱 처음 실행시
-//                changeRootViewController(newVC: MyPageViewController())
-//            } else {
-//                changeRootViewController(newVC: LoginViewController())
-//            }
-//        }
-//        changeRootViewController(newVC: TabBarViewController())
-    }
-    
-    func changeRootViewController(newVC : UIViewController){
-        let newVC = UINavigationController(rootViewController: newVC)
-        window?.rootViewController = newVC
-        window?.makeKeyAndVisible()
     }
     
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {

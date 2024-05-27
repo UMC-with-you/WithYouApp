@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         //KakaoSDK.initSDK(appKey: "1295c9d7651a86701ea8af72a43d8e3a")
         let navigationBarAppearace = UINavigationBar.appearance()
-        navigationBarAppearace.tintColor = WithYouAsset.mainColorDark.color
+        //navigationBarAppearace.tintColor = WithYouAsset.mainColorDark.color
         return true
     }
 

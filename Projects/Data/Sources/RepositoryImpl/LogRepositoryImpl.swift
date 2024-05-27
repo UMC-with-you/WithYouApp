@@ -14,6 +14,8 @@ final public class DefaultLogRepository : LogRepository {
     
     private let service : BaseService = BaseService()
     
+    public init(){}
+    
     public func getAllLogs() -> Single<[Log]> {
         let router = LogRouter.getAllLog
         return service.request([Log].self, router: router)

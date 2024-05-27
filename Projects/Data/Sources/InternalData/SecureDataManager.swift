@@ -50,7 +50,7 @@ class SecureDataManager {
         }
     }
     
-    private func setData(_ token: String, label : TokenType)-> OSStatus {
+    internal func setData(_ token: String, label : TokenType)-> OSStatus {
         let keychainItem = [
                     kSecClass: kSecClassGenericPassword,
                     kSecAttrAccount: label.rawValue,
@@ -65,7 +65,7 @@ class SecureDataManager {
         return status
     }
     
-    func getData(label : TokenType) -> String {
+    internal func getData(label : TokenType) -> String {
         let searchQuery: NSDictionary = [kSecClass: kSecClassGenericPassword,
                                      kSecAttrAccount: label.rawValue,
                                   kSecAttrService : serviceName,

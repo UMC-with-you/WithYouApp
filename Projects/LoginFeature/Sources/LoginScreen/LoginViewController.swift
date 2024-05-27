@@ -11,78 +11,84 @@ import AuthenticationServices
 import CryptoKit
 import Core
 import Domain
+import Foundation
 //import GoogleSignIn
 //import KakaoSDKAuth
 //import KakaoSDKCommon
 //import KakaoSDKUser
-import UIKit
 import SnapKit
+import RxCocoa
+import RxSwift
+import UIKit
 
-final class LoginViewController: BaseViewController {
+
+
+public final class LoginViewController: BaseViewController {
 
     fileprivate var currentNonce: String?
     
-    let logoImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "MainLogo")
-        imageView.contentMode = .scaleAspectFit
-        return imageView
+    lazy var loginView = LoginView()
+    
+    
+    
+    lazy var pages = BehaviorRelay(value: [
+        CellData(mainText: "우리 여행의 한 페이지", subText: "Travel Log를 만들어\n함께 여행하는 사람들을 초대해보세요!", image: "MockUp"),
+        CellData(mainText: "여행 전", subText: "Notice에서 중요한 사항들을 공유하고,\nPacking Togather에서 공동의 짐을 함께 챙겨요!", image: "MockUp1"),
+        CellData(mainText: "오늘의 여행은 어떠셨나요?", subText: "하루가 끝나고\n오늘의 여행 Rewind를 통해 오늘의 여행을 기록하고\n오늘의 한마디를 전해주세요.", image: "MockUp2"),
+        CellData(mainText: "여행이 끝난 후", subText: "Photo Book에서 우리만의 피드를 꾸미고\n Rewind Book으로 여행을 추억해요.\n공유 Cloud도 있어요!", image: "MockUp3")
+    
+    ])
+    
+    let collectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.itemSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        
+        let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collection.backgroundColor = .brown
+        collection.register(OnBoardingCell.self, forCellWithReuseIdentifier: OnBoardingCell.cellId)
+       return collection
     }()
     
-    let appleLoginButton = {
-        let button = UIButton(type: .custom)
-        button.setImage(UIImage(named: "AppleLogin"), for: .normal)
-        return button
+    override public func viewDidLoad() {
+        super.viewDidLoad()
+    }
+    
+    private lazy var pageControl: UIPageControl = {
+        let pagecontrol = UIPageControl()
+        pagecontrol.isHidden = true
+        pagecontrol.numberOfPages = pages.value.count
+        return pagecontrol
     }()
     
-    let googleLoginButton: UIButton = {
-        let button = UIButton(type: .custom)
-        button.setImage(UIImage(named: "GoogleLogin"), for: .normal)
-        return button
-    }()
+    public override func setFunc() {
+        pages
+            .bind(to: collectionView.rx.items(cellIdentifier: OnBoardingCell.cellId, cellType: OnBoardingCell.self)){ index, element, cell in
+                cell.backgroundColor = .black
+                cell.bind(element)
+            }
+            .disposed(by: disposeBag)
+    }
     
-    let kakaoLoginButton: UIButton = {
-        let button = UIButton(type: .custom)
-        button.setImage(UIImage(named: "KakaoLogin"), for: .normal)
-        return button
-    }()
-    
-    override func setUpViewProperty() {
+    public override func setUpViewProperty() {
         view.backgroundColor = UIColor(red: 0.969, green: 0.969, blue: 0.969, alpha: 1)
     }
     
-    override func setUp() {
-        view.addSubview(logoImageView)
-        view.addSubview(appleLoginButton)
-        view.addSubview(googleLoginButton)
-        view.addSubview(kakaoLoginButton)
+    public override func setUp() {
+        view.addSubview(collectionView)
+        view.addSubview(pageControl)
     }
     
-    override func setLayout() {
-        logoImageView.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.centerY.equalToSuperview().offset(-20)
+    public override func setLayout() {
+        collectionView.snp.makeConstraints{
+            $0.width.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.top.equalToSuperview()
         }
         
-        appleLoginButton.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(logoImageView.snp.bottom).offset(80)
-            make.width.equalTo(360)
-            make.height.equalTo(60)
-        }
-        
-        googleLoginButton.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(appleLoginButton.snp.bottom).offset(10)
-            make.width.equalTo(360)
-            make.height.equalTo(60)
-        }
-        
-        kakaoLoginButton.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(googleLoginButton.snp.bottom).offset(10)
-            make.width.equalTo(360)
-            make.height.equalTo(60)
+        pageControl.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.width.equalToSuperview().dividedBy(4)
+            $0.bottom.equalToSuperview().offset(20)
         }
     }
     
@@ -133,39 +139,29 @@ final class LoginViewController: BaseViewController {
     
     private func judgeNextStep(token: AuthToken){
         //토큰 저장
-        if self.saveTokens(tokens: token) {
-//            if DataManager.shared.getIsLogin() {
-//                //프로필이 존재하면 메인 화면으로 가기
-//                let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
-//                guard let delegate = sceneDelegate else { return }
-//                delegate.window?.rootViewController = TabBarViewController()
-//            } else {
-//                //첫 로그인 시 프로필 설정 화면으로 가기
-//                
-//                navigationController?.pushViewController(NickNameViewController(), animated: true)
-//            }
-        } else {
-            print("토큰 저장 실패")
-        }
-    }
-    
-    private func moveToView(newVC: UIViewController){
-        newVC.modalPresentationStyle = .overFullScreen
-        self.present(newVC,animated: true)
-    }
-
-
-    func saveTokens(tokens: AuthToken) -> Bool{
-        return true
+//        if self.saveTokens(tokens: token) {
+////            if DataManager.shared.getIsLogin() {
+////                //프로필이 존재하면 메인 화면으로 가기
+////                let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
+////                guard let delegate = sceneDelegate else { return }
+////                delegate.window?.rootViewController = TabBarViewController()
+////            } else {
+////                //첫 로그인 시 프로필 설정 화면으로 가기
+////                
+////                navigationController?.pushViewController(NickNameViewController(), animated: true)
+////            }
+//        } else {
+//            print("토큰 저장 실패")
+//        }
     }
 }
 
 extension LoginViewController :ASAuthorizationControllerPresentationContextProviding , ASAuthorizationControllerDelegate{
-    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+    public func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
         return self.view.window!
     }
     // 성공 후 동작
-    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization){
+    public func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization){
         //로그인 성공
         switch authorization.credential {
         case let appleIDCredential as ASAuthorizationAppleIDCredential:
@@ -199,7 +195,7 @@ extension LoginViewController :ASAuthorizationControllerPresentationContextProvi
     }
     
     // 실패 후 동작
-    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+    public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
         print("apple login failed")
     }
     
@@ -243,5 +239,12 @@ extension LoginViewController :ASAuthorizationControllerPresentationContextProvi
         }
         
         return result
+    }
+}
+
+
+extension LoginViewController : UIScrollViewDelegate{
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        pageControl.currentPage = Int(floor(scrollView.contentOffset.x / UIScreen.main.bounds.width))
     }
 }

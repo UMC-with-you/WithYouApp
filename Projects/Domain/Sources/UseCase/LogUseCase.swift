@@ -24,7 +24,7 @@ public final class DefaultLogUseCase : LogUseCase {
     
     let repository : LogRepository
     
-    init(repository: LogRepository) {
+    public init(repository: LogRepository) {
         self.repository = repository
     }
     
