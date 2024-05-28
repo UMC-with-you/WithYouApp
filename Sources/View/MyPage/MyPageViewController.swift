@@ -126,10 +126,6 @@ final class MyPageViewController: BaseViewController {
     }
     
     override func viewDidLoad() {
-        self.navigationItem.titleView = topLabel
-        setUpViewProperty()
-        setUp()
-        setLayout()
         setRx()
         setCollectionView()
         loadPosts()
@@ -239,6 +235,7 @@ final class MyPageViewController: BaseViewController {
     }
     
     override func setUpViewProperty() {
+        self.navigationItem.titleView = topLabel
         view.backgroundColor = .white
     }
     
