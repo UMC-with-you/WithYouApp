@@ -108,15 +108,6 @@ class ProfileEditViewController: BaseViewController {
         return view
     }()
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        setUpViewProperty()
-        setUp()
-        setLayout()
-        setDelegate()
-    }
-    
     override func setUpViewProperty() {
         view.backgroundColor = .white
         navigationItem.title = "프로필 수정"
