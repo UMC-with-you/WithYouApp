@@ -14,11 +14,11 @@ public final class HomeCoordinator : Coordinator {
     
     public struct Dependecy{
         let navigationController : UINavigationController
-        let viewModel : MainLogViewModel
+        let homeViewController : MainViewController
         
-        public init(navigationController: UINavigationController, viewModel: MainLogViewModel) {
+        public init(navigationController: UINavigationController, homeViewController: MainViewController) {
             self.navigationController = navigationController
-            self.viewModel = viewModel
+            self.homeViewController = homeViewController
         }
     }
     
@@ -34,8 +34,7 @@ public final class HomeCoordinator : Coordinator {
     }
     
     public func start() {
-        let viewController = MainViewController(viewModel: dependency.viewModel)
-        navigationController.pushViewController(viewController, animated: true)
+        navigationController.pushViewController(dependency.homeViewController, animated: true)
     }
 }
 

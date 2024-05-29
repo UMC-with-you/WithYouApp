@@ -13,7 +13,7 @@ import RxSwift
 import UIKit
 
 
-class MainViewController: BaseViewController {
+public class MainViewController: BaseViewController {
     let header = TopHeader()
     let button = WYAddButton(.big)
     
@@ -35,14 +35,14 @@ class MainViewController: BaseViewController {
     var previousIndex : Int?
     var previousLogCount = 0
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         loadLogs()
         setActions()
         setSubscribes()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         viewModel.loadLogs()
     }
     
@@ -163,17 +163,17 @@ class MainViewController: BaseViewController {
     }
     
     
-    override func setUp() {
+    public override func setUp() {
         [header,emptyLogView,mainLogView,button].forEach{
             view.addSubview($0)
         }
     }
     
-    override func setDelegate() {
+    public override func setDelegate() {
         mainLogView.logCollectionView.delegate = self
     }
     
-    override func setLayout() {
+    public override func setLayout() {
         header.snp.makeConstraints{
             $0.top.equalToSuperview()
             $0.width.equalToSuperview()
@@ -195,7 +195,7 @@ class MainViewController: BaseViewController {
         }
     }
     
-    override func setUpViewProperty() {
+    public override func setUpViewProperty() {
         view.backgroundColor = .white
         self.navigationItem.backButtonTitle = "Home"
     }
@@ -244,14 +244,14 @@ extension MainViewController{
 }
 
 extension MainViewController : UICollectionViewDelegateFlowLayout{
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+    public func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         let scrolledOffsetX = targetContentOffset.pointee.x + scrollView.contentInset.left
         let cellWidth = UIScreen.main.bounds.width * 0.75 + 17
         let index = round(scrolledOffsetX / cellWidth)
         targetContentOffset.pointee = CGPoint(x: index * cellWidth - scrollView.contentInset.left, y: scrollView.contentInset.top)
     }
     
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let cellWidth = CGFloat(UIScreen.main.bounds.width * 0.75 + 17)
         let curScrollOffset = scrollView.contentOffset.x + scrollView.contentInset.left
         let index = Int(round(curScrollOffset/cellWidth))

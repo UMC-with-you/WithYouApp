@@ -29,18 +29,17 @@ class AppCoordinator : Coordinator {
         
         let loginViewModel = LoginViewModel(authUseCase:
                                                 DefaultAuthUseCase(repository: DefaultAuthRepository(), 
-                                                                   secureDataRepository: DefaultSecureDataRepository()
-                                                                  ))
+                                                                   secureDataRepository: DefaultSecureDataRepository()))
         let loginDependency = LoginCoordinator.Dependecy(loginViewController: LoginViewController(viewModel: loginViewModel),
                                                          navigationController: navigationController)
         let loginCoordinator = LoginCoordinator(dependency: loginDependency)
-        loginCoordinator.start()
+        //loginCoordinator.start()
         
         
         
         let homeViewModel = MainLogViewModel(useCase: DefaultLogUseCase(repository: DefaultLogRepository()))
-        let homeDependency = HomeCoordinator.Dependecy.init(navigationController: navigationController,
-                                                            viewModel: homeViewModel)
+        let homeViewController = MainViewController(viewModel: homeViewModel)
+        let homeDependency = HomeCoordinator.Dependecy.init(navigationController: navigationController, homeViewController: homeViewController)
         
         let homeCoordinator = HomeCoordinator(dependency: homeDependency)
         //homeCoordinator.start()

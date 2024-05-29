@@ -109,5 +109,3 @@ extension NameProfileViewController: UIColorPickerViewControllerDelegate {
         profileImageView.backgroundColor = selectedBackgroundColor
     }
 }
-
-
