@@ -11,6 +11,8 @@ import RxSwift
 
 public final class DefaultSecureDataRepository : SecureDataRepository {
     
+    public init(){}
+    
     public func saveToken(authToken: AuthToken) -> Single<Void> {
         return SecureDataManager.shared.saveToken(authToken: authToken)
     }

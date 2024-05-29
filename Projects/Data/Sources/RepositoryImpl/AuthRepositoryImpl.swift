@@ -14,6 +14,8 @@ final public class DefaultAuthRepository : AuthRepository {
     
     private let service : BaseService = BaseService()
     
+    public init(){}
+    
     public func authWithKakao(authCode: String) -> Single<AuthToken> {
         let dto = AuthRequestDTO(accessToken: authCode, provider: "kakako")
         let router = AuthRouter.kakao(authDTO: dto)

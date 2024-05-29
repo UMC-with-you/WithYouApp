@@ -64,7 +64,7 @@ extension LogRouter : BaseRouter {
     var parameter: RequestParams {
         switch self{
         case .getAllLog:
-            return .query(["localDate" : "2024-05-27"])
+            return .query(["localDate" : "2024-05-28"])
             
         case .joinLog(let dto):
             return .body(dto)

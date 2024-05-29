@@ -27,14 +27,23 @@ class AppCoordinator : Coordinator {
         // OnBoarding을 했으면 Login
         // 로그인이 된 상태라면 로그인 진행
         
-//        let loginCoordinator = LoginCoordinator(navigationController: navigationController)
-//        loginCoordinator.start()
+        let loginViewModel = LoginViewModel(authUseCase:
+                                                DefaultAuthUseCase(repository: DefaultAuthRepository(), 
+                                                                   secureDataRepository: DefaultSecureDataRepository()
+                                                                  ))
+        let loginDependency = LoginCoordinator.Dependecy(loginViewController: LoginViewController(viewModel: loginViewModel),
+                                                         navigationController: navigationController)
+        let loginCoordinator = LoginCoordinator(dependency: loginDependency)
+        loginCoordinator.start()
+        
+        
+        
         let homeViewModel = MainLogViewModel(useCase: DefaultLogUseCase(repository: DefaultLogRepository()))
         let homeDependency = HomeCoordinator.Dependecy.init(navigationController: navigationController,
                                                             viewModel: homeViewModel)
         
         let homeCoordinator = HomeCoordinator(dependency: homeDependency)
-        homeCoordinator.start()
+        //homeCoordinator.start()
         
         self.childCoordinaotrs.append(homeCoordinator)
     }

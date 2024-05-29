@@ -13,9 +13,9 @@ import Core
 import Domain
 import Foundation
 //import GoogleSignIn
-//import KakaoSDKAuth
-//import KakaoSDKCommon
-//import KakaoSDKUser
+import KakaoSDKAuth
+import KakaoSDKCommon
+import KakaoSDKUser
 import SnapKit
 import RxCocoa
 import RxSwift
@@ -27,9 +27,15 @@ public final class LoginViewController: BaseViewController {
 
     fileprivate var currentNonce: String?
     
+    let viewModel : LoginViewModel
+    
+    public init(currentNonce: String? = nil, viewModel: LoginViewModel) {
+        self.currentNonce = currentNonce
+        self.viewModel = viewModel
+        super.init()
+    }
+    
     lazy var loginView = LoginView()
-    
-    
     
     lazy var pages = BehaviorRelay(value: [
         CellData(mainText: "우리 여행의 한 페이지", subText: "Travel Log를 만들어\n함께 여행하는 사람들을 초대해보세요!", image: "MockUp"),
@@ -39,33 +45,25 @@ public final class LoginViewController: BaseViewController {
     
     ])
     
-    let collectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        layout.itemSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        
-        let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collection.backgroundColor = .brown
-        collection.register(OnBoardingCell.self, forCellWithReuseIdentifier: OnBoardingCell.cellId)
-       return collection
-    }()
-    
     override public func viewDidLoad() {
         super.viewDidLoad()
     }
     
-    private lazy var pageControl: UIPageControl = {
-        let pagecontrol = UIPageControl()
-        pagecontrol.isHidden = true
-        pagecontrol.numberOfPages = pages.value.count
-        return pagecontrol
-    }()
     
     public override func setFunc() {
-        pages
-            .bind(to: collectionView.rx.items(cellIdentifier: OnBoardingCell.cellId, cellType: OnBoardingCell.self)){ index, element, cell in
-                cell.backgroundColor = .black
-                cell.bind(element)
+        loginView.appleLoginButton
+            .rx
+            .tap
+            .subscribe { [weak self] _ in
+                self?.appleButtonTapped()
+            }
+            .disposed(by: disposeBag)
+        
+        loginView.kakaoLoginButton
+            .rx
+            .tap
+            .subscribe { [weak self] _ in
+                self?.kakaoButtonTapped()
             }
             .disposed(by: disposeBag)
     }
@@ -75,20 +73,12 @@ public final class LoginViewController: BaseViewController {
     }
     
     public override func setUp() {
-        view.addSubview(collectionView)
-        view.addSubview(pageControl)
+        view.addSubview(loginView)
     }
     
     public override func setLayout() {
-        collectionView.snp.makeConstraints{
-            $0.width.bottom.equalTo(view.safeAreaLayoutGuide)
-            $0.top.equalToSuperview()
-        }
-        
-        pageControl.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.width.equalToSuperview().dividedBy(4)
-            $0.bottom.equalToSuperview().offset(20)
+        loginView.snp.makeConstraints{
+            $0.edges.equalToSuperview()
         }
     }
     
@@ -121,20 +111,24 @@ public final class LoginViewController: BaseViewController {
     }
     
     @objc private func kakaoButtonTapped() {
-//        UserApi.shared.loginWithKakaoAccount {(oauthToken, error) in
-//                if let error = error {
-//                    print(error)
-//                }
-//                else {
-//                    print("loginWithKakaoAccount() success.")
-//                    //do something
-//                    _ = oauthToken
-//                    AuthService.shared.authWithKakao(oauthToken?.accessToken ?? "error"){ response in
-//                        print(response)
-//                        self.judgeNextStep(token: response)
-//                    }
-//                }
-//            }
+        UserApi.shared.loginWithKakaoAccount {(oauthToken, error) in
+                if let error = error {
+                    print(error)
+                }
+                else {
+                    print("loginWithKakaoAccount() success.")
+                    //do something
+                    guard let authCode = oauthToken else {return }
+                    self.viewModel.kakaoLogin(authCode: authCode.accessToken)
+                        .subscribe { token in
+                            print(token)
+                        } onFailure: { error in
+                            print("error")
+                        }
+                        .disposed(by: self.disposeBag)
+
+                }
+            }
     }
     
     private func judgeNextStep(token: AuthToken){
@@ -173,11 +167,14 @@ extension LoginViewController :ASAuthorizationControllerPresentationContextProvi
                 let email = appleIDCredential.email,
                 let userName = appleIDCredential.fullName,
                 let nonce = currentNonce{
+                
+                self.viewModel.appleLogin(accessToken: identifyTokenString, userName: userName.formatted(), email: email, provider: "apple" , nonce: nonce)
+                    .subscribe { token in
+                        print("good")
+                    } onFailure: { error in
+                        print(error)
+                    }.disposed(by: disposeBag)
 
-//                AuthService.shared.authWithApple(identifyTokenString, userName: userName.formatted(), email: email,nonce: nonce){ response in
-//                    print(response)
-//                    self.judgeNextStep(token: response)
-//                }
             }
             //로그인 이후 로직
             
@@ -239,12 +236,5 @@ extension LoginViewController :ASAuthorizationControllerPresentationContextProvi
         }
         
         return result
-    }
-}
-
-
-extension LoginViewController : UIScrollViewDelegate{
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        pageControl.currentPage = Int(floor(scrollView.contentOffset.x / UIScreen.main.bounds.width))
     }
 }

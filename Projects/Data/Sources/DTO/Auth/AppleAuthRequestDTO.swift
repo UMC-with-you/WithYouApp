@@ -12,6 +12,6 @@ public struct AppleAuthRequestDTO : Encodable {
     var accessToken : String
     var userName : String
     var email : String
-    var provider : String
+    var provider : String = "apple"
     var nonce  : String
 }

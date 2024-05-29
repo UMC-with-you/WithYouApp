@@ -11,16 +11,27 @@ import Foundation
 import UIKit
 
 public class LoginCoordinator : Coordinator {
+    
+    public struct Dependecy{
+        let loginViewController : LoginViewController
+        let navigationController : UINavigationController
+        
+        public init(loginViewController: LoginViewController, navigationController: UINavigationController) {
+            self.loginViewController = loginViewController
+            self.navigationController = navigationController
+        }
+    }
+    
+    let dependency : Dependecy
     public var childCoordinaotrs: [Coordinator] = []
+    private var navigationController: UINavigationController
     
-    private var navigationController: UINavigationController!
-    
-    public init(navigationController : UINavigationController){
-        self.navigationController = navigationController
+    public init(dependency : Dependecy){
+        self.dependency = dependency
+        self.navigationController = dependency.navigationController
     }
     
     public func start() {
-        let viewController = OnBoardingViewController()
-        navigationController.pushViewController(viewController, animated: true)
+        navigationController.pushViewController(dependency.loginViewController, animated: true)
     }
 }

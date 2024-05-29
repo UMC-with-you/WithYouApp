@@ -18,13 +18,13 @@ class OnBoardingViewController: BaseViewController {
         let page2 = ViewController2()
         let page3 = ViewController3()
         let page4 = ViewController4()
-        let page5 = LoginViewController()
+        //let page5 = LoginViewController()
         
         pages.append(page1)
         pages.append(page2)
         pages.append(page3)
         pages.append(page4)
-        pages.append(page5)
+        //pages.append(page5)
         
         currentVC = pages.first!
         

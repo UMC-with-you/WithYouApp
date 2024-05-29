@@ -8,7 +8,7 @@
 
 import Foundation
 struct Constants {
-    static let baseURL = "http://13.209.91.33/api/v1"
+    static let baseURL = "http://13.209.91.33:8080/api/v1"
     
     static let Authorization = "Authorization"
     static let ApplicationJson = "Application/json"

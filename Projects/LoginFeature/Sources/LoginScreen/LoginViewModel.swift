@@ -14,10 +14,19 @@ import RxSwift
 
 public class LoginViewModel {
     
-    func googleLogin(){
-        
+    let authUseCase : AuthUseCase
+    
+    public init(authUseCase : AuthUseCase){
+        self.authUseCase = authUseCase
     }
-
+    
+    func appleLogin(accessToken: String, userName: String, email: String, provider: String, nonce: String) -> Single<AuthToken>{
+        authUseCase.authWithApple(accessToken: accessToken, userName: userName, email: email, provider: provider, nonce: nonce)
+    }
+    
+    func kakaoLogin(authCode: String) -> Single<AuthToken> {
+        authUseCase.authWithKakao(authCode: authCode)
+    }
 }
 
 

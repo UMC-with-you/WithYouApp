@@ -26,7 +26,7 @@ final public class DefaultAuthUseCase : AuthUseCase {
     let authRepository : AuthRepository
     let secureDataRepository : SecureDataRepository
     
-    init(repository: AuthRepository, secureDataRepository: SecureDataRepository) {
+    public init(repository: AuthRepository, secureDataRepository: SecureDataRepository) {
         self.authRepository = repository
         self.secureDataRepository = secureDataRepository
     }
