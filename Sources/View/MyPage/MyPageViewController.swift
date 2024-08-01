@@ -23,8 +23,8 @@ final class MyPageViewController: BaseViewController {
         label.textAlignment = .center
         label.textColor = WithYouAsset.mainColorDark.color
         return label
-        
     }()
+    
     let myPageCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -112,66 +112,13 @@ final class MyPageViewController: BaseViewController {
     var bag = DisposeBag()
     
     var underLineConst : Constraint?
-    var posts = BehaviorSubject<[PostWithLogId]>(value: [])
     
-    var scrapPost = [PostWithLogId]()
-    var myPost = [PostWithLogId]()
-    
-    var linePosition = BehaviorRelay<Bool>(value: true)
-    
-    override func viewWillAppear(_ animated: Bool) {
-        loadPosts()
-        nickNameLabel.text = DataManager.shared.getUserName()
-        profileView.profileImage.image = UIImage(data:DataManager.shared.getUserImage())
-    }
+    let viewModel = MyPageViewModel()
     
     override func viewDidLoad() {
+        super.viewDidLoad() // 부모 viewDidLoad 호출
         setRx()
         setCollectionView()
-        loadPosts()
-    }
-    
-    private func loadPosts(){
-        //Scrap
-        scrapPost = []
-        PostService.shared.getScrapedPost { scrapPosts in
-            LogService.shared.getAllLogs { logs in
-                let logIdSet = Set<Int>(logs.map{$0.id})
-                for id in logIdSet {
-                    PostService.shared.getAllPost(travelId: id){ posts in
-                        for post in posts {
-                            if scrapPosts.contains(post){
-                                self.scrapPost.append(PostWithLogId(post:post,travelId: id))
-                            }
-                        }
-                        
-                    }
-                }
-            }
-        }
-        
-        // My
-        myPost = []
-        let localPostDTO = DataManager.shared.getMyPost()
-        let travelSet = Set<Int>(localPostDTO.map{$0.travelId})
-        let postSet = Set<Int>(localPostDTO.map({$0.postId}))
-        for logId in travelSet {
-            PostService.shared.getAllPost(travelId: logId){ posts in
-                for post in posts{
-                    if postSet.contains(post.postId) {
-                        self.myPost.append(PostWithLogId(post: post, travelId: logId))
-                    }
-                }
-            }
-        }
-        
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 5) {
-            if self.linePosition.value {
-                self.posts.onNext(self.scrapPost)
-            } else {
-                self.posts.onNext(self.myPost)
-            }
-        }
     }
     
     private func setCollectionView() {
@@ -179,10 +126,17 @@ final class MyPageViewController: BaseViewController {
         myPageCollectionView.register(PostGridCollectionViewCell.self, forCellWithReuseIdentifier: PostGridCollectionViewCell.identifier)
         configureRefreshControl()
         
-        posts.bind(to: myPageCollectionView.rx.items(cellIdentifier: PostGridCollectionViewCell.identifier, cellType: PostGridCollectionViewCell.self)){ index, item,cell in
-            cell.postImageView.kf.setImage(with: URL(string: item.post.thumbnailUrl))
-        }
-        .disposed(by: bag)
+        viewModel.posts
+            .bind(to: myPageCollectionView.rx.items(cellIdentifier: PostGridCollectionViewCell.identifier, cellType: PostGridCollectionViewCell.self)){
+                index, item, cell in
+                cell.postImageView.kf.setImage(with: URL(string: item.post.thumbnailUrl))
+            }
+            .disposed(by: bag)
+        
+//        posts.bind(to: myPageCollectionView.rx.items(cellIdentifier: PostGridCollectionViewCell.identifier, cellType: PostGridCollectionViewCell.self)){ index, item,cell in
+//            cell.postImageView.kf.setImage(with: URL(string: item.post.thumbnailUrl))
+//        }
+//        .disposed(by: bag)
         
         myPageCollectionView
             .rx
@@ -203,11 +157,12 @@ final class MyPageViewController: BaseViewController {
             .disposed(by: bag)
     }
     
+    
     private func setRx(){
         scrapLabel.rx.tapGesture()
             .when(.recognized)
             .subscribe{ [unowned self] _ in
-                linePosition.accept(true)
+                viewModel.linePosition.accept(true)
                 
             }
             .disposed(by: bag)
@@ -215,21 +170,30 @@ final class MyPageViewController: BaseViewController {
         myLabel.rx.tapGesture()
             .when(.recognized)
             .subscribe{ [unowned self] _ in
-                linePosition.accept(false)
+                viewModel.linePosition.accept(false)
             }
             .disposed(by: bag)
         
-        linePosition.subscribe { [unowned self] _ in
+        viewModel.linePosition.subscribe { [unowned self] _ in
             self.underLineConst?.deactivate()
             self.underlineView.snp.makeConstraints{
-                self.underLineConst = $0.centerX.equalTo(linePosition.value ? scrapLabel.snp.centerX : myLabel.snp.centerX).constraint
+                self.underLineConst = $0.centerX.equalTo(viewModel.linePosition.value ? scrapLabel.snp.centerX : myLabel.snp.centerX).constraint
             }
             
-            if linePosition.value {
-                self.posts.onNext(self.scrapPost)
+            if viewModel.linePosition.value {
+                scrapLabel.textColor = WithYouAsset.mainColorDark.color
+                myLabel.textColor = .lightGray
             } else {
-                self.posts.onNext(self.myPost)
+                scrapLabel.textColor = .lightGray
+                myLabel.textColor = WithYouAsset.mainColorDark.color
+                
             }
+//
+//            if viewModel.linePosition.value {
+//                self.viewModel.posts.onNext(self.scrapPost)
+//            } else {
+//                self.posts.onNext(self.myPost)
+//            }
         }
         .disposed(by:bag)
     }
@@ -300,10 +264,10 @@ final class MyPageViewController: BaseViewController {
     }
     
     @objc func handleRefreshControl() {
-        loadPosts()
-        DispatchQueue.main.async{
-            self.myPageCollectionView.refreshControl?.endRefreshing()
-        }
+//        loadPosts()
+//        DispatchQueue.main.async{
+//            self.myPageCollectionView.refreshControl?.endRefreshing()
+//        }
     }
     
     @objc func editButtonTapped() {
