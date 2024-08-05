@@ -6,6 +6,7 @@
 //  Copyright © 2024 withyou.org. All rights reserved.
 //
 
+import SnapKit
 import UIKit
 
 public protocol BaseUIProtocol {
@@ -30,4 +31,17 @@ open class BaseUIView: UIView, BaseUIProtocol{
     open func initUI() {}
     
     open func initLayout() {}
+}
+
+extension BaseUIView {
+    public func addUnderline(to label: UILabel, thickness: CGFloat, color: UIColor) {
+        let underline = UILabel()
+        underline.backgroundColor = color
+        self.addSubview(underline)
+        underline.snp.makeConstraints { make in
+            make.leading.trailing.bottom.equalTo(label)
+            make.height.equalTo(thickness)
+        }
+        self.bringSubviewToFront(label)
+    }
 }

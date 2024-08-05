@@ -36,7 +36,7 @@ final public class DefaultNoticeUseCase : NoticeUseCase {
         repository.getOneNotice(noticeId: noticeId)
     }
     
-    public func deleteNotice(noticeId: Int) -> Single<Int> {
+    public func deleteNotice(noticeId : Int) -> Single<Int> {
         repository.deleteNotice(noticeId: noticeId)
     }
     

@@ -6,7 +6,8 @@
 //  Copyright © 2024 withyou.org. All rights reserved.
 //
 
-import Alamofire
+import Core
+import CommonUI
 import Domain
 import SnapKit
 import RxCocoa

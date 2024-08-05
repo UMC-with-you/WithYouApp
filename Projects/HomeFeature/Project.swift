@@ -12,8 +12,8 @@ let project = Project.makeModule(
     name: "HomeFeature", 
     product: .staticFramework,
     dependencies: [
+        .project(target: "Core", path: .relativeToRoot("Projects/Core")),
         .project(target: "Domain", path: .relativeToRoot("Projects/Domain")),
-        .project(target: "Data", path: .relativeToRoot("Projects/Data")),
         .project(target: "CommonUI", path: .relativeToRoot("Projects/CommonUI")),
         .external(name: "RxSwift"),
         .external(name: "SnapKit")

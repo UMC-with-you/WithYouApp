@@ -7,9 +7,11 @@
 //
 
 import Core
+import CommonUI
 import UIKit
 import RxSwift
 import SnapKit
+
 
 class NameProfileViewController: UIViewController {
 

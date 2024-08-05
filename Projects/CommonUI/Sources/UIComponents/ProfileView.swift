@@ -11,53 +11,73 @@ import Domain
 import SnapKit
 import UIKit
 
-enum ProfileSizeOption : Int{
+public enum ProfileSizeOption : Int{
     case big = 70
     case medium = 40
     case small = 32
     case my = 60
 }
 
-class ProfileView: UIView {
+public class ProfileView: BaseUIView {
     
-    var size : ProfileSizeOption
+    private var size : ProfileSizeOption
     
-    var traveler : Traveler
+    private var profileImage = UIImageView()
     
-    var profileImage = {
-       var image = UIImageView()
-        image.layer.cornerRadius = 15
-        image.layer.borderWidth = 1
-        image.layer.borderColor = WithYouAsset.subColor.color.cgColor
-        return image
-    }()
+    public var traveler : Traveler?
     
-    init( size : ProfileSizeOption, traveler : Traveler = Traveler(id: 0, name: "김아무개", profilePicture: "없음")){
+    public init(size : ProfileSizeOption){
         self.size = size
-        self.traveler = traveler
-//        if traveler.name == DataManager.shared.getUserName(){
-//            self.profileImage.image = UIImage(data:DataManager.shared.getUserImage())
-//        }
         super.init(frame: .zero)
-        
         //API 연동 후
         //self.profileImage.image = traveler.profilePicture
-        
-        self.addSubview(profileImage)
-        
-        setConst()
     }
     
-    private func setConst(){
-        self.snp.makeConstraints{
-            $0.width.equalTo(size.rawValue + 5)
-            $0.height.equalTo(size.rawValue + 5)
+    public func bindTraveler(traveler: Traveler){
+        self.traveler = traveler
+        if traveler.profilePicture == nil {
+            profileImage.image = CommonUIAsset.defaultProfilePic.image
         }
-
-        profileImage.snp.makeConstraints{
+    }
+    
+    public func bindImage(image : UIImage){
+        self.profileImage.image = image
+    }
+    
+    public override func initUI() {
+        self.addSubview(profileImage)
+        self.layer.cornerRadius = CGFloat(size.rawValue / 2)
+        self.layer.borderWidth = 1
+        self.layer.borderColor = WithYouAsset.pointColor.color.cgColor.copy(alpha: 0.28)
+        self.backgroundColor = .white
+        self.clipsToBounds = true
+    }
+    
+    public override func initLayout() {
+        self.snp.makeConstraints{
             $0.width.equalTo(size.rawValue)
             $0.height.equalTo(size.rawValue)
-            $0.centerY.equalToSuperview()
+        }
+        
+        switch size {
+        case .big, .medium :
+            profileImage.snp.makeConstraints{
+                $0.width.equalTo(size.rawValue - 5)
+                $0.height.equalTo(size.rawValue - 5)
+                $0.center.equalToSuperview()
+            }
+        case .my :
+            profileImage.snp.makeConstraints{
+                $0.width.equalTo(size.rawValue - 1)
+                $0.height.equalTo(size.rawValue - 1)
+                $0.center.equalToSuperview()
+            }
+        case .small :
+            profileImage.snp.makeConstraints{
+                $0.width.equalTo(size.rawValue)
+                $0.height.equalTo(size.rawValue)
+                $0.center.equalToSuperview()
+            }
         }
     }
     

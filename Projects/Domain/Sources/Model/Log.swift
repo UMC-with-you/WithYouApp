@@ -16,6 +16,15 @@ public struct Log : Codable, Identifiable {
     public var status : String
     public var imageUrl : String
     
+    public init(id: Int, title: String, startDate: String, endDate: String, status: String, imageUrl: String) {
+        self.id = id
+        self.title = title
+        self.startDate = startDate
+        self.endDate = endDate
+        self.status = status
+        self.imageUrl = imageUrl
+    }
+    
     private enum CodingKeys : String, CodingKey{
         case id = "travelId"
         case title

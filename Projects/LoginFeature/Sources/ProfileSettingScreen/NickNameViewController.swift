@@ -6,6 +6,7 @@
 //  Copyright © 2024 withyou.org. All rights reserved.
 //
 
+import Core
 import Domain
 import UIKit
 import SnapKit
@@ -45,7 +46,7 @@ class NickNameViewController: UIViewController {
         button.titleLabel?.font = UIFont(name: "Pretendard-Medium", size: 18)
         button.setTitle("확인하기", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = LoginFeatureAsset.subColor.color
+        button.backgroundColor = WithYouAsset.subColor.color
         button.layer.cornerRadius = 20
         button.layer.masksToBounds = true
         button.addTarget(self, action: #selector(checkButtonTapped), for: .touchUpInside)
@@ -128,7 +129,7 @@ extension NickNameViewController : UITextFieldDelegate{
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if textField.text!.count == 0 {
-            checkButton.backgroundColor = LoginFeatureAsset.mainColorDark.color
+            checkButton.backgroundColor = WithYouAsset.mainColorDark.color
         } else {
             
         }
@@ -141,7 +142,7 @@ extension NickNameViewController : UITextFieldDelegate{
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         if !textField.hasText {
-            checkButton.backgroundColor = LoginFeatureAsset.subColor.color
+            checkButton.backgroundColor = WithYouAsset.subColor.color
         }
     }
 }

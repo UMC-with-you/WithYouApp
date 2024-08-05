@@ -11,17 +11,19 @@ import UIKit
 public struct Notice : Codable {
     public let noticeID : Int
     public let profileImage: String
-    public let state : NoticeOptions
+    public var state : NoticeOptions
     public let userName: String
-    public let noticeContent: String
-    public let checkNum : Int
+    public var noticeContent: String
+    public var checkNum : Int
+    public var didUserChecked : Bool
     
-    public init(noticeID: Int, profileImage: String, state: NoticeOptions, userName: String, noticeContent: String, checkNum: Int) {
+    public init(noticeID: Int, profileImage: String, state: NoticeOptions, userName: String, noticeContent: String, checkNum: Int, didUserChecked: Bool) {
         self.noticeID = noticeID
         self.profileImage = profileImage
         self.state = state
         self.userName = userName
         self.noticeContent = noticeContent
         self.checkNum = checkNum
+        self.didUserChecked = didUserChecked
     }
 }

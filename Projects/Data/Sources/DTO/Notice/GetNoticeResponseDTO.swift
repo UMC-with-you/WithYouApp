@@ -30,7 +30,8 @@ extension GetNoticeResponseDTO {
                                   state: .always,
                                   userName: dto.name,
                                   noticeContent: dto.content,
-                                  checkNum: dto.checkNum))
+                                  checkNum: dto.checkNum,
+                                 didUserChecked: false))
         }
         
         return notices

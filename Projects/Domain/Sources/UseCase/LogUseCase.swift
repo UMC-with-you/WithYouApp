@@ -11,7 +11,7 @@ import RxSwift
 
 public protocol LogUseCase {
     func getAllLogs() -> Single<[Log]>
-    func addLog(title:String, startDate:String, endDate: String, localDate:Date, image : Data?) -> Single<Int>
+    func addLog(title:String, startDate:String, endDate: String, image : Data?) -> Single<Int>
     func deleteLog(travelId : Int) -> Single<Int>
     func editLog(travelId : Int, title:String?, startDate:String?, endDate: String?, localDate:Date?, image : Data?) -> Single<Int>
     func joinLog(inviteCode : String) -> Single<Void>
@@ -32,8 +32,8 @@ public final class DefaultLogUseCase : LogUseCase {
         repository.getAllLogs()
     }
     
-    public func addLog(title: String, startDate: String, endDate: String, localDate: Date, image: Data?) -> Single<Int> {
-        repository.addLog(title: title, startDate: startDate, endDate: endDate, localDate: localDate, image: image)
+    public func addLog(title: String, startDate: String, endDate: String, image: Data?) -> Single<Int> {
+        repository.addLog(title: title, startDate: startDate, endDate: endDate, image: image)
     }
     
     public func deleteLog(travelId: Int) -> Single<Int> {

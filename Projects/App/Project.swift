@@ -15,7 +15,10 @@ let project = Project.makeModule(name: "App",
                                 .project(target: "Core", path: .relativeToRoot("Projects/Core")),
                                 .project(target: "Data", path: .relativeToRoot("Projects/Data")),
                                 .project(target: "HomeFeature", path: .relativeToRoot("Projects/HomeFeature")),
-                                .project(target: "LoginFeature", path: .relativeToRoot("Projects/LoginFeature"))
+                                .project(target: "LoginFeature", path: .relativeToRoot("Projects/LoginFeature")),
+                                .project(target: "TravelLogFeature", path: .relativeToRoot("Projects/TravelLogFeature")),
+                                .project(target: "CreateLogFeature", path: .relativeToRoot("Projects/CreateLogFeature")),
+                                .project(target: "MyPageFeature", path: .relativeToRoot("Projects/MyPageFeature"))
                              ],
                                  resources: ["Resources/**"],
                              infoPlist: .file(path: "Support/Info.plist")

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Core
 import Domain
 import RxSwift
 
@@ -21,8 +22,8 @@ final public class DefaultLogRepository : LogRepository {
         return service.request([Log].self, router: router)
     }
     
-    public func addLog(title: String, startDate: String, endDate: String, localDate: Date, image: Data?) -> Single<Int> {
-        let requestDTO = AddLogRequestDTO(title: title, startDate: startDate, endDate: endDate, localDate: "")
+    public func addLog(title: String, startDate: String, endDate: String, image: Data?) -> Single<Int> {
+        let requestDTO = AddLogRequestDTO(title: title, startDate: startDate, endDate: endDate, localDate: Date().getCurrentDateToString())
         let router = LogRouter.addLog(logDTO: requestDTO, image: image)
         return service.requestWithImage(LogIDResponseDTO.self, router: router).map{ $0.travelId }
     }

@@ -14,7 +14,6 @@ public protocol AuthRepository {
     func authWithApple(accessToken : String,
                        userName : String,
                        email : String,
-                       provider : String,
                        nonce : String) -> Single<AuthToken>
     func authWithGoogle(authCode : String) -> Single<AuthToken>
 }

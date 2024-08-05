@@ -7,6 +7,16 @@
 //
 
 public protocol Coordinator : AnyObject {
-    var childCoordinaotrs : [Coordinator] { get set }
+    var childCoordinators : [Coordinator] { get set }
+    var parentCoordiantor : Coordinator? { get set }
     func start()
+}
+
+extension Coordinator {
+    public func childDidFinish(_ child: Coordinator?) {
+        for (index, coordinator) in childCoordinators.enumerated() where coordinator === child {
+            childCoordinators.remove(at: index)
+            break
+        }
+    }
 }

@@ -13,7 +13,8 @@ import RxSwift
 import SnapKit
 import UIKit
 
-class NoticeTableViewCell: UITableViewCell {
+class NoticeTableCell: UITableViewCell {
+    static let cellId  = "NoticeTableCell"
     var notice : Notice?
     
     var logId : Int?

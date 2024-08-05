@@ -47,10 +47,7 @@ final class TodayView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        backgroundColor = .white
-        addSubview(mainImage)
-        addSubview(mainLabel)
-        addSubview(subLabel)
+        
     
         setConstraints()
     }

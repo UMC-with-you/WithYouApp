@@ -14,14 +14,14 @@ import UIKit
 // 버튼 : 설명~ 식의 스타일
 public class TwoComponentLineView: UIView{
     
-    let label = {
+    public let label = {
         let label = UILabel()
         label.textColor = WithYouAsset.mainColorDark.color
         label.font = WithYouFontFamily.Pretendard.medium.font(size: 16)
         return label
     }()
     
-    var imageView : UIView!
+    public var imageView : UIView!
     
     override init(frame: CGRect) {
         self.imageView = UIView()
@@ -53,7 +53,7 @@ public class TwoComponentLineView: UIView{
         imageView.snp.makeConstraints{
             $0.centerY.equalToSuperview()
             $0.leading.equalToSuperview()
-            if imageView is WYAddButton {
+            if imageView is WYAddButton || imageView is ProfileView{
             } else {
                 $0.height.width.equalTo(28)
             }

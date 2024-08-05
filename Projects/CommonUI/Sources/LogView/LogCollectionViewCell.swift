@@ -32,10 +32,17 @@ public class LogCollectionViewCell: UICollectionViewCell {
     }()
     
     var backImage = {
-        let img = UIImageView(image: UIImage(named: "LogModel1"))
+        let img = UIImageView(image: UIImage(named: "LogModel0"))
         img.layer.cornerRadius = 15
         img.layer.masksToBounds = true
         return img
+    }()
+    
+    var imageBackGround = {
+        let view = UIView()
+        view.backgroundColor = .black.withAlphaComponent(0.3)
+        view.layer.cornerRadius = 15
+        return view
     }()
     
     //For Big Size Only
@@ -44,8 +51,6 @@ public class LogCollectionViewCell: UICollectionViewCell {
         button.layer.cornerRadius = 13
         return button
     }()
-    
-    var bag = DisposeBag()
     
     override init(frame : CGRect){
         super.init(frame: frame)
@@ -58,7 +63,7 @@ public class LogCollectionViewCell: UICollectionViewCell {
         dDay.setTitle(dateController.days(from:log.startDate), for: .normal)
         
         //self.backImage.kf.setImage(with: URL(string: log.imageUrl))
-        self.backImage.alpha = 0.5
+        self.backImage.image = WithYouAsset.logModel1.image
     
         setConst(isBigCell)
         setSize(isBigCell)
@@ -74,13 +79,17 @@ public class LogCollectionViewCell: UICollectionViewCell {
     private func setUp(){
         self.clipsToBounds = true
         
-        [backImage,title,date].forEach{
+        [backImage,imageBackGround,title,date].forEach{
             addSubview($0)
         }
     }
     
     private func setConst(_ isBigCell : Bool){
         backImage.snp.makeConstraints{
+            $0.width.height.equalToSuperview()
+        }
+        
+        imageBackGround.snp.makeConstraints{
             $0.width.height.equalToSuperview()
         }
         

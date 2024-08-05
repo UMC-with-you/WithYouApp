@@ -25,12 +25,10 @@ final public class DefaultAuthRepository : AuthRepository {
     public func authWithApple(accessToken : String,
                               userName : String,
                               email : String,
-                              provider : String,
                               nonce : String) -> Single<AuthToken> {
         let dto = AppleAuthRequestDTO(accessToken: accessToken,
                                       userName: userName,
                                       email: email,
-                                      provider: provider,
                                       nonce: nonce)
         let router = AuthRouter.apple(authDTO: dto)
         return service.request(AuthResponseDTO.self, router: router).map{ $0.toDomain() }
@@ -41,6 +39,4 @@ final public class DefaultAuthRepository : AuthRepository {
         let router = AuthRouter.google(authDTO: dto)
         return service.request(AuthResponseDTO.self, router: router).map{ $0.toDomain() }
     }
-    
-    
 }

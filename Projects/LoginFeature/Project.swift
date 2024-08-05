@@ -13,11 +13,9 @@ let project = Project.makeModule(
     product: .staticFramework,
     dependencies: [
         .project(target: "Domain", path: .relativeToRoot("Projects/Domain")),
-        .project(target: "Data", path: .relativeToRoot("Projects/Data")),
         .project(target: "Core", path: .relativeToRoot("Projects/Core")),
         .external(name: "KakaoSDK"),
         .external(name: "RxSwift"),
         .external(name: "RxCocoa"),
-        .external(name: "SnapKit")],
-    resources: ["Resources/**"]
+        .external(name: "SnapKit")]
     )

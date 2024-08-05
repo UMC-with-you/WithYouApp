@@ -10,15 +10,12 @@ import Foundation
 import RxSwift
 
 public protocol AuthUseCase {
-    func authWithKakao(authCode : String) -> Single<AuthToken>
+    func authWithKakao(authCode : String) -> Single<Void>
     func authWithApple(accessToken : String,
                        userName : String,
                        email : String,
-                       provider : String,
-                       nonce : String) -> Single<AuthToken>
-    func authWithGoogle(authCode : String) -> Single<AuthToken>
-    
-    func saveToken(accessToken : String, refreshToken : String) -> Single<Void>
+                       nonce : String) -> Single<Void>
+    func authWithGoogle(authCode : String) -> Single<Void>
 }
 
 final public class DefaultAuthUseCase : AuthUseCase {
@@ -31,27 +28,59 @@ final public class DefaultAuthUseCase : AuthUseCase {
         self.secureDataRepository = secureDataRepository
     }
     
-    public func authWithKakao(authCode: String) -> Single<AuthToken> {
-        authRepository.authWithKakao(authCode: authCode)
+    public func authWithKakao(authCode: String) -> Single<Void> {
+        return Single<Void>.create { single in
+            self.authRepository.authWithKakao(authCode: authCode).subscribe { authToken in
+                self.saveToken(authToken).subscribe { _ in
+                    single(.success(()))
+                } onFailure: { error in
+                    single(.failure(error))
+                }
+                .dispose()
+            } onFailure: { error in
+                single(.failure(error))
+            }
+        }
     }
     
     public func authWithApple(accessToken : String,
                               userName : String,
                               email : String,
-                              provider : String,
-                              nonce : String) -> Single<AuthToken> {
-        authRepository.authWithApple(accessToken: accessToken,
-                                 userName: userName,
-                                 email: email,
-                                 provider: provider,
-                                 nonce: nonce)
+                              nonce : String) -> Single<Void> {
+        return Single<Void>.create { single in
+            self.authRepository.authWithApple(accessToken: accessToken,
+                                                             userName: userName,
+                                                             email: email,
+                                                             nonce: nonce)
+            .subscribe { authToken in
+                self.saveToken(authToken).subscribe { _ in
+                    single(.success(()))
+                } onFailure: { error in
+                    single(.failure(error))
+                }
+                .dispose()
+            } onFailure: { error in
+                single(.failure(error))
+            }
+        }
     }
     
-    public func authWithGoogle(authCode: String) -> Single<AuthToken> {
-        authRepository.authWithGoogle(authCode: authCode)
+    public func authWithGoogle(authCode: String) -> Single<Void> {
+        return Single<Void>.create { single in
+            self.authRepository.authWithGoogle(authCode: authCode).subscribe { authToken in
+                self.saveToken(authToken).subscribe { _ in
+                    single(.success(()))
+                } onFailure: { error in
+                    single(.failure(error))
+                }
+                .dispose()
+            } onFailure: { error in
+                single(.failure(error))
+            }
+        }
     }
     
-    public func saveToken(accessToken: String, refreshToken: String) -> RxSwift.Single<Void> {
-        secureDataRepository.saveToken(authToken: AuthToken(accessToken: accessToken, refreshToken: refreshToken))
+    public func saveToken(_ token : AuthToken) -> Single<Void> {
+        secureDataRepository.saveToken(authToken: token)
     }
 }

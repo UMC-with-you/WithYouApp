@@ -11,7 +11,7 @@ import RxSwift
 
 public protocol LogRepository {
     func getAllLogs() -> Single<[Log]>
-    func addLog(title:String, startDate:String, endDate: String, localDate:Date, image : Data?) -> Single<Int>
+    func addLog(title:String, startDate:String, endDate: String, image : Data?) -> Single<Int>
     func deleteLog(travelId : Int) -> Single<Int>
     func editLog(travelId : Int, title:String?, startDate:String?, endDate: String?, localDate:Date?, image : Data?) -> Single<Int>
     func joinLog(inviteCode : String) -> Single<Void>

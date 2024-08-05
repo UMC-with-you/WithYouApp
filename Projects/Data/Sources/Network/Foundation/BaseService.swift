@@ -61,7 +61,7 @@ public class BaseService {
 
 final class MyRequestInterceptor: RequestInterceptor {
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
-        var urlRequest = urlRequest
+        let urlRequest = urlRequest
         
         //urlRequest.setValue("1", forHTTPHeaderField: "Authorization")
         completion(.success(urlRequest))

@@ -20,4 +20,11 @@ public struct PackingItem : Codable, Equatable, Identifiable {
         case packerId
         case isChecked = "checked"
     }
+    
+    public init(id: Int, itemName: String, packerId: Int? = nil, isChecked: Bool) {
+        self.id = id
+        self.itemName = itemName
+        self.packerId = packerId
+        self.isChecked = isChecked
+    }
 }

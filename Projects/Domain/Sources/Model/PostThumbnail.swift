@@ -11,4 +11,9 @@ import Foundation
 public struct PostThumbnail : Decodable {
     public var postId : Int
     public var thumbnailUrl : String
+    
+    public init(postId: Int, thumbnailUrl: String) {
+        self.postId = postId
+        self.thumbnailUrl = thumbnailUrl
+    }
 }
