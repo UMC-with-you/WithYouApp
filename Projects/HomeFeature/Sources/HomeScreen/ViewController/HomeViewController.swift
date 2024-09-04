@@ -45,6 +45,8 @@ public class HomeViewController: BaseViewController {
     
     public override func viewWillAppear(_ animated: Bool) {
         viewModel.loadLogs()
+        viewModel.ingTapped()
+        mainLogView.moveEclipse(state: true)
     }
     
     // MARK: Rx연결
@@ -166,7 +168,6 @@ extension HomeViewController{
 extension HomeViewController : NewLogSheetDelegate {
     public func showCreateLogScreen() {
         coordinator?.navigateToCreateScreen()
-        
     }
     
     public func joinLog(invitationCode : String){

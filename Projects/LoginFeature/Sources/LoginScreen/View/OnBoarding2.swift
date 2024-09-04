@@ -60,7 +60,7 @@ final class OnBoarding2: BaseUIView {
         
         mockUpImageView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview()
+            make.bottom.equalToSuperview().offset(-50)
         }
     }
 }

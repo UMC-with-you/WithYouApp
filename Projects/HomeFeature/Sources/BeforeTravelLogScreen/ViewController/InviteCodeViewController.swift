@@ -10,7 +10,6 @@ import Core
 import CommonUI
 import UIKit
 
-
 public class InviteCodeViewController : BaseViewController {
     
     // MARK: UIComponents

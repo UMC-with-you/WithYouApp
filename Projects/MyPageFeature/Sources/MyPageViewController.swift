@@ -28,7 +28,7 @@
 //        
 //    }()
 //    let myPageCollectionView: UICollectionView = {
-//        let layout = UICollectionViewFlowLayout()
+//        let layout = UICollectio.  ViewFlowLayout()
 //        layout.scrollDirection = .vertical
 //        layout.itemSize = CGSize(width: UIScreen.main.bounds.width / 3 - 1, height: UIScreen.main.bounds.width / 3 - 1)
 //        layout.minimumLineSpacing = 1

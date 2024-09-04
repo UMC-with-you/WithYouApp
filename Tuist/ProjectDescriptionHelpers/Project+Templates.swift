@@ -15,7 +15,7 @@ public extension Project {
             resources: ResourceFileElements? = nil,
             infoPlist: InfoPlist = .default
         ) -> Project {
-            var target = [Target(name: name,
+            var target = [Target.target(name: name,
                                 destinations: .iOS,
                                 product: product,
                                 bundleId: "WithYou.app",
@@ -26,7 +26,7 @@ public extension Project {
                                  dependencies: dependencies)]
             
             if includeTest{
-                let testTarget = Target(name: "\(name)Tests",
+                let testTarget = Target.target(name: "\(name)Tests",
                                         destinations: .iOS,
                                         product: .unitTests,
                                         bundleId: "WithYou.app.Tests",
