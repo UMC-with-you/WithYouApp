@@ -10,20 +10,6 @@ import Foundation
 import UIKit
 
 public final class HomeCoordinator : Coordinator {
-    // MARK: 추후 DI Refactoring 예정
-//    public struct Dependency {
-//        let navigationController : UINavigationController
-//        let homeViewController : HomeViewController
-//        let logUseCase : LogUseCase
-//        
-//        public init(navigationController: UINavigationController, homeViewController: HomeViewController, logUseCase: LogUseCase) {
-//            self.navigationController = navigationController
-//            self.homeViewController = homeViewController
-//            self.logUseCase = logUseCase
-//        }
-//    }
-    
-//    private let dependency : Dependency
     
     private var navigationController: UINavigationController
     
@@ -37,7 +23,7 @@ public final class HomeCoordinator : Coordinator {
     }
     
     public func start() {
-        let homeViewModel = HomeLogViewModel(useCase: DefaultLogUseCase(repository: MockLogRepository()))
+        let homeViewModel = HomeLogViewModel(useCase: DIContainer.shared.resolve(LogUseCase.self)!)
         let homeVC = HomeViewController(viewModel: homeViewModel)
         homeVC.coordinator = self
         navigationController.pushViewController(homeVC, animated: true)
@@ -66,7 +52,7 @@ extension HomeCoordinator : HomeViewControllerDelgate {
     
     //Log 생성 화면 이동
     public func navigateToCreateScreen(){
-        let createLogViewModel = CreateLogViewModel(logUseCase: DefaultLogUseCase(repository: MockLogRepository()))
+        let createLogViewModel = CreateLogViewModel(logUseCase: DIContainer.shared.resolve(LogUseCase.self)!)
         let createLogViewController = CreateLogViewController(viewModel: createLogViewModel)
         createLogViewController.hidesBottomBarWhenPushed = true
         self.navigationController.pushViewController(createLogViewController, animated: true)
@@ -78,5 +64,12 @@ extension HomeCoordinator : HomeViewControllerDelgate {
         beforeTravelCoordinator.parentCoordiantor = self
         beforeTravelCoordinator.start()
         self.childCoordinators.append(beforeTravelCoordinator)
+    }
+    
+    public func navigateToOnGoingTravelView(log: Log) {
+        let onGoingTravelCoordinator = OnGoingTravelCoordinator(navigationController: self.navigationController, log: log)
+        onGoingTravelCoordinator.parentCoordiantor = self
+        onGoingTravelCoordinator.start()
+        self.childCoordinators.append(onGoingTravelCoordinator)
     }
 }

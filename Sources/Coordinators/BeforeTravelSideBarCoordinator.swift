@@ -26,7 +26,7 @@ final public class BeforeTravelSideBarCoordinator : Coordinator {
     }
     
     public func start() {
-        let logUseCase = DefaultLogUseCase(repository: MockLogRepository())
+        let logUseCase = DIContainer.shared.resolve(LogUseCase.self)!
         let sideBarViewModel = BeforeTravelSideBarViewModel(logUseCase: logUseCase, travelers: travelers, log: log)
         let sideBarViewController = BeforeTravelSideBarViewController(viewModel: sideBarViewModel)
         

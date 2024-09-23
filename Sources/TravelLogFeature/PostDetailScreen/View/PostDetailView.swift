@@ -13,7 +13,6 @@ import UIKit
 
 class PostDetailView : BaseUIView {
     
-    
     lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "오징어들의 오사카여행"
@@ -58,45 +57,48 @@ class PostDetailView : BaseUIView {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 0
+        layout.itemSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = WithYouAsset.backgroundColor.color
         collectionView.isPagingEnabled = true
         collectionView.showsHorizontalScrollIndicator = false
+        collectionView.register(PostImageCell.self, forCellWithReuseIdentifier: PostImageCell.cellId)
         return collectionView
     }()
     
     lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
-        pageControl.hidesForSinglePage = true
         pageControl.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
         pageControl.pageIndicatorTintColor = WithYouAsset.subColor.color
         pageControl.currentPageIndicatorTintColor = .black
-        pageControl.isEnabled = false
+        pageControl.isEnabled = true
+        pageControl.allowsContinuousInteraction = true
+        pageControl.isUserInteractionEnabled = true
         return pageControl
     }()
     
     
     lazy var likeConfig: UIImage.Configuration = {
-        let config = UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)
+        let config = UIImage.SymbolConfiguration(pointSize: 24, weight: .light)
         return config
     }()
     
     lazy var messageConfig: UIImage.Configuration = {
-        let config = UIImage.SymbolConfiguration(pointSize: 22, weight: .regular)
+        let config = UIImage.SymbolConfiguration(pointSize: 22, weight: .light)
         return config
     }()
     
     
-    lazy var likeButton: UIButton = {
-        let button = UIButton()
-        let image = UIImage(systemName: "heart",withConfiguration: likeConfig)?.withTintColor(.black, renderingMode: .alwaysOriginal)
-        let filledImage = UIImage(systemName: "heart.fill",withConfiguration: likeConfig)?.withTintColor(.red, renderingMode: .alwaysOriginal)
-        button.setImage(filledImage, for: .selected)
-        button.setImage(image, for: .normal)
-        return button
-    }()
+//    lazy var likeButton: UIButton = {
+//        let button = UIButton()
+//        let image = UIImage(systemName: "heart",withConfiguration: likeConfig)?.withTintColor(.black, renderingMode: .alwaysOriginal)
+//        let filledImage = UIImage(systemName: "heart.fill",withConfiguration: likeConfig)?.withTintColor(.red, renderingMode: .alwaysOriginal)
+//        button.setImage(filledImage, for: .selected)
+//        button.setImage(image, for: .normal)
+//        return button
+//    }()
     
-    lazy var messageButton: UIButton = {
+    lazy var commentButton: UIButton = {
         let button = UIButton()
         let image = UIImage(systemName: "message",withConfiguration: messageConfig)?.withTintColor(.black, renderingMode: .alwaysOriginal)
         button.setImage(image, for: .normal)
@@ -112,12 +114,12 @@ class PostDetailView : BaseUIView {
         return button
     }()
     
-    lazy var likeLabel: UILabel = {
-        let label = UILabel()
-        label.font = WithYouFontFamily.Pretendard.semiBold.font(size: 15)
-        label.textColor = .black
-        return label
-    }()
+//    lazy var likeLabel: UILabel = {
+//        let label = UILabel()
+//        label.font = WithYouFontFamily.Pretendard.semiBold.font(size: 15)
+//        label.textColor = .black
+//        return label
+//    }()
     
     lazy var likeCount: UILabel = {
         let label = UILabel()
@@ -137,7 +139,7 @@ class PostDetailView : BaseUIView {
     }()
     
     override func initUI() {
-        [titleLabel, periodLabel, profilePic, posterName, optionButton, profileLineView, postCollectionView, pageControl, likeButton, messageButton, bookMarkButton, likeLabel, likeCount, contextLabel].forEach{
+        [titleLabel, periodLabel, profilePic, posterName, optionButton, profileLineView, postCollectionView, pageControl, commentButton, bookMarkButton, likeCount, contextLabel].forEach{
             self.addSubview($0)
         }
         
@@ -145,7 +147,7 @@ class PostDetailView : BaseUIView {
     
     override func initLayout() {
         titleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(20)
+            $0.top.equalToSuperview().offset(10)
             $0.centerX.equalToSuperview()
         }
         
@@ -186,33 +188,26 @@ class PostDetailView : BaseUIView {
             $0.centerX.equalToSuperview()
         }
         
-        likeButton.snp.makeConstraints {
-            $0.top.equalTo(pageControl.snp.bottom)
+//        likeButton.snp.makeConstraints {
+//            $0.centerY.equalTo(pageControl)
+//            $0.leading.equalToSuperview().offset(15)
+//        }
+        
+        commentButton.snp.makeConstraints {
+            $0.centerY.equalTo(pageControl)
             $0.leading.equalToSuperview().offset(15)
         }
         
-        messageButton.snp.makeConstraints {
-            $0.centerY.equalTo(likeButton)
-            $0.leading.equalTo(likeButton.snp.trailing).offset(10)
-        }
-        
         bookMarkButton.snp.makeConstraints {
-            $0.centerY.equalTo(likeButton)
+            $0.centerY.equalTo(pageControl)
             $0.trailing.equalToSuperview().offset(-15)
         }
-        
-        likeLabel.snp.makeConstraints {
-            $0.top.equalTo(likeButton.snp.bottom).offset(10)
-            $0.leading.equalTo(likeButton)
-        }
-        
+
         contextLabel.snp.makeConstraints {
-            $0.top.equalTo(likeLabel.snp.bottom).offset(10)
-            $0.leading.equalTo(likeLabel)
+            $0.top.equalTo(commentButton.snp.bottom).offset(10)
+            $0.leading.equalTo(commentButton)
             $0.trailing.equalToSuperview().offset(-15)
         }
     }
-    
-    
 }
 

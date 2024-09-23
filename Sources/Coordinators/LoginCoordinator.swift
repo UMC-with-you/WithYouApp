@@ -20,10 +20,8 @@ public class LoginCoordinator : Coordinator {
     }
     
     public func start() {
-        let authRepository = MockAuthRepository()
-        let secureRepository = DefaultSecureDataRepository()
         
-        let authUseCase = DefaultAuthUseCase(repository: authRepository, secureDataRepository: secureRepository)
+        let authUseCase = DIContainer.shared.resolve(AuthUseCase.self)!
         let loginService = LoginService(authUseCase: authUseCase)
         
         let viewModel = LoginViewModel(loginService: loginService)

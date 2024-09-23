@@ -12,6 +12,7 @@ import Foundation
 
 protocol PostListViewControllerDelgate {
     func navigateToDetailPost(_ postId: Int)
+    func navigateToAddPost()
 }
 
 
@@ -35,7 +36,7 @@ public final class PostListViewController : BaseViewController {
     
     public override func setUp() {
         view.addSubview(postListView)
-        view.backgroundColor = .white
+
         postListView.travelTitle.text = viewModel.log.title
         postListView.dateTitle.text = "\(viewModel.log.startDate.replacingOccurrences(of: "-", with: ".")) - \(viewModel.log.endDate.replacingOccurrences(of: "-", with: "."))"
     }
@@ -44,6 +45,10 @@ public final class PostListViewController : BaseViewController {
         postListView.snp.makeConstraints{
             $0.edges.equalToSuperview()
         }
+    }
+    
+    public override func setUpViewProperty() {
+        view.backgroundColor = .white
     }
     
     public override func setFunc() {
@@ -61,5 +66,15 @@ public final class PostListViewController : BaseViewController {
                 owner.coordinator?.navigateToDetailPost(postThumbnail.postId)
             })
             .disposed(by: disposeBag)
+        
+        postListView.addButton
+            .rx
+            .tap
+            .withUnretained(self)
+            .subscribe { (owner, _) in
+                owner.coordinator?.navigateToAddPost()
+            }
+            .disposed(by: disposeBag)
     }
+    
 }
