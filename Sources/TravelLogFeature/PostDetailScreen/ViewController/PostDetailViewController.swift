@@ -38,8 +38,8 @@ class DetailPostViewController: BaseViewController {
                 self.bindPost(post)
             })
             .disposed(by: disposeBag)
-        viewModel.post
-            .bind(to: postView.postCollectionView.rx.items(cellIdentifier: <#T##String#>, cellType: <#T##Cell.Type#>))
+//        viewModel.post
+//            .bind(to: postView.postCollectionView.rx.items(cellIdentifier: <#T##String#>, cellType: <#T##Cell.Type#>))
     }
     
     override func setUpViewProperty() {

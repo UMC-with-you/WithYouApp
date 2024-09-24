@@ -13,9 +13,8 @@ let project = Project(
             resources: ["Resources/**"],
             dependencies: [
                 .external(name: "Alamofire"),
-                .external(name: "RxSwift"),
-                .external(name: "RxCocoa"),
-                .external(name: "RxGesture"),
+//                .external(name: "RxSwift"),
+//                .external(name: "RxGesture"),
                 .external(name: "SnapKit"),
                 .external(name: "KakaoSDK"),
 //                                .external(name: "GoogleSignIn"),
