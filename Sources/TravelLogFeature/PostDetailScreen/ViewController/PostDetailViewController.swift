@@ -74,7 +74,6 @@ class DetailPostViewController: BaseViewController {
             .disposed(by: disposeBag)
   
         postView.pageControl.addTarget(self, action: #selector(pageControlTapped(_:)), for: .valueChanged)
-        
     }
     
     override func setUpViewProperty() {
