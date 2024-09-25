@@ -7,10 +7,9 @@
 //
 
 import RxCocoa
-
 import RxSwift
 
-public class HomeLogViewModel {
+public final class HomeLogViewModel {
     // MARK: Properties
     private var disposeBag = DisposeBag()
     private var useCase : LogUseCase

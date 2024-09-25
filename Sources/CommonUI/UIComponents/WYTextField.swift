@@ -13,7 +13,7 @@ public class WYTextField : UITextField {
         super.init(frame: frame)
         self.borderStyle = .roundedRect
         self.layer.borderWidth = 1
-        self.layer.cornerRadius = 15
+        self.layer.cornerRadius = 10
         self.layer.borderColor = WithYouAsset.subColor.color.cgColor
         self.layer.masksToBounds = true
         self.font = WithYouFontFamily.Pretendard.regular.font(size: 16)

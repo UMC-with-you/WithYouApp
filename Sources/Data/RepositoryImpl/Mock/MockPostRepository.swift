@@ -32,7 +32,9 @@ public final class MockPostRepository : PostRepository {
             ],
             images: [
                 PostImage(imageId: 1, imageUrl: "https://example.com/beach1.jpg", position: 1),
-                PostImage(imageId: 2, imageUrl: "https://example.com/beach2.jpg", position: 2)
+                PostImage(imageId: 2, imageUrl: "https://example.com/beach2.jpg", position: 2),
+                PostImage(imageId: 2, imageUrl: "https://example.com/beach2.jpg", position: 3),
+                PostImage(imageId: 2, imageUrl: "https://example.com/beach2.jpg", position: 4)
             ]
         ),
         Post(

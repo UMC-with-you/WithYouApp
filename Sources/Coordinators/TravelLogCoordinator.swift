@@ -22,7 +22,8 @@ public final class TravelLogCoordinator : Coordinator {
     }
     
     public func start() {
-        let viewModel = TravelLogViewModel(useCase: DefaultLogUseCase(repository: MockLogRepository()))
+        let useCase = DIContainer.shared.resolve(LogUseCase.self)!
+        let viewModel = TravelLogViewModel(useCase: useCase)
         let viewController = TravelLogViewController(viewModel: viewModel)
         viewController.coordinator = self
         
@@ -53,7 +54,8 @@ extension TravelLogCoordinator : TravelLogViewControllerDelgate {
     
     //로그 추가 스크린으로
     public func navigateToCreateScreen(){
-        let createLogViewModel = CreateLogViewModel(logUseCase: DefaultLogUseCase(repository: MockLogRepository()))
+        let useCase = DIContainer.shared.resolve(LogUseCase.self)!
+        let createLogViewModel = CreateLogViewModel(logUseCase: useCase)
         let createLogViewController = CreateLogViewController(viewModel: createLogViewModel)
         createLogViewController.hidesBottomBarWhenPushed = true
         self.navigationController.pushViewController(createLogViewController, animated: true)

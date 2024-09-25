@@ -14,6 +14,7 @@ final public class PostDetailViewModel {
     private let disposeBag = DisposeBag()
     
     public var post : PublishSubject<Post> = PublishSubject()
+    public var postImages = PublishSubject<[PostImage]>()
     private let postId : Int
     public let log : Log
     
@@ -29,5 +30,9 @@ final public class PostDetailViewModel {
                 self?.post.onNext(onePost)
             })
             .disposed(by: disposeBag)
+    }
+    
+    public func bindImages(_ images : [PostImage]){
+        self.postImages.onNext(images)
     }
 }

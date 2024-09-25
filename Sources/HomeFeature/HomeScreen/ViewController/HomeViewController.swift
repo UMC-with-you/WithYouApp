@@ -4,12 +4,7 @@
 //  Created by 김도경 on 1/8/24.
 //
 
-
-
-
 import SnapKit
-import RxCocoa
-import RxGesture
 import RxSwift
 import UIKit
 
@@ -17,6 +12,7 @@ public protocol HomeViewControllerDelgate {
     func showBottomSheet()
     func navigateToCreateScreen()
     func navigateToBeforeTravelView(log : Log)
+    func navigateToOnGoingTravelView(log : Log)
 }
 
 public class HomeViewController: BaseViewController {
@@ -60,8 +56,13 @@ public class HomeViewController: BaseViewController {
         mainLogView.logCollectionView
             .rx
             .modelSelected(Log.self)
-            .subscribe { [weak self] log in
-                self?.coordinator?.navigateToBeforeTravelView(log: log)
+            .withUnretained(self)
+            .subscribe { (owner, logEvent) in
+                if logEvent.status == "ONGOING"{
+                    owner.coordinator?.navigateToOnGoingTravelView(log: logEvent)
+                } else {
+                    owner.coordinator?.navigateToBeforeTravelView(log: logEvent)
+                }
             }
             .disposed(by: disposeBag)
         
@@ -214,28 +215,3 @@ extension HomeViewController : UICollectionViewDelegateFlowLayout{
         }
 }
 
-
-//로그 데이터 CollectionView 연결
-//        logs
-//            .bind(to: mainLogView.logCollectionView.rx.items(cellIdentifier: LogCollectionViewCell.cellId, cellType: LogCollectionViewCell.self)){ index, item, cell in
-//                cell.bind(log: item, isBigCell: true)
-//                if index != self.previousIndex{
-//                    cell.transform = CGAffineTransform(scaleX: 1, y: 0.87)
-//                }
-//
-//                cell.rx
-//                    .longPressGesture()
-//                    .when(.recognized)
-//                    .subscribe{ _ in
-//                        let alert = UIAlertController(title: "삭제", message: "셀을 삭제 하시겠습니까?", preferredStyle: .alert)
-//                        alert.addAction(UIAlertAction(title: "확인", style: .destructive,handler: { _ in
-//                            LogService.shared.deleteLog(logId: item.id){ _ in
-//                                self.loadLogs()
-//                            }
-//                        }))
-//                        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
-//                        self.present(alert, animated: true)
-//                    }
-//                    .disposed(by: cell.bag)
-//            }
-//        .disposed(by: disposeBag)

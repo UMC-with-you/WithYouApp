@@ -20,7 +20,7 @@ public class ProfileView: BaseUIView {
     
     private var size : ProfileSizeOption
     
-    private var profileImage = UIImageView()
+    public var profileImage = UIImageView()
     
     public var traveler : Traveler?
     

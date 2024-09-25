@@ -25,7 +25,8 @@ public final class DetailTravelLogCoordinator : Coordinator {
     }
     
     public func start() {
-        let vm = DetailTravelViewModel(logUseCase: DefaultLogUseCase(repository: MockLogRepository()))
+        let useCase = DIContainer.shared.resolve(LogUseCase.self)!
+        let vm = DetailTravelViewModel(logUseCase: useCase)
         let viewController = DetailTravelLogViewController(viewModel: vm, log: log)
         viewController.delegate = self
         self.navigationController.pushViewController(viewController, animated: true)

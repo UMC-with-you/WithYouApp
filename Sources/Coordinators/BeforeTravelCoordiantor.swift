@@ -24,9 +24,10 @@ final public class BeforeTravelCoordiantor : Coordinator {
     }
     
     public func start() {
-        let logUseCase = DefaultLogUseCase(repository: MockLogRepository())
-        let packingUseCase = DefaultPackingItemUseCase(repository: MockPackingRepository())
-        let beforeTravelViewModel = BeforeTravelLogViewModel(log: log, noticeUseCase: DefaultNoticeUseCase(repository: MockNoticeRepository()), logUseCase: logUseCase, packingUseCase: packingUseCase)
+        let logUseCase = DIContainer.shared.resolve(LogUseCase.self)!
+        let packingUseCase = DIContainer.shared.resolve(PackingItemUseCase.self)!
+        let noticeUseCase = DIContainer.shared.resolve(NoticeUseCase.self)!
+        let beforeTravelViewModel = BeforeTravelLogViewModel(log: log, noticeUseCase: noticeUseCase, logUseCase: logUseCase, packingUseCase: packingUseCase)
         let beforeTravelViewController = BeforeTravelLogViewController(viewModel: beforeTravelViewModel)
         beforeTravelViewController.coordinator = self
         navigationController.pushViewController(beforeTravelViewController, animated: true)

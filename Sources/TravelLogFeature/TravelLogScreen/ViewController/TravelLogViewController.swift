@@ -6,9 +6,6 @@
 //  Copyright © 2024 withyou.org. All rights reserved.
 //
 
-
-
-
 import SnapKit
 import RxSwift
 import UIKit
@@ -71,6 +68,20 @@ public class TravelLogViewController: BaseViewController{
             $0.edges.equalToSuperview()
         }
     }
+    
+    public override func setDelegate() {
+        travelView.searchField.delegate = self
+    }
+}
+
+extension TravelLogViewController : UITextFieldDelegate{
+    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+    }
 }
 
 extension TravelLogViewController : NewLogSheetDelegate {
@@ -82,3 +93,4 @@ extension TravelLogViewController : NewLogSheetDelegate {
         viewModel.joinLog(invitationCode)
     }
 }
+
