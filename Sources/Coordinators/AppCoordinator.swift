@@ -77,7 +77,7 @@ class AppCoordinator : Coordinator {
         }
 
         container.register(RewindRepository.self) {
-            DefaultRewindRepository() // Register DefaultRewindRepository for RewindRepository
+            MockRewindRepository() // Register DefaultRewindRepository for RewindRepository
         }
 
         container.register(SecureDataRepository.self) {

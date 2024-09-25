@@ -10,7 +10,7 @@ import RxCocoa
 import RxSwift
 
 final public class OnGoingTravelViewModel {
-    private let log : Log
+    public let log : Log
     
     private let noticeUseCase : NoticeUseCase
     

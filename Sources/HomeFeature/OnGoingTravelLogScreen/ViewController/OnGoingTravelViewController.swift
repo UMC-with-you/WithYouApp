@@ -8,12 +8,18 @@
 import Foundation
 import UIKit
 
+public protocol OnGoingTravelViewControllerDelgate {
+    func navigateToCreatRewind(log : Log)
+}
+
 final public class OnGoingTravelViewController : BaseViewController {
     
     private let onGoingView = OnGoingTravelView()
     let addNoticeView = AddNoticeView()
     
     private let viewModel : OnGoingTravelViewModel
+    
+    public var coordinator : OnGoingTravelViewControllerDelgate?
     
     init(viewModel: OnGoingTravelViewModel) {
         self.viewModel = viewModel
@@ -103,10 +109,10 @@ final public class OnGoingTravelViewController : BaseViewController {
          onGoingView.rewindView.rx
              .tapGesture()
              .when(.recognized)
-             .subscribe{ _ in
-//                 let nextVC = TravelRewindViewController()
-//                 nextVC.log = self.log
-//                 self.navigationController?.pushViewController(nextVC, animated: true)
+             .withUnretained(self)
+             .subscribe{ (owner, _) in
+                 print("RewindButton Touched")
+                 owner.coordinator?.navigateToCreatRewind(log: owner.viewModel.log)
              }
              .disposed(by: disposeBag)
          

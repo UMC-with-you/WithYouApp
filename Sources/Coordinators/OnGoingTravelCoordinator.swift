@@ -27,5 +27,13 @@ final public class OnGoingTravelCoordinator : Coordinator {
         let viewModel = OnGoingTravelViewModel(log: self.log, noticeUseCase: useCase)
         let viewController = OnGoingTravelViewController(viewModel: viewModel)
         self.navigationController.pushViewController(viewController, animated: true)
+        viewController.coordinator = self
+    }
+}
+
+extension OnGoingTravelCoordinator : OnGoingTravelViewControllerDelgate {
+    public func navigateToCreatRewind(log: Log) {
+        let coordinator = CreateRewindCoordinator(navigationController: self.navigationController, log: self.log)
+        coordinator.start()
     }
 }
