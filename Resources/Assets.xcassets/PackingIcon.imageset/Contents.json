@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Bag.png",
+      "filename" : "Bag.svg",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "Bag 1.svg",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "Bag 2.svg",
       "idiom" : "universal",
       "scale" : "3x"
     }

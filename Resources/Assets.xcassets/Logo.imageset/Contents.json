@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "with You 2.png",
+      "filename" : "with You.svg",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "with You.png",
+      "filename" : "with You 1.svg",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "with You 1.png",
+      "filename" : "with You 2.svg",
       "idiom" : "universal",
       "scale" : "3x"
     }

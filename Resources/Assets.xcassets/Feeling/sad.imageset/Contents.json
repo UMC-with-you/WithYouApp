@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "sad.png",
+      "filename" : "우울.svg",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "우울 1.svg",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "우울 2.svg",
       "idiom" : "universal",
       "scale" : "3x"
     }
