@@ -18,6 +18,7 @@ public final class TopHeader : UIView {
         super.init(frame: frame)
         setup()
         setConst()
+        message.isHidden = true
     }
     
     required init?(coder: NSCoder) {

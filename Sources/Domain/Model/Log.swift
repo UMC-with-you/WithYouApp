@@ -37,7 +37,7 @@ public struct Log : Codable, Identifiable {
 
 extension Log {
     public func getTravelPeriod() -> String{
-        return startDate + "~" + endDate.dropFirst(4)
+        return startDate + "~" + endDate.dropFirst(5)
     }
 }
 

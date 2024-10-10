@@ -80,6 +80,10 @@ public class OnBoardingViewController: BaseViewController {
     
     public override func setUpViewProperty() {
         view.backgroundColor = UIColor(red: 0.969, green: 0.969, blue: 0.969, alpha: 1)
+        
+        let profileView = ProfileView(size: .small)
+        profileView.bindTraveler(traveler: Traveler(id: 3, name: "테스트"))
+        self.navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: profileView)]
     }
     
     public override func setUp() {

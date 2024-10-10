@@ -40,4 +40,8 @@ extension CreateRewindCoordinator : CreateTravelViewControllerDelgate {
         self.navigationController.present(popUp, animated: true)
         popUp.delegate = delegate
     }
+    
+    func dismiss() {
+        self.navigationController.popViewController(animated: true)
+    }
 }

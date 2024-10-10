@@ -35,3 +35,4 @@ public enum UserDefaultsManager {
     @MyDefaults(key: Key.isLoggined.rawValue, defaultValue: false)
     public static var isLoggined
 }
+

@@ -75,7 +75,7 @@ public final class NoticeView: BaseUIView {
         }
         
         checkImage.snp.makeConstraints { make in
-            make.height.width.equalTo(32)
+            make.height.width.equalTo(30)
             make.top.equalToSuperview().offset(10)
             make.leading.equalToSuperview().offset(10)
         }

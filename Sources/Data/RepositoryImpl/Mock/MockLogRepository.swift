@@ -30,7 +30,8 @@ final public class MockLogRepository : LogRepository {
     }
     
     public func deleteLog(travelId: Int) -> Single<Int> {
-        .just(0)
+        logs = logs.filter{ $0.id != travelId }
+        return .just(0)
     }
     
     public func editLog(travelId: Int, title: String?, startDate: String?, endDate: String?, localDate: Date?, image: Data?) -> Single<Int> {

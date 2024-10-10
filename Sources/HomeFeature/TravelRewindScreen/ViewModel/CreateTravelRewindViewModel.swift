@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import RxRelay
 
 final public class CreateTravelRewindViewModel {
     
@@ -14,18 +15,24 @@ final public class CreateTravelRewindViewModel {
     private let rewindUseCase : RewindUseCase
     private let logUseCase : LogUseCase
     
+    private var disposeBag = DisposeBag()
+    
     let moodImageTags = [
         "heart","lucky","surprised","angry","touched","sunny","sad","soso"
     ]
     
-    private var mvpTraveler : Traveler?
-    
     public var rewindQnaSubject = PublishSubject<[RewindQna]>()
     public var travelersSubject = PublishSubject<[Traveler]>()
+    public var buttonColorRelay = BehaviorRelay<Bool>(value: false)
     
-    private var disposeBag = DisposeBag()
-    
+    private var mvpTraveler : Traveler?
+    public var textField2String : String = ""
+    public var textField3String : String = ""
+    public var textField4String : String = ""
+    public var textField5String : String = ""
+
     var moodTag = ""
+    var rewindQna : [RewindQna] = []
     
     init(log: Log, rewindUseCase: RewindUseCase, logUseCase: LogUseCase) {
         self.log = log
@@ -33,6 +40,7 @@ final public class CreateTravelRewindViewModel {
         self.logUseCase = logUseCase
 
     }
+    
     public func loadData(){
         rewindUseCase.getQnaList()
             .subscribe(onSuccess: { rewinds in
@@ -41,6 +49,7 @@ final public class CreateTravelRewindViewModel {
                     randomRewinds.append(rewinds.randomElement()!)
                 }
                 self.rewindQnaSubject.onNext(randomRewinds)
+                self.rewindQna = randomRewinds
             })
             .disposed(by: disposeBag)
         
@@ -54,5 +63,31 @@ final public class CreateTravelRewindViewModel {
     public func selectMVP(_ traveler: Traveler){
         self.mvpTraveler = traveler
     }
-
+    
+    public func checkInputs(){
+        if moodTag != "" &&
+            textField2String != "" &&
+            textField3String != "" &&
+            textField4String != "" &&
+            textField5String != "" &&
+            mvpTraveler != nil {
+            buttonColorRelay.accept(true)
+        } else {
+            buttonColorRelay.accept(false)
+        }
+    }
+    
+    public func createRewind(){
+        var list = [RewindQna]()
+        let textList = [textField2String,textField3String,textField4String,textField5String]
+        for i in 0..<rewindQna.count {
+            let qna = rewindQna[i]
+            list.append(RewindQna(qnaId: qna.qnaId, questionId: qna.questionId, content: qna.content, answer: textList[i] ))
+        }
+        rewindUseCase.createRewind(day: dateController.daysAsInt(from: log.startDate), mvpCandidateId: mvpTraveler?.id ?? 0, mood: moodTag, qnaList: list, comment: "", travelId: log.id)
+            .subscribe { a in
+                print(a)
+            }
+            .disposed(by: disposeBag)
+    }
 }

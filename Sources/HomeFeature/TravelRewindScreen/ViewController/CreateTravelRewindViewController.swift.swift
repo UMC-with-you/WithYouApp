@@ -13,6 +13,7 @@ import SnapKit
 
 protocol CreateTravelViewControllerDelgate {
     func openMoodPopup(_ delegate : MoodPopupDelegate)
+    func dismiss()
 }
 
 class CreateTravelRewindViewController: BaseViewController{
@@ -84,9 +85,64 @@ class CreateTravelRewindViewController: BaseViewController{
             .withUnretained(self)
             .subscribe { (owner, travler) in
                 owner.viewModel.selectMVP(travler)
+                owner.viewModel.checkInputs()
             }
             .disposed(by: disposeBag)
         
+        viewModel.buttonColorRelay
+            .map{ $0 ? WithYouAsset.mainColorDark.color : WithYouAsset.subColor.color }
+            .bind(to: rewindView.addButton.rx.backgroundColor)
+            .disposed(by: disposeBag)
+        
+        rewindView.question2TextField
+            .rx
+            .text
+            .orEmpty
+            .withUnretained(self)
+            .subscribe { (owner,text) in
+                owner.viewModel.textField2String = text
+            }
+            .disposed(by: disposeBag)
+        
+        rewindView.question3TextField
+            .rx
+            .text
+            .orEmpty
+            .withUnretained(self)
+            .subscribe { (owner,text) in
+                owner.viewModel.textField3String = text
+            }
+            .disposed(by: disposeBag)
+        
+        rewindView.question4TextField
+            .rx
+            .text
+            .orEmpty
+            .withUnretained(self)
+            .subscribe { (owner,text) in
+                owner.viewModel.textField4String = text
+            }
+            .disposed(by: disposeBag)
+        
+        rewindView.question5TextField
+            .rx
+            .text
+            .orEmpty
+            .withUnretained(self)
+            .subscribe { (owner,text) in
+                owner.viewModel.textField5String = text
+            }
+            .disposed(by: disposeBag)
+        
+        rewindView.addButton
+            .rx
+            .tap
+            .withUnretained(self)
+            .subscribe { (owner, _) in
+                owner.viewModel.createRewind()
+                owner.coordinator?.dismiss()
+            }
+            .disposed(by: disposeBag)
     }
     
     override func setDelegate() {
@@ -95,32 +151,6 @@ class CreateTravelRewindViewController: BaseViewController{
         rewindView.question4TextField.delegate = self
         rewindView.question5TextField.delegate = self
     }
-    
-
-//        addButton.rx
-//            .tapGesture()
-//            .when(.recognized)
-//            .subscribe{ _ in
-////                var postQna = [RewindQnaPostRequest]()
-////                [self.question2TextField,self.question3TextField,self.question4TextField,self.question5TextField].enumerated().forEach{ index , field in
-////                    postQna.append(RewindQnaPostRequest(questionId: self.qnaList[index].questionId, answer: field.text!))
-////                }
-////
-////                let rewind = RewindPostRequest(day: dateController.daysAsInt(from: self.log!.startDate),
-////                                               mvpCandidateId: self.mvpCandidate,
-////                                               mood: self.moodTag.uppercased(),
-////                                               qnaList: postQna,
-////                                               comment: "")
-////
-////                RewindService.shared.postRewind(rewindPostRequest: rewind, travelId: self.log!.id){ response in
-////                    self.rewindId = response.rewindId
-////                    self.navigationController?.popViewController(animated: true)
-////                }
-//            }
-//            .disposed(by: bag)
-//        
-//    }
-
 }
 
 extension CreateTravelRewindViewController: MoodPopupDelegate {
@@ -144,6 +174,7 @@ extension CreateTravelRewindViewController: MoodPopupDelegate {
 extension CreateTravelRewindViewController: UITextFieldDelegate {
     //화면 터치시 키보드 내림
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.viewModel.checkInputs()
         self.view.endEditing(true)
     }
     
