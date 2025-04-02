@@ -47,24 +47,24 @@ public class HomeViewController: BaseViewController {
     
     // MARK: Rx연결
     public override func setFunc(){
-        viewModel.logs
-            .bind(to: mainLogView.logCollectionView.rx.items(cellIdentifier: LogCollectionViewCell.cellId, cellType: LogCollectionViewCell.self)) { index, item, cell in
-                cell.bind(log: item, isBigCell: true)
-            }
-            .disposed(by: disposeBag)
+         viewModel.logs
+             .bind(to: mainLogView.logCollectionView.rx.items(cellIdentifier: LogCollectionViewCell.cellId, cellType: LogCollectionViewCell.self)) { index, item, cell in
+                 cell.bind(log: item, isBigCell: true)
+             }
+             .disposed(by: disposeBag)
         
-        mainLogView.logCollectionView
-            .rx
-            .modelSelected(Log.self)
-            .withUnretained(self)
-            .subscribe { (owner, logEvent) in
-                if logEvent.status == "ONGOING"{
-                    owner.coordinator?.navigateToOnGoingTravelView(log: logEvent)
-                } else {
-                    owner.coordinator?.navigateToBeforeTravelView(log: logEvent)
-                }
-            }
-            .disposed(by: disposeBag)
+         mainLogView.logCollectionView
+             .rx
+             .modelSelected(Log.self)
+             .withUnretained(self)
+             .subscribe { (owner, logEvent) in
+                 if logEvent.status == "ONGOING"{
+                     owner.coordinator?.navigateToOnGoingTravelView(log: logEvent)
+                 } else {
+                     owner.coordinator?.navigateToBeforeTravelView(log: logEvent)
+                 }
+             }
+             .disposed(by: disposeBag)
         
         viewModel.isLogEmpty
             .subscribe { [weak self] isLogEmpty in

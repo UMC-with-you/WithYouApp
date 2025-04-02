@@ -32,7 +32,6 @@ public class MyPageViewController: BaseViewController {
     
     // View
     public override func viewWillAppear(_ animated: Bool) {
-        view = myPageView
         
 //        viewModel.loadPosts()
 //        myPageView.moveEclipse(state: true)
@@ -121,14 +120,15 @@ public class MyPageViewController: BaseViewController {
     
     // MARK: - ViewController
     public override func setUpViewProperty() {
-        view.backgroundColor = .white
+        self.view.backgroundColor = .white
         self.navigationItem.title = "MY"
     }
     
     public override func setUp() {
-        [myPageView].forEach {
-            view.addSubview($0)
-        }
+//        [myPageView].forEach {
+//            view.addSubview($0)
+//        }
+        view.addSubview(myPageView)
     }
     
     public override func setDelegate() {
