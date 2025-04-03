@@ -1,20 +1,153 @@
-////
-////  MyPageViewController.swift
-////  WithYou
-////
-////  Created by 김도경 on 1/12/24.
-////  Copyright © 2024 withyou.org. All rights reserved.
-////
 //
+//  MyPageViewController.swift
+//  WithYou
 //
+//  Created by 김도경 on 1/12/24.
+//  Copyright © 2024 withyou.org. All rights reserved.
 //
-//import Kingfisher
-//import RxGesture
-//import RxSwift
-//import RxCocoa
-//import UIKit
-//import SnapKit
-//
+
+import Kingfisher
+import RxGesture
+import RxSwift
+import RxCocoa
+import UIKit
+import SnapKit
+
+public protocol MyPageViewControllerDelgate {
+    
+}
+
+public class MyPageViewController: BaseViewController {
+    private let myPageView = MyPageView()
+    private let viewModel: MyPageViewModel
+    private var linePosition = BehaviorRelay<Bool>(value: true)
+    
+    public var coordinator: MyPageViewControllerDelgate?
+    
+    // ViewModel
+    public init(viewModel: MyPageViewModel) {
+        self.viewModel = viewModel
+        super.init()
+    }
+    
+    // View
+    public override func viewWillAppear(_ animated: Bool) {
+        
+//        viewModel.loadPosts()
+//        myPageView.moveEclipse(state: true)
+    }
+    
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+    
+    // MARK: - Rx 연결
+    public override func setFunc() {
+        // 스크랩 라벨 터치 시 ViewModel의 linePosition 업데이트
+        myPageView.scrapLabel.rx.tapGesture()
+            .when(.recognized)
+            .subscribe { [unowned self] _ in
+                viewModel.updateLinePosition(true)
+            }
+            .disposed(by: disposeBag)
+        
+        // 나의 라벨 터치 시 ViewModel의 linePosition 업데이트
+        myPageView.myLabel.rx.tapGesture()
+            .when(.recognized)
+            .subscribe { [unowned self] _ in
+                viewModel.updateLinePosition(false)
+            }
+            .disposed(by: disposeBag)
+        
+        // ViewModel의 linePosition 값을 구독하여 언더라인 위치와 게시물 전환
+        viewModel.linePosition
+            .subscribe(onNext: { [unowned self] isScrapSelected in
+                // 언더라인 위치 업데이트
+                self.myPageView.underLineConst?.deactivate()
+                self.myPageView.underlineView.snp.makeConstraints {
+                    self.myPageView.underLineConst = $0.centerX.equalTo(isScrapSelected ? myPageView.scrapLabel.snp.centerX : myPageView.myLabel.snp.centerX).constraint
+                }
+                // 게시물 목록 전환
+                self.viewModel.togglePosts()
+            })
+            .disposed(by: disposeBag)
+        
+        // ViewModel의 posts를 myPageView의 CollectionView에 바인딩
+        viewModel.posts
+            .bind(to: myPageView.myPageCollectionView.rx.items(cellIdentifier: PostListCell.cellId, cellType: PostListCell.self)) { _, post, cell in
+                cell.thumb.image = UIImage(named: post.thumbnailUrl)
+            }
+            .disposed(by: disposeBag)
+    }
+
+    
+//    // MARK: - Rx 연결
+//    public override func setFunc() {
+//        myPageView.scrapLabel.rx.tapGesture()
+//            .when(.recognized)
+//            .subscribe{ [unowned self] _ in
+//                linePosition.accept(true)
+//                
+//            }
+//            .disposed(by: disposeBag)
+//        
+//        myPageView.myLabel.rx.tapGesture()
+//            .when(.recognized)
+//            .subscribe{ [unowned self] _ in
+//                linePosition.accept(false)
+//            }
+//            .disposed(by: disposeBag)
+//        
+//        linePosition.subscribe { [unowned self] _ in
+//            self.myPageView.underLineConst?.deactivate()
+//            self.myPageView.underlineView.snp.makeConstraints{
+//                self.myPageView.underLineConst = $0.centerX.equalTo(linePosition.value ? myPageView.scrapLabel.snp.centerX : myPageView.myLabel.snp.centerX).constraint
+//            }
+//            
+//            if linePosition.value {
+//                self.posts.onNext(self.myPageViewscrapPost)
+//            } else {
+//                self.posts.onNext(self.myPost)
+//            }
+//        }
+//        .disposed(by: disposeBag)
+//    }
+    
+    // MARK: - 사용자 터치 이벤트
+    private func setActions() {
+        
+    }
+    
+    // MARK: - ViewController
+    public override func setUpViewProperty() {
+        self.view.backgroundColor = .white
+        self.navigationItem.title = "MY"
+    }
+    
+    public override func setUp() {
+//        [myPageView].forEach {
+//            view.addSubview($0)
+//        }
+        view.addSubview(myPageView)
+    }
+    
+    public override func setDelegate() {
+        myPageView.myPageCollectionView.delegate = self
+    }
+    
+    public override func setLayout() {
+        myPageView.snp.makeConstraints {
+            $0.edges.equalTo(view.safeAreaLayoutGuide)
+        }
+    }
+}
+
+extension MyPageViewController: UICollectionViewDelegate {
+    
+}
+
+
+
 //final class MyPageViewController: BaseViewController {
 //    
 //    //UI Components
@@ -28,7 +161,7 @@
 //        
 //    }()
 //    let myPageCollectionView: UICollectionView = {
-//        let layout = UICollectio.  ViewFlowLayout()
+//        let layout = UICollectionViewFlowLayout()
 //        layout.scrollDirection = .vertical
 //        layout.itemSize = CGSize(width: UIScreen.main.bounds.width / 3 - 1, height: UIScreen.main.bounds.width / 3 - 1)
 //        layout.minimumLineSpacing = 1
@@ -58,7 +191,7 @@
 //    
 //    let nickNameLabel: UILabel = {
 //        let label = UILabel()
-////        label.text = DataManager.shared.getUserName()
+//        //        label.text = DataManager.shared.getUserName()
 //        label.textColor = .black
 //        label.numberOfLines = 0
 //        label.textAlignment = .center

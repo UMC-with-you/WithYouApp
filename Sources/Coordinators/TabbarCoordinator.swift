@@ -49,7 +49,7 @@ public class TabbarCoordinator : Coordinator {
         case .travelog:
             self.createTravelCoordinator(with: controller)
         case .my:
-            self.createHomeCoordinator(with: controller)
+            self.createMyPageCoordinator(with: controller)
         }
     }
     
