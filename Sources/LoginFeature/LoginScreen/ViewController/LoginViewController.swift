@@ -23,6 +23,7 @@ import UIKit
 
 public protocol LoginDelegate {
     func moveToTabbar()
+    func moveToProfileSetting()
 }
 
 public final class LoginViewController: BaseViewController {
@@ -56,8 +57,9 @@ public final class LoginViewController: BaseViewController {
             .tap
             .withUnretained(self)
             .subscribe{ (owner,_) in
-                //owner.viewModel.kakaoLogin()
-                owner.coordinator?.moveToTabbar()
+//                owner.viewModel.kakaoLogin()
+//                owner.coordinator?.moveToTabbar()
+                owner.coordinator?.moveToProfileSetting()
             }
             .disposed(by: disposeBag)
         
@@ -67,7 +69,8 @@ public final class LoginViewController: BaseViewController {
             .subscribe(onNext: { (owner,result) in
                 print(result)
                 if result {
-                    owner.coordinator?.moveToTabbar()
+//                    owner.coordinator?.moveToTabbar()
+                    owner.coordinator?.moveToProfileSetting()
                 }
             })
             .disposed(by: disposeBag)

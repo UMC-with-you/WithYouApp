@@ -41,7 +41,6 @@ public class LoginCoordinator : Coordinator {
             navigationController.pushViewController(loginViewController, animated: true)
             loginService.window = navigationController.view.window
         }
-        
     }
 }
 
@@ -55,5 +54,16 @@ extension LoginCoordinator : LoginDelegate {
         UserDefaultsManager.isLoggined = true
         //LoginView 제거해주기
         self.navigationController.viewControllers.removeFirst()
+    }
+    
+    public func moveToProfileSetting() {
+        let appCoordinator = self.parentCoordiantor as! AppCoordinator
+        
+        let profileSettingCoordinator = ProfileSettingCoordinator(navigationController: self.navigationController)
+        profileSettingCoordinator.parentCoordiantor = appCoordinator
+        appCoordinator.childCoordinators.append(profileSettingCoordinator)
+        profileSettingCoordinator.start()
+        
+        self.parentCoordiantor?.childDidFinish(self)
     }
 }

@@ -14,6 +14,8 @@ import SnapKit
 
 class ProfileSetViewController: UIViewController {
     
+    weak var coordinator: ProfileSettingCoordinator?
+    
     var bag = DisposeBag()
     
     var nickName: String?
@@ -28,7 +30,7 @@ class ProfileSetViewController: UIViewController {
         return label
     }()
     
-    let profileImageView: UIImageView = {
+    lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
@@ -38,7 +40,7 @@ class ProfileSetViewController: UIViewController {
         return imageView
     }()
     
-    let selectImageButton: UIButton = {
+    lazy var selectImageButton: UIButton = {
         let button = UIButton()
         
         if let originalImage = UIImage(systemName: "plus.circle.fill") {
@@ -84,60 +86,56 @@ class ProfileSetViewController: UIViewController {
         return view
     }()
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .white
+        
         let button = WYButton("완료")
         button.backgroundColor = WithYouAsset.mainColorDark.color
         button.frame = CGRect(x: 0, y: 0, width: 64, height: 30)
         button.layer.cornerRadius = 15
         button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: button)
+        
         setViews()
         setConstraints()
     }
     
     private func setViews() {
-        view.addSubview(mainLabel)
-        view.addSubview(profileImageView)
-        view.addSubview(selectImageButton)
-        view.addSubview(cancelImageButton)
-        view.addSubview(nickNameSelectButton)
-        view.addSubview(underlineView)
+        [mainLabel, profileImageView, selectImageButton, cancelImageButton, nickNameSelectButton, underlineView].forEach { view.addSubview($0) }
     }
     
     private func setConstraints() {
-        mainLabel.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.centerY.equalToSuperview().offset(-200)
+        mainLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.centerY.equalToSuperview().offset(-200)
         }
         
-        profileImageView.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.centerY.equalToSuperview()
-            make.width.height.equalTo(200)
+        profileImageView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.centerY.equalToSuperview()
+            $0.width.height.equalTo(200)
         }
         
-        selectImageButton.snp.makeConstraints { make in
-            make.center.equalTo(profileImageView)
+        selectImageButton.snp.makeConstraints {
+            $0.center.equalTo(profileImageView)
         }
         
-        cancelImageButton.snp.makeConstraints { make in
-            make.centerX.equalTo(profileImageView.snp.right)
-            make.centerY.equalTo(profileImageView.snp.top)
+        cancelImageButton.snp.makeConstraints {
+            $0.centerX.equalTo(profileImageView.snp.right)
+            $0.centerY.equalTo(profileImageView.snp.top)
         }
         
-        nickNameSelectButton.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(profileImageView.snp.bottom).offset(50)
+        nickNameSelectButton.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(profileImageView.snp.bottom).offset(50)
         }
         
-        underlineView.snp.makeConstraints { make in
-            make.top.equalTo(nickNameSelectButton.snp.bottom).offset(1)
-            make.leading.trailing.equalTo(nickNameSelectButton)
-            make.height.equalTo(1)
+        underlineView.snp.makeConstraints {
+            $0.top.equalTo(nickNameSelectButton.snp.bottom).offset(1)
+            $0.leading.trailing.equalTo(nickNameSelectButton)
+            $0.height.equalTo(1)
         }
     }
     
@@ -152,7 +150,8 @@ class ProfileSetViewController: UIViewController {
         })
         .disposed(by: bag)
         
-        navigationController?.pushViewController(nameProfileViewController, animated: true)
+//        navigationController?.pushViewController(nameProfileViewController, animated: true)
+        coordinator?.finishProfileSetting()
     }
     
     @objc func doneButtonTapped() {
@@ -166,6 +165,7 @@ class ProfileSetViewController: UIViewController {
 //        let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
 //        guard let delegate = sceneDelegate else { return }
 //        delegate.window?.rootViewController = TabBarViewController()
+        coordinator?.finishProfileSetting()
     }
 }
 
