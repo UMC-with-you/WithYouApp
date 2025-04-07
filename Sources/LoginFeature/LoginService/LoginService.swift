@@ -31,12 +31,12 @@ public final class LoginService : NSObject {
     }
     
     
-    func login(with method: LoginMethod) {
+    func login(with method: LoginMethod, _ googleCode: String = "") {
         switch method {
         case .kakao:
             loginWithKakao()
         case .google:
-            loginWithGoogle()
+            loginWithGoogle(googleCode)
         case .apple:
             loginWithApple()
         }
@@ -63,19 +63,11 @@ public final class LoginService : NSObject {
             }
     }
     
-    private func loginWithGoogle(){
-//        return Single<Void>.create { single in
-//            GIDSignIn.sharedInstance.signIn(withPresenting: self) { [weak self] signInResult, error in
-//                guard let self,
-//                      let result = signInResult else { return single(.failure(error)) }
-//                self.authUseCase.authWithKakao(authCode: authCode.accessToken).subscribe { result in
-//                    return result
-//                }
-//                .dispose()
-//                // 서버에 토큰 보내기
-//            }
-//            return Disposables.create()
-//        }
+    private func loginWithGoogle(_ accessToken : String){
+        self.authUseCase.authWithGoogle(authCode: accessToken).subscribe { result in
+            self.loginResultSubject.onNext(true)
+        }
+        .disposed(by: disposeBag)
     }
     
     private func loginWithApple(){
