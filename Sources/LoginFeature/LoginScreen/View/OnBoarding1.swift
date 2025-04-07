@@ -24,9 +24,10 @@ final class OnBoarding1: BaseUIView {
     let subLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor(red: 0.301, green: 0.301, blue: 0.301, alpha: 1)
-        label.font = UIFont(name: "Pretendard-Regular", size: 16)
+        label.font = UIFont(name: "Pretendard-Regular", size: 17)
         label.textAlignment = .center
-        label.text = "Travel Log를 만들어\n함께 여행하는 사람들을 초대해보세요!"
+        label.text = "여행 Pod을 만들어\n함께 여행하는 사람들을 초대해보세요!"
+        label.setBoldFont("Pretendard-SemiBold", range: NSRange(location: 0,length: 6))
         label.numberOfLines = 0
         label.lineBreakMode = .byWordWrapping
         return label

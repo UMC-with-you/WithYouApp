@@ -26,7 +26,9 @@ final class OnBoarding2: BaseUIView {
         label.textColor = UIColor(red: 0.301, green: 0.301, blue: 0.301, alpha: 1)
         label.font = UIFont(name: "Pretendard-Regular", size: 16)
         label.textAlignment = .center
-        label.text = "Notice에서 중요한 사항들을 공유하고,\nPacking Togather에서 공동의 짐을 함께 챙겨요!"
+        label.text = "Notice에서 중요한 사항들을 공유하고,\n with Item에서 공동의 짐을 함께 챙겨요!"
+        label.setBoldFont("Pretendard-SemiBold", range: NSRange(location: 0, length: 6))
+        label.setBoldFont("Pretendard-SemiBold", range: NSRange(location: 25, length: 9))
         label.numberOfLines = 0
         label.lineBreakMode = .byWordWrapping
         return label
