@@ -62,7 +62,8 @@ public class OnBoardingViewController: BaseViewController {
             .withUnretained(self)
             .subscribe{ (owner,_) in
                 //owner.viewModel.kakaoLogin()
-                owner.coordinator?.moveToTabbar()
+//                owner.coordinator?.moveToTabbar()
+                owner.coordinator?.moveToProfileSetting()
             }
             .disposed(by: disposeBag)
         
@@ -72,7 +73,8 @@ public class OnBoardingViewController: BaseViewController {
             .subscribe(onNext: { (owner,result) in
                 print(result)
                 if result {
-                    owner.coordinator?.moveToTabbar()
+//                    owner.coordinator?.moveToTabbar()
+                    owner.coordinator?.moveToProfileSetting()
                 }
             })
             .disposed(by: disposeBag)

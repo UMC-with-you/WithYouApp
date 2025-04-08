@@ -12,6 +12,7 @@ import UIKit
 import RxSwift
 import SnapKit
 
+/// 회원가입 두번째 화면
 class ProfileSetViewController: UIViewController {
     
     weak var coordinator: ProfileSettingCoordinator?
@@ -151,7 +152,7 @@ class ProfileSetViewController: UIViewController {
         .disposed(by: bag)
         
 //        navigationController?.pushViewController(nameProfileViewController, animated: true)
-        coordinator?.finishProfileSetting()
+        coordinator?.navigateNameVC()
     }
     
     @objc func doneButtonTapped() {
