@@ -21,6 +21,7 @@ final public class ProfileSettingCoordinator: Coordinator {
     public var nickName: String?
     
     public func start() {
+        navigationController.isNavigationBarHidden = false
         let nickVC = NickNameViewController()
         nickVC.coordinator = self
         navigationController.pushViewController(nickVC, animated: true)
@@ -46,5 +47,6 @@ final public class ProfileSettingCoordinator: Coordinator {
         let appCoordinator = self.parentCoordiantor as! AppCoordinator
         appCoordinator.startTabbarScene()
         appCoordinator.childDidFinish(self)
+//        self.navigationController.viewControllers.removeFirst()
     }
 }
