@@ -102,9 +102,10 @@ class BaseOnBoarding: BaseUIView {
         }
         
         mockUpImageView.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
             make.bottom.equalToSuperview()
-            make.width.equalTo(CGFloat(353).adjusted)
+            make.centerX.equalToSuperview()
+            make.width.equalToSuperview().multipliedBy(0.8)
+            make.height.equalToSuperview().multipliedBy(0.7)
         }
     }
 }
