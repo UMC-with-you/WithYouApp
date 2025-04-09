@@ -45,38 +45,37 @@ public class OnBoardingViewController: BaseViewController {
         super.viewDidLoad()
         setUpPageViewController()
     }
-    
-//    public override func setFunc() {
-//        loginView.appleLoginButton
-//            .rx
-//            .tap
-//            .withUnretained(self)
-//            .subscribe{ (owner,_)in
-//                owner.viewModel.appleLogin()
-//            }
-//            .disposed(by: disposeBag)
-//        
-//        loginView.kakaoLoginButton
-//            .rx
-//            .tap
-//            .withUnretained(self)
-//            .subscribe{ (owner,_) in
-//                //owner.viewModel.kakaoLogin()
-//                owner.coordinator?.moveToTabbar()
-//            }
-//            .disposed(by: disposeBag)
-//        
-//        viewModel.loginService
-//            .loginResultSubject
-//            .withUnretained(self)
-//            .subscribe(onNext: { (owner,result) in
-//                print(result)
-//                if result {
-//                    owner.coordinator?.moveToTabbar()
-//                }
-//            })
-//            .disposed(by: disposeBag)
-//    }
+   
+    public override func setFunc() {
+        loginView.appleLoginButton
+            .rx
+            .tap
+            .withUnretained(self)
+            .subscribe{ (owner,_)in
+                owner.viewModel.appleLogin()
+            }
+            .disposed(by: disposeBag)
+        
+        loginView.kakaoLoginButton
+            .rx
+            .tap
+            .withUnretained(self)
+            .subscribe{ (owner,_) in
+                owner.viewModel.kakaoLogin()
+            }
+            .disposed(by: disposeBag)
+        
+        viewModel.loginService
+            .loginResultSubject
+            .withUnretained(self)
+            .subscribe(onNext: { (owner,result) in
+                print(result)
+                if result {
+                    owner.coordinator?.moveToProfileSetting()
+                }
+            })
+            .disposed(by: disposeBag)
+    }
     
     public override func setUpViewProperty() {
         view.backgroundColor = UIColor(red: 0.969, green: 0.969, blue: 0.969, alpha: 1)

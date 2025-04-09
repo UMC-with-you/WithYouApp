@@ -11,7 +11,10 @@
 import UIKit
 import SnapKit
 
+/// 회원가입 첫번째 화면
 class NickNameViewController: UIViewController {
+    
+    weak var coordinator: ProfileSettingCoordinator?
     
     let logoImageView: UIImageView = {
         let imageView = UIImageView()
@@ -41,7 +44,7 @@ class NickNameViewController: UIViewController {
         return view
     }()
     
-    let checkButton: UIButton = {
+    lazy var checkButton: UIButton = {
         let button = UIButton(type: .custom)
         button.titleLabel?.font = UIFont(name: "Pretendard-Medium", size: 18)
         button.setTitle("확인하기", for: .normal)
@@ -52,6 +55,7 @@ class NickNameViewController: UIViewController {
         button.addTarget(self, action: #selector(checkButtonTapped), for: .touchUpInside)
         return button
     }()
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         //self.navigationController?.setNavigationBarHidden(true, animated: true)
@@ -67,57 +71,62 @@ class NickNameViewController: UIViewController {
     }
     
     private func setViews() {
-        view.addSubview(logoImageView)
-        view.addSubview(mainLabel)
-        view.addSubview(nickNameTextField)
-        view.addSubview(underlineView)
-        view.addSubview(checkButton)
+        [logoImageView, mainLabel, nickNameTextField, underlineView, checkButton].forEach { view.addSubview($0) }
     }
     
     private func setConstraints() {
-        logoImageView.snp.makeConstraints { make in
-            make.width.equalTo(120)
-            make.height.equalTo(40)
-            make.top.equalToSuperview().offset(60)
-            make.leading.equalToSuperview().offset(15)
+        logoImageView.snp.makeConstraints {
+            $0.width.equalTo(120)
+            $0.height.equalTo(40)
+            $0.top.equalToSuperview().offset(60)
+            $0.leading.equalToSuperview().offset(15)
         }
         
-        mainLabel.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.centerY.equalToSuperview().offset(-80)
+        mainLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.centerY.equalToSuperview().offset(-80)
         }
         
-        nickNameTextField.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(mainLabel.snp.bottom).offset(40)
-            make.leading.equalToSuperview().offset(40)
-            make.trailing.equalToSuperview().offset(-40)
+        nickNameTextField.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(mainLabel.snp.bottom).offset(40)
+            $0.leading.equalToSuperview().offset(40)
+            $0.trailing.equalToSuperview().offset(-40)
         }
         
-        underlineView.snp.makeConstraints { make in
-            make.top.equalTo(nickNameTextField.snp.bottom).offset(10)
-            make.leading.trailing.equalTo(nickNameTextField)
-            make.height.equalTo(1)
+        underlineView.snp.makeConstraints {
+            $0.top.equalTo(nickNameTextField.snp.bottom).offset(10)
+            $0.leading.trailing.equalTo(nickNameTextField)
+            $0.height.equalTo(1)
         }
         
-        checkButton.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview().offset(-40)
-            make.width.equalToSuperview().multipliedBy(0.9)
-            make.height.equalTo(40)
+        checkButton.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalToSuperview().offset(-40)
+            $0.width.equalToSuperview().multipliedBy(0.9)
+            $0.height.equalTo(40)
         }
     }
     
     @objc func checkButtonTapped() {
-        if !nickNameTextField.hasText {
+//        if !nickNameTextField.hasText {
+//            let alert = UIAlertController(title: "에러", message: "닉네임을 올바르게 입력해주세요", preferredStyle: .alert)
+//            alert.addAction(UIAlertAction(title: "확인", style: .default))
+//            self.present(alert, animated: true)
+//        } else {
+//            let profileSetViewController = ProfileSetViewController()
+//            profileSetViewController.nickName = nickNameTextField.text!
+////            self.navigationController?.pushViewController(profileSetViewController, animated: true)
+//            coordinator?.navigateProfileSetVC()
+//        }
+        guard let nickName = nickNameTextField.text, !nickName.isEmpty else {
             let alert = UIAlertController(title: "에러", message: "닉네임을 올바르게 입력해주세요", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "확인", style: .default))
             self.present(alert, animated: true)
-        } else {
-            let profileSetViewController = ProfileSetViewController()
-            profileSetViewController.nickName = nickNameTextField.text!
-            self.navigationController?.pushViewController(profileSetViewController, animated: true)
+            return
         }
+        
+        coordinator?.navigateProfileSetVC(nickName: nickNameTextField.text!)
     }
 }
 
