@@ -32,6 +32,7 @@ class AppCoordinator : Coordinator {
     }
     
     public func startTabbarScene(){
+        navigationController.isNavigationBarHidden = true
         let tabCoordinator = TabbarCoordinator(navigationController: navigationController)
         tabCoordinator.parentCoordiantor = self
         tabCoordinator.start()
