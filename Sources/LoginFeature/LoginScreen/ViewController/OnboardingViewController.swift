@@ -11,7 +11,7 @@ public class OnBoardingViewController: BaseViewController {
         OnBoarding4()
     ]
     
-    let loginView = LoginView()
+//    let loginView = LoginView()
     
     let scrollView = {
         let scrollView = UIScrollView()
@@ -24,10 +24,10 @@ public class OnBoardingViewController: BaseViewController {
     
     lazy var pageControl = {
         let pageControl = UIPageControl()
-        pageControl.numberOfPages = 5
+        pageControl.numberOfPages = 4
         pageControl.currentPage = 0
         pageControl.pageIndicatorTintColor = .lightGray
-        pageControl.currentPageIndicatorTintColor = .black
+        pageControl.currentPageIndicatorTintColor = UIColor(named: "PointColor")
         pageControl.addTarget(self, action: #selector(pageControlTapped(_:)), for:.valueChanged)
         return pageControl
     }()
@@ -45,7 +45,7 @@ public class OnBoardingViewController: BaseViewController {
         super.viewDidLoad()
         setUpPageViewController()
     }
-    
+   
     public override func setFunc() {
         loginView.appleLoginButton
             .rx
@@ -61,9 +61,7 @@ public class OnBoardingViewController: BaseViewController {
             .tap
             .withUnretained(self)
             .subscribe{ (owner,_) in
-                //owner.viewModel.kakaoLogin()
-//                owner.coordinator?.moveToTabbar()
-                owner.coordinator?.moveToProfileSetting()
+                owner.viewModel.kakaoLogin()
             }
             .disposed(by: disposeBag)
         
@@ -73,7 +71,6 @@ public class OnBoardingViewController: BaseViewController {
             .subscribe(onNext: { (owner,result) in
                 print(result)
                 if result {
-//                    owner.coordinator?.moveToTabbar()
                     owner.coordinator?.moveToProfileSetting()
                 }
             })
@@ -82,7 +79,6 @@ public class OnBoardingViewController: BaseViewController {
     
     public override func setUpViewProperty() {
         view.backgroundColor = UIColor(red: 0.969, green: 0.969, blue: 0.969, alpha: 1)
-        
         let profileView = ProfileView(size: .small)
         profileView.bindTraveler(traveler: Traveler(id: 3, name: "테스트"))
         self.navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: profileView)]
@@ -92,7 +88,7 @@ public class OnBoardingViewController: BaseViewController {
         view.addSubview(scrollView)
         view.addSubview(pageControl)
         
-        self.pages.append(self.loginView)
+//        self.pages.append(self.loginView)
         pages.forEach{
             scrollView.addSubview($0)
         }
@@ -105,8 +101,8 @@ public class OnBoardingViewController: BaseViewController {
             $0.width.height.equalToSuperview()
             $0.center.equalToSuperview()
         }
-        pageControl.snp.makeConstraints{
-            $0.bottom.equalToSuperview().offset(-20)
+        pageControl.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(16)
             $0.centerX.equalToSuperview()
         }
     }
