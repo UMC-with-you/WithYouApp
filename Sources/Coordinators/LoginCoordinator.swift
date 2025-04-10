@@ -24,9 +24,7 @@ public class LoginCoordinator : Coordinator {
         // NOTE: 현재 온보딩 테스트 중이므로 조건 반전(!) 적용함.
         // 실제 서비스 배포 전에는 `if UserDefaultsManager.isFirstTime` 로 수정 필요.
         if !UserDefaultsManager.isFirstTime {
-            let onBoardingViewController = OnBoardingViewController()
-            onBoardingViewController.coordinator = self
-            navigationController.pushViewController(onBoardingViewController, animated: true)
+            showOnBoarding()
         }
         else {
             showLogin()
@@ -60,7 +58,7 @@ extension LoginCoordinator : LoginDelegate {
     }
 }
 
-//MARK: - Onboarding Flow
+//MARK: - Onboarding, Login Flow
 
 extension LoginCoordinator {
     
@@ -69,6 +67,12 @@ extension LoginCoordinator {
         let loginService = LoginService(authUseCase: authUseCase)
         loginService.window = navigationController.view.window
         return LoginViewModel(loginService: loginService)
+    }
+    
+    public func showOnBoarding() {
+        let onBoardingViewController = OnBoardingViewController()
+        onBoardingViewController.coordinator = self
+        navigationController.pushViewController(onBoardingViewController, animated: true)
     }
     
     public func showLogin() {
