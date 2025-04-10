@@ -88,7 +88,7 @@ class BaseOnBoarding: BaseUIView {
         
         mainLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalToSuperview().offset(CGFloat(126).adjustedH)
+            make.top.equalToSuperview().offset(CGFloat(134).adjustedH)
         }
         
         subLabel1.snp.makeConstraints { make in
