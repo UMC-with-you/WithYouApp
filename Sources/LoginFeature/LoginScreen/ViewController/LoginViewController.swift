@@ -22,7 +22,7 @@ import RxSwift
 import UIKit
 
 public protocol LoginDelegate {
-    func moveToTabbar()
+//    func moveToTabbar()
     func moveToProfileSetting()
 }
 
