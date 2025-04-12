@@ -174,7 +174,7 @@ class ProfileSetViewController: UIViewController {
 extension ProfileSetViewController : UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     // MARK: - UIImagePickerDelegate
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let selectedImage = info[.originalImage] as? UIImage {
+        if let selectedImage = info[.editedImage] as? UIImage {
             profileImageView.image = selectedImage
             selectImageButton.isHidden = true
             cancelImageButton.isHidden = false
@@ -191,6 +191,7 @@ extension ProfileSetViewController : UIImagePickerControllerDelegate, UINavigati
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
         imagePicker.sourceType = .photoLibrary
+        imagePicker.allowsEditing = true // 시스템 편집기 사용
         present(imagePicker, animated: true, completion: nil)
     }
     
