@@ -50,28 +50,28 @@ final class LoginView: BaseUIView {
         
         logoImageView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.centerY.equalToSuperview().offset(-20)
-        }
-        
-        appleLoginButton.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(logoImageView.snp.bottom).offset(80)
-            make.width.equalTo(360)
-            make.height.equalTo(60)
-        }
-        
-        googleLoginButton.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(appleLoginButton.snp.bottom).offset(10)
-            make.width.equalTo(360)
-            make.height.equalTo(60)
+            make.top.equalToSuperview().offset(CGFloat(294.57).adjustedH)
         }
         
         kakaoLoginButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(googleLoginButton.snp.bottom).offset(10)
-            make.width.equalTo(360)
-            make.height.equalTo(60)
+            make.top.equalTo(logoImageView.snp.bottom).offset(CGFloat(169).adjustedH)
+            make.width.equalTo(CGFloat(300).adjusted)
+            make.height.equalTo(CGFloat(45).adjustedH)
+        }
+        
+        appleLoginButton.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(kakaoLoginButton.snp.bottom).offset(CGFloat(11).adjustedH)
+            make.width.equalTo(CGFloat(300).adjusted)
+            make.height.equalTo(CGFloat(45).adjustedH)
+        }
+        
+        googleLoginButton.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(appleLoginButton.snp.bottom).offset(CGFloat(11).adjustedH)
+            make.width.equalTo(CGFloat(300).adjusted)
+            make.height.equalTo(CGFloat(45).adjustedH)
         }
     }
 }
