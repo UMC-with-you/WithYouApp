@@ -158,14 +158,10 @@ class ProfileSetViewController: UIViewController {
     @objc func doneButtonTapped() {
         guard let image = profileImageView.image else {return}
         guard let name = nickName else {return}
-//        DataManager.shared.saveImage(image: image, key: "ProfilePicture")
-//        DataManager.shared.saveText(text: name, key: "UserName")
-//        DataManager.shared.setIsLogin()
-        
-        // 메인 화면으로 가기
-//        let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
-//        guard let delegate = sceneDelegate else { return }
-//        delegate.window?.rootViewController = TabBarViewController()
+        ProfileUserDefaultManager.profileImage = image;
+        ProfileUserDefaultManager.userName = name;
+        UserDefaultsManager.isLoggined = true;
+
         coordinator?.finishProfileSetting()
     }
 }

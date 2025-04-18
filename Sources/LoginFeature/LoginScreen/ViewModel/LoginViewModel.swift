@@ -25,8 +25,11 @@ public class LoginViewModel {
     }
     
     func appleLogin() {
-//        loginService.login(with: .apple)
-        loginService.testApple()
+        loginService.login(with: .apple)
+    }
+    
+    func googleLogin(_ accessToken : String){
+        loginService.login(with: .google, accessToken)
     }
 }
 

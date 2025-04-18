@@ -43,7 +43,7 @@ extension BaseRouter {
         case .withAuth :
             request.setValue(Constants.ApplicationJson, forHTTPHeaderField: Constants.ContentType)
             request.setValue("Bearer " + SecureDataManager.shared.getData(label: .accessToken), forHTTPHeaderField: Constants.Authorization)
-            request.setValue("1", forHTTPHeaderField: Constants.Authorization)
+            //request.setValue("1", forHTTPHeaderField: Constants.Authorization)
             return request
         case .basicHeader:
             request.setValue(Constants.ApplicationJson, forHTTPHeaderField: Constants.ContentType)

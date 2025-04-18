@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 
 public enum ProfileUserDefaultManager {
@@ -13,7 +14,7 @@ public enum ProfileUserDefaultManager {
         case profileImage, userName
     }
     
-    @MyDefaults(key: Key.profileImage.rawValue, defaultValue: Data())
+    @MyDefaults(key: Key.profileImage.rawValue, defaultValue: UIImage())
     public static var profileImage
 
     @MyDefaults(key: Key.userName.rawValue, defaultValue: "")
