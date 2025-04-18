@@ -18,22 +18,28 @@ final public class ProfileSettingCoordinator: Coordinator {
         self.navigationController = navigationController
     }
 
+    public var nickName: String?
+    
     public func start() {
-        let nameVC = NameProfileViewController()
-        nameVC.coordinator = self
-        navigationController.pushViewController(nameVC, animated: true)
-    }
-
-    public func showNickName() {
+        navigationController.isNavigationBarHidden = false
         let nickVC = NickNameViewController()
         nickVC.coordinator = self
         navigationController.pushViewController(nickVC, animated: true)
     }
 
-    public func showFinalProfile() {
-        let finalVC = ProfileSetViewController()
-        finalVC.coordinator = self
-        navigationController.pushViewController(finalVC, animated: true)
+    public func navigateProfileSetVC(nickName: String) {
+        self.nickName = nickName
+        let profileSetVC = ProfileSetViewController()
+        profileSetVC.nickName = nickName
+        profileSetVC.coordinator = self
+        navigationController.pushViewController(profileSetVC, animated: true)
+    }
+
+    public func navigateNameVC() {
+        let nameVC = NameProfileViewController()
+        nameVC.nickName = self.nickName
+        nameVC.coordinator = self
+        navigationController.pushViewController(nameVC, animated: true)
     }
 
     public func finishProfileSetting() {
@@ -41,5 +47,6 @@ final public class ProfileSettingCoordinator: Coordinator {
         let appCoordinator = self.parentCoordiantor as! AppCoordinator
         appCoordinator.startTabbarScene()
         appCoordinator.childDidFinish(self)
+//        self.navigationController.viewControllers.removeFirst()
     }
 }

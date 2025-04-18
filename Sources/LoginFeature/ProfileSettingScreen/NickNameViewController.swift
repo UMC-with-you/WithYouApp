@@ -11,6 +11,7 @@
 import UIKit
 import SnapKit
 
+/// 회원가입 첫번째 화면
 class NickNameViewController: UIViewController {
     
     weak var coordinator: ProfileSettingCoordinator?
@@ -108,16 +109,24 @@ class NickNameViewController: UIViewController {
     }
     
     @objc func checkButtonTapped() {
-        if !nickNameTextField.hasText {
+//        if !nickNameTextField.hasText {
+//            let alert = UIAlertController(title: "에러", message: "닉네임을 올바르게 입력해주세요", preferredStyle: .alert)
+//            alert.addAction(UIAlertAction(title: "확인", style: .default))
+//            self.present(alert, animated: true)
+//        } else {
+//            let profileSetViewController = ProfileSetViewController()
+//            profileSetViewController.nickName = nickNameTextField.text!
+////            self.navigationController?.pushViewController(profileSetViewController, animated: true)
+//            coordinator?.navigateProfileSetVC()
+//        }
+        guard let nickName = nickNameTextField.text, !nickName.isEmpty else {
             let alert = UIAlertController(title: "에러", message: "닉네임을 올바르게 입력해주세요", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "확인", style: .default))
             self.present(alert, animated: true)
-        } else {
-            let profileSetViewController = ProfileSetViewController()
-            profileSetViewController.nickName = nickNameTextField.text!
-//            self.navigationController?.pushViewController(profileSetViewController, animated: true)
-            coordinator?.showFinalProfile()
+            return
         }
+        
+        coordinator?.navigateProfileSetVC(nickName: nickNameTextField.text!)
     }
 }
 

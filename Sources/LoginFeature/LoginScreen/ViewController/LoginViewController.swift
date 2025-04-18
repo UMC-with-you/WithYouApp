@@ -22,7 +22,7 @@ import RxSwift
 import UIKit
 
 public protocol LoginDelegate {
-    func moveToTabbar()
+//    func moveToTabbar()
     func moveToProfileSetting()
 }
 
@@ -65,7 +65,7 @@ public final class LoginViewController: BaseViewController {
             .rx
             .tap
             .withUnretained(self)
-            .subscribe { (owner, _) in
+            .subscribe { (owner,_) in
                 GIDSignIn.sharedInstance.signIn(withPresenting: owner) { signInResult, error in
                     guard let result = signInResult else { return }
                     owner.viewModel.googleLogin(result.user.accessToken.tokenString)

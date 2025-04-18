@@ -12,7 +12,7 @@ import UIKit
 import RxSwift
 import SnapKit
 
-
+/// 회원가입 세번째 화면
 class NameProfileViewController: UIViewController {
     
     var nickName: String?
@@ -101,7 +101,7 @@ class NameProfileViewController: UIViewController {
         newImage.onCompleted()
         //        self.navigationController?.popViewController(animated: true)
         
-        coordinator?.showNickName()
+        coordinator?.finishProfileSetting()
     }
     
     @objc func profileImageTapped() {

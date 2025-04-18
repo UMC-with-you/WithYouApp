@@ -16,7 +16,7 @@ final public class DefaultAuthRepository : AuthRepository {
     public init(){}
     
     public func authWithKakao(authCode: String) -> Single<AuthToken> {
-        let dto = AuthRequestDTO(accessToken: authCode, provider: "kakako")
+        let dto = AuthRequestDTO(accessToken: authCode, provider: "kakao")
         let router = AuthRouter.kakao(authDTO: dto)
         return service.request(AuthResponseDTO.self, router: router).map{ $0.toDomain() }
     }
@@ -26,7 +26,7 @@ final public class DefaultAuthRepository : AuthRepository {
                               email : String,
                               nonce : String) -> Single<AuthToken> {
         let dto = AppleAuthRequestDTO(accessToken: accessToken,
-                                      userName: userName,
+                                      name: userName,
                                       email: email,
                                       nonce: nonce)
         let router = AuthRouter.apple(authDTO: dto)

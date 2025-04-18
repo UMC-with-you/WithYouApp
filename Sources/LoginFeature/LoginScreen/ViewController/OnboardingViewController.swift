@@ -11,7 +11,7 @@ public class OnBoardingViewController: BaseViewController {
         OnBoarding4()
     ]
     
-    let loginView = LoginView()
+    weak var coordinator: LoginCoordinator?
     
     let scrollView = {
         let scrollView = UIScrollView()
@@ -22,65 +22,37 @@ public class OnBoardingViewController: BaseViewController {
         return scrollView
     }()
     
+    lazy var goToLoginButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("확인", for: .normal)
+        button.titleLabel?.font = WithYouFontFamily.Pretendard.medium.font(size: 17)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = UIColor(named: "MainColorDark")
+        button.layer.masksToBounds = true
+        button.layer.cornerRadius = 17
+        button.layer.cornerCurve = .continuous
+        button.isHidden = true
+        button.addTarget(self, action: #selector(confirmButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    
     lazy var pageControl = {
         let pageControl = UIPageControl()
-        pageControl.numberOfPages = 5
+        pageControl.numberOfPages = 4
         pageControl.currentPage = 0
         pageControl.pageIndicatorTintColor = .lightGray
-        pageControl.currentPageIndicatorTintColor = .black
+        pageControl.currentPageIndicatorTintColor = UIColor(named: "PointColor")
         pageControl.addTarget(self, action: #selector(pageControlTapped(_:)), for:.valueChanged)
         return pageControl
     }()
-    
-    public var coordinator : LoginDelegate?
-    
-    var viewModel : LoginViewModel
-    
-    public init(viewModel: LoginViewModel) {
-        self.viewModel = viewModel
-        super.init()
-    }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
         setUpPageViewController()
     }
     
-    public override func setFunc() {
-        loginView.appleLoginButton
-            .rx
-            .tap
-            .withUnretained(self)
-            .subscribe{ (owner,_)in
-                owner.viewModel.appleLogin()
-            }
-            .disposed(by: disposeBag)
-        
-        loginView.kakaoLoginButton
-            .rx
-            .tap
-            .withUnretained(self)
-            .subscribe{ (owner,_) in
-                //owner.viewModel.kakaoLogin()
-                owner.coordinator?.moveToTabbar()
-            }
-            .disposed(by: disposeBag)
-        
-        viewModel.loginService
-            .loginResultSubject
-            .withUnretained(self)
-            .subscribe(onNext: { (owner,result) in
-                print(result)
-                if result {
-                    owner.coordinator?.moveToTabbar()
-                }
-            })
-            .disposed(by: disposeBag)
-    }
-    
     public override func setUpViewProperty() {
         view.backgroundColor = UIColor(red: 0.969, green: 0.969, blue: 0.969, alpha: 1)
-        
         let profileView = ProfileView(size: .small)
         profileView.bindTraveler(traveler: Traveler(id: 3, name: "테스트"))
         self.navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: profileView)]
@@ -89,8 +61,8 @@ public class OnBoardingViewController: BaseViewController {
     public override func setUp() {
         view.addSubview(scrollView)
         view.addSubview(pageControl)
+        view.addSubview(goToLoginButton)
         
-        self.pages.append(self.loginView)
         pages.forEach{
             scrollView.addSubview($0)
         }
@@ -103,8 +75,14 @@ public class OnBoardingViewController: BaseViewController {
             $0.width.height.equalToSuperview()
             $0.center.equalToSuperview()
         }
-        pageControl.snp.makeConstraints{
-            $0.bottom.equalToSuperview().offset(-20)
+        goToLoginButton.snp.makeConstraints {
+            $0.centerY.equalTo(pageControl)
+            $0.trailing.equalToSuperview().offset(CGFloat(-15).adjusted)
+            $0.width.equalTo(64)
+            $0.height.equalTo(34)
+        }
+        pageControl.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(16)
             $0.centerX.equalToSuperview()
         }
     }
@@ -118,15 +96,26 @@ public class OnBoardingViewController: BaseViewController {
     }
 }
 
+// MARK: - Scroll, pageControl delegate
+
 extension OnBoardingViewController : UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let pageIndex = round(scrollView.contentOffset.x / view.bounds.width)
         pageControl.currentPage = Int(pageIndex)
+        goToLoginButton.isHidden = pageControl.currentPage != 3
     }
     
     @objc func pageControlTapped(_ sender: UIPageControl) {
         let page = sender.currentPage
         let offset = CGPoint(x: view.frame.width * CGFloat(page), y: 0)
         scrollView.setContentOffset(offset, animated: true)
+    }
+}
+
+// MARK: - 확인버튼 클릭 함수
+
+extension OnBoardingViewController {
+    @objc func confirmButtonTapped() {
+        coordinator?.showLogin()
     }
 }
