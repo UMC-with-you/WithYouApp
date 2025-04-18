@@ -32,9 +32,6 @@ public class LoginViewModel {
         loginService.login(with: .google, accessToken)
     }
     
-    func googleLogin(_ accessToken : String){
-        loginService.login(with: .google, accessToken)
-    }
 }
 
 
