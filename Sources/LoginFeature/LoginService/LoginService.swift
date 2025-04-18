@@ -31,19 +31,15 @@ public final class LoginService : NSObject {
     }
     
     
-    func login(with method: LoginMethod) {
+    func login(with method: LoginMethod, _ googleToken : String = "") {
         switch method {
         case .kakao:
             loginWithKakao()
         case .google:
-            loginWithGoogle()
+            loginWithGoogle(googleToken)
         case .apple:
             loginWithApple()
         }
-    }
-    
-    func testApple() {
-        self.loginWithApple()
     }
     
     private func loginWithKakao() {
@@ -58,34 +54,28 @@ public final class LoginService : NSObject {
                         .subscribe(onSuccess: { [weak self] _ in
                         self?.loginResultSubject.onNext(true)
                     })
-                    .dispose()
+                        .disposed(by: self.disposeBag )
                 }
             }
     }
     
-    private func loginWithGoogle(){
-//        return Single<Void>.create { single in
-//            GIDSignIn.sharedInstance.signIn(withPresenting: self) { [weak self] signInResult, error in
-//                guard let self,
-//                      let result = signInResult else { return single(.failure(error)) }
-//                self.authUseCase.authWithKakao(authCode: authCode.accessToken).subscribe { result in
-//                    return result
-//                }
-//                .dispose()
-//                // 서버에 토큰 보내기
-//            }
-//            return Disposables.create()
-//        }
+    private func loginWithGoogle(_ accessToken : String){
+        self.authUseCase.authWithGoogle(authCode: accessToken)
+            .subscribe(onSuccess: { _ in
+                self.loginResultSubject.onNext(true);
+            }, onFailure: { error in
+                //TODO: 에러 처리
+            })
+        .disposed(by: disposeBag)
     }
     
     private func loginWithApple(){
-        let nonce = randomNonceString()
-        currentNonce = nonce
+        let nonce = sha256(randomNonceString())
         let appleIDProvider = ASAuthorizationAppleIDProvider()
         let request = appleIDProvider.createRequest()
         request.requestedScopes = [.fullName, .email]
-        request.nonce = sha256(nonce)
-        
+        request.nonce = nonce
+        currentNonce = nonce
         let authorizationController = ASAuthorizationController(authorizationRequests: [request])
         authorizationController.delegate = self
         authorizationController.presentationContextProvider = self
@@ -115,7 +105,7 @@ extension LoginService :ASAuthorizationControllerPresentationContextProviding , 
                 authUseCase.authWithApple(accessToken: identifyTokenString, userName: userName.formatted(), email: email, nonce: nonce).subscribe { _ in
                     self.loginResultSubject.onNext(true)
                 }
-                .dispose()
+                .disposed(by: disposeBag)
             }
             //로그인 이후 로직
             

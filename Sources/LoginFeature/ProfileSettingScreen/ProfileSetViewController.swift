@@ -158,14 +158,10 @@ class ProfileSetViewController: UIViewController {
     @objc func doneButtonTapped() {
         guard let image = profileImageView.image else {return}
         guard let name = nickName else {return}
-//        DataManager.shared.saveImage(image: image, key: "ProfilePicture")
-//        DataManager.shared.saveText(text: name, key: "UserName")
-//        DataManager.shared.setIsLogin()
-        
-        // 메인 화면으로 가기
-//        let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
-//        guard let delegate = sceneDelegate else { return }
-//        delegate.window?.rootViewController = TabBarViewController()
+        ProfileUserDefaultManager.profileImage = image;
+        ProfileUserDefaultManager.userName = name;
+        UserDefaultsManager.isLoggined = true;
+
         coordinator?.finishProfileSetting()
     }
 }
@@ -174,7 +170,7 @@ class ProfileSetViewController: UIViewController {
 extension ProfileSetViewController : UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     // MARK: - UIImagePickerDelegate
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let selectedImage = info[.originalImage] as? UIImage {
+        if let selectedImage = info[.editedImage] as? UIImage {
             profileImageView.image = selectedImage
             selectImageButton.isHidden = true
             cancelImageButton.isHidden = false
@@ -191,6 +187,7 @@ extension ProfileSetViewController : UIImagePickerControllerDelegate, UINavigati
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
         imagePicker.sourceType = .photoLibrary
+        imagePicker.allowsEditing = true // 시스템 편집기 사용
         present(imagePicker, animated: true, completion: nil)
     }
     

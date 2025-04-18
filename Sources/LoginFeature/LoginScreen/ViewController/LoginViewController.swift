@@ -12,7 +12,7 @@ import CryptoKit
 
 
 import Foundation
-//import GoogleSignIn
+import GoogleSignIn
 import KakaoSDKAuth
 import KakaoSDKCommon
 import KakaoSDKUser
@@ -57,9 +57,19 @@ public final class LoginViewController: BaseViewController {
             .tap
             .withUnretained(self)
             .subscribe{ (owner,_) in
-//                owner.viewModel.kakaoLogin()
-//                owner.coordinator?.moveToTabbar()
-                owner.coordinator?.moveToProfileSetting()
+                owner.viewModel.kakaoLogin()
+            }
+            .disposed(by: disposeBag)
+        
+        loginView.googleLoginButton
+            .rx
+            .tap
+            .withUnretained(self)
+            .subscribe { (owner,_) in
+                GIDSignIn.sharedInstance.signIn(withPresenting: owner) { signInResult, error in
+                    guard let result = signInResult else { return }
+                    owner.viewModel.googleLogin(result.user.accessToken.tokenString)
+                }
             }
             .disposed(by: disposeBag)
         
@@ -69,7 +79,6 @@ public final class LoginViewController: BaseViewController {
             .subscribe(onNext: { (owner,result) in
                 print(result)
                 if result {
-//                    owner.coordinator?.moveToTabbar()
                     owner.coordinator?.moveToProfileSetting()
                 }
             })

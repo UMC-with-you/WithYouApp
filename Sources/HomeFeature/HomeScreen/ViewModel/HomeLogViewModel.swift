@@ -19,7 +19,7 @@ public final class HomeLogViewModel {
     
     // Relays
     var eclipsePosition : PublishRelay<Bool> = PublishRelay()
-    var isLogEmpty : PublishRelay<Bool> = PublishRelay()
+    var isLogEmpty : BehaviorRelay<Bool> = BehaviorRelay(value: true)
     
     // Subjects
     var logs = PublishSubject<[Log]>()

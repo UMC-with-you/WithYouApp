@@ -20,7 +20,7 @@ let project = Project(
                 .external(name: "RxGesture"),
                 .external(name: "SnapKit"),
                 .external(name: "KakaoSDK"),
-//                                .external(name: "GoogleSignIn"),
+                .external(name: "GoogleSignIn"),
                 .external(name: "Kingfisher")
             ]
         )
