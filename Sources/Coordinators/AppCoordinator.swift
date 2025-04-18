@@ -54,11 +54,13 @@ class AppCoordinator : Coordinator {
 
         // Register Repositories (Concrete implementations for their respective protocols)
         container.register(AuthRepository.self) {
-            MockAuthRepository() // Register DefaultAuthRepository for AuthRepository
+            //MockAuthRepository() // Register DefaultAuthRepository for AuthRepository
+            DefaultAuthRepository()
         }
 
         container.register(LogRepository.self) {
-            MockLogRepository() // Register DefaultLogRepository for LogRepository
+            //MockLogRepository() // Register DefaultLogRepository for LogRepository
+            DefaultLogRepository()
         }
 
         container.register(MemberRepository.self) {
