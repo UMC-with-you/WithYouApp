@@ -23,7 +23,7 @@ public class LoginCoordinator : Coordinator {
         //온보딩 로그인 분기 설정
         // NOTE: 현재 온보딩 테스트 중이므로 조건 반전(!) 적용함.
         // 실제 서비스 배포 전에는 `if UserDefaultsManager.isFirstTime` 로 수정 필요.
-        if !UserDefaultsManager.isFirstTime {
+        if UserDefaultsManager.isFirstTime {
             showOnBoarding()
         }
         else {
