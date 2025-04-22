@@ -200,28 +200,3 @@ final class ThumbView: UIView {
         centerDot.center = CGPoint(x: bounds.midX, y: bounds.midY)
     }
 }
-
-// MARK: - Extension
-
-private extension UIView {
-    /// 뷰의 스냅샷을 생성하는 메서드
-    var snapshot: UIImage {
-        let renderer = UIGraphicsImageRenderer(bounds: bounds)
-        return renderer.image { context in
-            layer.render(in: context.cgContext)
-        }
-    }
-}
-
-extension UIColor {
-    /// UIColor에서 RGB 값을 추출하는 메서드
-    func getRGBComponents() -> (r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat)? {
-        var r: CGFloat = 0
-        var g: CGFloat = 0
-        var b: CGFloat = 0
-        var a: CGFloat = 0
-
-        let success = self.getRed(&r, green: &g, blue: &b, alpha: &a)
-        return success ? (r, g, b, a) : nil
-    }
-}

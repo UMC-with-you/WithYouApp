@@ -27,7 +27,16 @@ extension UIView {
         }
     }
 }
+
+// MARK: - ColorSlider snapShot
+
 extension UIView {
-  
+    /// 뷰의 스냅샷을 생성하는 메서드
+    var snapshot: UIImage {
+        let renderer = UIGraphicsImageRenderer(bounds: bounds)
+        return renderer.image { context in
+            layer.render(in: context.cgContext)
+        }
+    }
 }
 
