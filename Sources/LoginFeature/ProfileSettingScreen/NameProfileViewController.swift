@@ -16,14 +16,14 @@ import SnapKit
 class NameProfileViewController: UIViewController {
     
     private let colorPalette: [UIColor] = [
-        WithYouAsset.nameBackgroundColorRed.color,
-        WithYouAsset.nameBackgroundColorOrange.color,
-        WithYouAsset.nameBackgroundColorYellow.color,
-        WithYouAsset.nameBackgroundColorGreen.color,
-        WithYouAsset.nameBackgroundColorBlue.color,
-        WithYouAsset.nameBackgroundColorPurple.color,
-        WithYouAsset.nameBackgroundColorPink.color,
-        WithYouAsset.nameBackgroundColorGray.color
+        WithYouAsset.nameBackgroundRed.color,
+        WithYouAsset.nameBackgroundOrange.color,
+        WithYouAsset.nameBackgroundYellow.color,
+        WithYouAsset.nameBackgroundGreen.color,
+        WithYouAsset.nameBackgroundBlue.color,
+        WithYouAsset.nameBackgroundPurple.color,
+        WithYouAsset.nameBackgroundPink.color,
+        WithYouAsset.nameBackgroundGray.color
     ]
     
     var nickName: String?
