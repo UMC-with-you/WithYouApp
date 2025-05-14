@@ -16,7 +16,7 @@ final class OnBoarding3: BaseOnBoarding {
             title: "오늘의 여행은 어떠셨나요?",
             description1: "오늘의 여행 Rewind를 통해 여행을 기록하고",
             description1Bold: NSRange(location: 0, length: 13),
-            description2: "오늘의 한마디를 전해주세요.",
+            description2: "오늘의 한마디를 전해보세요.",
             description2Bold: NSRange(location: 0, length: 7),
             mockUpImage: UIImage(named: "MockUp2")
         )
