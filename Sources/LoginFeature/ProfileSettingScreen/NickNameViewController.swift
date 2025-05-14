@@ -55,17 +55,13 @@ class NickNameViewController: UIViewController {
         button.addTarget(self, action: #selector(checkButtonTapped), for: .touchUpInside)
         return button
     }()
+
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
-        //self.navigationController?.setNavigationBarHidden(true, animated: true)
-    }
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         navigationItem.hidesBackButton = true
         nickNameTextField.delegate = self
-        
         setViews()
         setConstraints()
     }

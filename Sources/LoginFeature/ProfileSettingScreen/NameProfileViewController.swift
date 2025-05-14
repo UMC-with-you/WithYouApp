@@ -85,6 +85,11 @@ class NameProfileViewController: UIViewController {
         return colorSlider
     }()
     
+    override func viewWillAppear(_ animated: Bool){
+        super.viewWillAppear(animated)
+        setupBackButton()
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -103,7 +108,7 @@ class NameProfileViewController: UIViewController {
         view.addSubview(profileImageView)
         view.addSubview(colorScrollView)
         view.addSubview(colorSlider)
-     
+        
         profileImageView.addSubview(textLabel)
         colorScrollView.addSubview(colorStackView)
         setupColorPalette()
@@ -121,13 +126,13 @@ class NameProfileViewController: UIViewController {
     
     private func setConstraints() {
         mainLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(CGFloat(173).adjustedH)
             $0.centerX.equalToSuperview()
-            $0.centerY.equalToSuperview().offset(-200)
         }
         
         profileImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(CGFloat(257).adjustedH)
             $0.centerX.equalToSuperview()
-            $0.centerY.equalToSuperview()
             $0.width.height.equalTo(200)
         }
         
@@ -137,7 +142,7 @@ class NameProfileViewController: UIViewController {
         
         colorScrollView.snp.makeConstraints{
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(CGFloat(550).adjustedH)
+            $0.top.equalToSuperview().offset(CGFloat(516).adjustedH)
             $0.width.equalTo(CGFloat(361).adjusted)
             $0.height.equalTo(CGFloat(40).adjustedH)
         }
@@ -149,7 +154,7 @@ class NameProfileViewController: UIViewController {
         
         colorSlider.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(CGFloat(590).adjustedH)
+            $0.top.equalToSuperview().offset(CGFloat(570).adjustedH)
             $0.width.equalTo(CGFloat(361).adjusted)
             $0.height.equalTo(CGFloat(80).adjustedH)
         }
@@ -179,7 +184,7 @@ class NameProfileViewController: UIViewController {
             colorStackView.addArrangedSubview(button)
         }
     }
-
+    
     /// 컬러슬라이더 Rx
     private func bind() {
         colorSlider.colorObservable
@@ -205,6 +210,7 @@ class NameProfileViewController: UIViewController {
         colorPickerVC.delegate = self
         present(colorPickerVC, animated: true, completion: nil)
     }
+    
 }
 
 extension NameProfileViewController: UIColorPickerViewControllerDelegate {
@@ -213,3 +219,4 @@ extension NameProfileViewController: UIColorPickerViewControllerDelegate {
         profileImageView.backgroundColor = selectedBackgroundColor
     }
 }
+
