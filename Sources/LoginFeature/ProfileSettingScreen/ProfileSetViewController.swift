@@ -87,6 +87,11 @@ class ProfileSetViewController: UIViewController {
         return view
     }()
     
+    override func viewWillAppear(_ animated: Bool){
+        super.viewWillAppear(animated)
+        setupBackButton()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -109,13 +114,13 @@ class ProfileSetViewController: UIViewController {
     
     private func setConstraints() {
         mainLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(CGFloat(173).adjustedH)
             $0.centerX.equalToSuperview()
-            $0.centerY.equalToSuperview().offset(-200)
         }
         
         profileImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(CGFloat(257).adjustedH)
             $0.centerX.equalToSuperview()
-            $0.centerY.equalToSuperview()
             $0.width.height.equalTo(200)
         }
         
@@ -130,7 +135,7 @@ class ProfileSetViewController: UIViewController {
         
         nickNameSelectButton.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(profileImageView.snp.bottom).offset(50)
+            $0.top.equalTo(profileImageView.snp.bottom).offset(80)
         }
         
         underlineView.snp.makeConstraints {

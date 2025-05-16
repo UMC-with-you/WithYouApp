@@ -16,14 +16,14 @@ class NickNameViewController: UIViewController {
     
     weak var coordinator: ProfileSettingCoordinator?
     
-    let logoImageView: UIImageView = {
+    lazy var logoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "Logo")
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
-    let mainLabel: UILabel = {
+    lazy var mainLabel: UILabel = {
         let label = UILabel()
         label.text = "사용할 닉네임을 입력하세요"
         label.font = UIFont(name: "Pretendard-SemiBold", size: 20)
@@ -31,16 +31,16 @@ class NickNameViewController: UIViewController {
         return label
     }()
     
-    let nickNameTextField: UITextField = {
+    lazy var nickNameTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "닉네임 입력"
         tf.textAlignment = .center
         return tf
     }()
     
-    let underlineView: UIView = {
+    lazy var underlineView: UIView = {
         let view = UIView()
-        view.backgroundColor = .lightGray
+        view.backgroundColor = WithYouAsset.subColor.color
         return view
     }()
     
@@ -55,17 +55,13 @@ class NickNameViewController: UIViewController {
         button.addTarget(self, action: #selector(checkButtonTapped), for: .touchUpInside)
         return button
     }()
+
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
-        //self.navigationController?.setNavigationBarHidden(true, animated: true)
-    }
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         navigationItem.hidesBackButton = true
         nickNameTextField.delegate = self
-        
         setViews()
         setConstraints()
     }
@@ -90,8 +86,8 @@ class NickNameViewController: UIViewController {
         nickNameTextField.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(mainLabel.snp.bottom).offset(40)
-            $0.leading.equalToSuperview().offset(40)
-            $0.trailing.equalToSuperview().offset(-40)
+            $0.leading.equalToSuperview().offset(CGFloat(68).adjusted)
+            $0.trailing.equalToSuperview().offset(CGFloat(-68).adjusted)
         }
         
         underlineView.snp.makeConstraints {
@@ -104,7 +100,7 @@ class NickNameViewController: UIViewController {
             $0.centerX.equalToSuperview()
             $0.bottom.equalToSuperview().offset(-40)
             $0.width.equalToSuperview().multipliedBy(0.9)
-            $0.height.equalTo(40)
+            $0.height.equalTo(CGFloat(52).adjustedH)
         }
     }
     
