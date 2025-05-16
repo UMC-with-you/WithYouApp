@@ -14,7 +14,7 @@ public enum ProfileUserDefaultManager {
         case profileImage, userName
     }
     
-    @MyDefaults(key: Key.profileImage.rawValue, defaultValue: UIImage())
+    @MyDefaults(key: Key.profileImage.rawValue, defaultValue: WithYouAsset.defaultProfilePic.image)
     public static var profileImage
 
     @MyDefaults(key: Key.userName.rawValue, defaultValue: "")
