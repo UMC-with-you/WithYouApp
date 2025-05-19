@@ -186,12 +186,11 @@ class ProfileSetViewController: UIViewController {
             present(alert, animated: true)
             return
         }
-        
-        //        guard let name = nickName else {return}
-        //        DataManager.shared.saveImage(image: image, key: "ProfilePicture")
-        //        DataManager.shared.saveText(text: name, key: "UserName")
-        //        DataManager.shared.setIsLogin()
-        
+        guard let name = nickName else {return}
+        ProfileUserDefaultManager.profileImage = image;
+        ProfileUserDefaultManager.userName = name;
+        UserDefaultsManager.isLoggined = true;
+      
         coordinator?.finishProfileSetting()
     }
 }

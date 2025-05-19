@@ -9,17 +9,31 @@
 import Foundation
 import UIKit
 
+
 @propertyWrapper
 struct MyDefaults<T> {
     let key: String
     let defaultValue: T
-    
+
     var wrappedValue: T {
         get {
-            UserDefaults.standard.object(forKey: key) as? T ?? defaultValue
+            if T.self == UIImage.self {
+                if let data = UserDefaults.standard.data(forKey: key),
+                   let image = UIImage(data: data) {
+                    return image as! T
+                }
+                return defaultValue
+            }
+
+            return UserDefaults.standard.object(forKey: key) as? T ?? defaultValue
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: key)
+            if let image = newValue as? UIImage,
+               let data = image.pngData() {
+                UserDefaults.standard.set(data, forKey: key)
+            } else {
+                UserDefaults.standard.set(newValue, forKey: key)
+            }
         }
     }
 }
