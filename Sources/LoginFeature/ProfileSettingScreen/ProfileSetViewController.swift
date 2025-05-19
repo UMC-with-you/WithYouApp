@@ -21,8 +21,6 @@ class ProfileSetViewController: UIViewController {
     
     var nickName: String?
     
-    let button = WYAddButton(.big)
-    
     lazy var mainLabel: UILabel = {
         let label = UILabel()
         label.text = "사용할 프로필 사진을 설정하세요"
@@ -180,7 +178,7 @@ class ProfileSetViewController: UIViewController {
     }
     
     @objc func doneButtonTapped() {
-        guard profileImageView.image != nil else {
+        guard let image = profileImageView.image else {
             let alert = UIAlertController(title: "잠깐만요!", message: "프로필 이미지를 선택해주세요", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "확인", style: .default))
             present(alert, animated: true)
