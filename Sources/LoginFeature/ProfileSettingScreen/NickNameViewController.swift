@@ -47,7 +47,7 @@ class NickNameViewController: UIViewController {
     lazy var checkButton: UIButton = {
         let button = UIButton(type: .custom)
         button.titleLabel?.font = UIFont(name: "Pretendard-Medium", size: 18)
-        button.setTitle("확인하기", for: .normal)
+        button.setTitle("다음", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = WithYouAsset.subColor.color
         button.layer.cornerRadius = 20
@@ -55,7 +55,6 @@ class NickNameViewController: UIViewController {
         button.addTarget(self, action: #selector(checkButtonTapped), for: .touchUpInside)
         return button
     }()
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -116,7 +115,7 @@ class NickNameViewController: UIViewController {
 //            coordinator?.navigateProfileSetVC()
 //        }
         guard let nickName = nickNameTextField.text, !nickName.isEmpty else {
-            let alert = UIAlertController(title: "에러", message: "닉네임을 올바르게 입력해주세요", preferredStyle: .alert)
+            let alert = UIAlertController(title: "잠깐만요!", message: "닉네임을 올바르게 입력해주세요", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "확인", style: .default))
             self.present(alert, animated: true)
             return

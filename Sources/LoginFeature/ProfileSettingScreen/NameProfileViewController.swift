@@ -84,7 +84,20 @@ class NameProfileViewController: UIViewController {
         colorSlider.translatesAutoresizingMaskIntoConstraints = false
         return colorSlider
     }()
+
+    lazy var checkButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.titleLabel?.font = UIFont(name: "Pretendard-Medium", size: 18)
+        button.setTitle("완료", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = WithYouAsset.mainColorDark.color
+        button.layer.cornerRadius = 20
+        button.layer.masksToBounds = true
+        button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        return button
+    }()
     
+
     override func viewWillAppear(_ animated: Bool){
         super.viewWillAppear(animated)
         setupBackButton()
@@ -108,20 +121,11 @@ class NameProfileViewController: UIViewController {
         view.addSubview(profileImageView)
         view.addSubview(colorScrollView)
         view.addSubview(colorSlider)
+        view.addSubview(checkButton)
         
         profileImageView.addSubview(textLabel)
         colorScrollView.addSubview(colorStackView)
         setupColorPalette()
-        
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(profileImageTapped))
-        profileImageView.addGestureRecognizer(tapGestureRecognizer)
-        profileImageView.isUserInteractionEnabled = true
-        let button = WYButton("완료")
-        button.backgroundColor = WithYouAsset.mainColorDark.color
-        button.frame = CGRect(x: 0, y: 0, width: 64, height: 30)
-        button.layer.cornerRadius = 15
-        button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: button)
     }
     
     private func setConstraints() {
@@ -157,6 +161,13 @@ class NameProfileViewController: UIViewController {
             $0.top.equalToSuperview().offset(CGFloat(570).adjustedH)
             $0.width.equalTo(CGFloat(361).adjusted)
             $0.height.equalTo(CGFloat(80).adjustedH)
+        }
+    
+        checkButton.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalToSuperview().offset(-40)
+            $0.width.equalToSuperview().multipliedBy(0.9)
+            $0.height.equalTo(CGFloat(52).adjustedH)
         }
         
     }
@@ -203,20 +214,6 @@ class NameProfileViewController: UIViewController {
         //        self.navigationController?.popViewController(animated: true)
         
         coordinator?.finishProfileSetting()
-    }
-    
-    @objc func profileImageTapped() {
-        let colorPickerVC = UIColorPickerViewController()
-        colorPickerVC.delegate = self
-        present(colorPickerVC, animated: true, completion: nil)
-    }
-    
-}
-
-extension NameProfileViewController: UIColorPickerViewControllerDelegate {
-    func colorPickerViewControllerDidSelectColor(_ viewController: UIColorPickerViewController) {
-        selectedBackgroundColor = viewController.selectedColor
-        profileImageView.backgroundColor = selectedBackgroundColor
     }
 }
 

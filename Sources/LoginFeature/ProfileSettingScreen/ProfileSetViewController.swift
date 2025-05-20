@@ -21,9 +21,7 @@ class ProfileSetViewController: UIViewController {
     
     var nickName: String?
     
-    let button = WYAddButton(.big)
-    
-    let mainLabel: UILabel = {
+    lazy var mainLabel: UILabel = {
         let label = UILabel()
         label.text = "사용할 프로필 사진을 설정하세요"
         label.font = UIFont(name: "Pretendard-SemiBold", size: 20)
@@ -63,7 +61,20 @@ class ProfileSetViewController: UIViewController {
         return button
     }()
     
-    let cancelImageButton: UIButton = {
+    lazy var checkButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.titleLabel?.font = UIFont(name: "Pretendard-Medium", size: 18)
+        button.setTitle("완료", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = WithYouAsset.subColor.color
+        button.layer.cornerRadius = 20
+        button.layer.masksToBounds = true
+        button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    
+    
+    lazy var cancelImageButton: UIButton = {
         let button = UIButton()
         button.isHidden = true
         let image = UIImage(systemName: "xmark.circle.fill")?.withRenderingMode(.alwaysOriginal)
@@ -73,15 +84,15 @@ class ProfileSetViewController: UIViewController {
         return button
     }()
     
-    let nickNameSelectButton: UIButton = {
+    lazy var nickNameSelectButton: UIButton = {
         let button = UIButton()
-        button.setTitle("닉네임으로 프로필 설정하기", for: .normal)
+        button.setTitle("닉네임으로 프로필 만들기", for: .normal)
         button.setTitleColor(UIColor(named: "MainColorDark"), for: .normal)
         button.addTarget(self, action: #selector(nickNameSetButtonTapped), for: .touchUpInside)
         return button
     }()
     
-    let underlineView: UIView = {
+    lazy var underlineView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(named: "MainColorDark")
         return view
@@ -97,19 +108,19 @@ class ProfileSetViewController: UIViewController {
         
         view.backgroundColor = .white
         
-        let button = WYButton("완료")
-        button.backgroundColor = WithYouAsset.mainColorDark.color
-        button.frame = CGRect(x: 0, y: 0, width: 64, height: 30)
-        button.layer.cornerRadius = 15
-        button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: button)
+        //        let button = WYButton("완료")
+        //        button.backgroundColor = WithYouAsset.mainColorDark.color
+        //        button.frame = CGRect(x: 0, y: 0, width: 64, height: 30)
+        //        button.layer.cornerRadius = 15
+        //        button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        //        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: button)
         
         setViews()
         setConstraints()
     }
     
     private func setViews() {
-        [mainLabel, profileImageView, selectImageButton, cancelImageButton, nickNameSelectButton, underlineView].forEach { view.addSubview($0) }
+        [mainLabel, profileImageView, selectImageButton, cancelImageButton, nickNameSelectButton, underlineView, checkButton].forEach { view.addSubview($0) }
     }
     
     private func setConstraints() {
@@ -143,30 +154,41 @@ class ProfileSetViewController: UIViewController {
             $0.leading.trailing.equalTo(nickNameSelectButton)
             $0.height.equalTo(1)
         }
+        checkButton.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalToSuperview().offset(-40)
+            $0.width.equalToSuperview().multipliedBy(0.9)
+            $0.height.equalTo(CGFloat(52).adjustedH)
+        }
     }
     
     @objc func nickNameSetButtonTapped() {
         let nameProfileViewController = NameProfileViewController()
         nameProfileViewController.nickName = nickName
         
-        nameProfileViewController.newImage.subscribe(onNext: { image in
-            self.profileImageView.image = image
-            self.selectImageButton.isHidden = true
-            self.cancelImageButton.isHidden = false
+        nameProfileViewController.newImage.subscribe(onNext: { [weak self] image in
+            self?.profileImageView.image = image
+            self?.selectImageButton.isHidden = true
+            self?.cancelImageButton.isHidden = false
         })
         .disposed(by: bag)
         
-//        navigationController?.pushViewController(nameProfileViewController, animated: true)
+        //        navigationController?.pushViewController(nameProfileViewController, animated: true)
         coordinator?.navigateNameVC()
     }
     
     @objc func doneButtonTapped() {
-        guard let image = profileImageView.image else {return}
+        guard let image = profileImageView.image else {
+            let alert = UIAlertController(title: "잠깐만요!", message: "프로필 이미지를 선택해주세요", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default))
+            present(alert, animated: true)
+            return
+        }
         guard let name = nickName else {return}
         ProfileUserDefaultManager.profileImage = image;
         ProfileUserDefaultManager.userName = name;
         UserDefaultsManager.isLoggined = true;
-
+      
         coordinator?.finishProfileSetting()
     }
 }
@@ -179,6 +201,7 @@ extension ProfileSetViewController : UIImagePickerControllerDelegate, UINavigati
             profileImageView.image = selectedImage
             selectImageButton.isHidden = true
             cancelImageButton.isHidden = false
+            checkButton.backgroundColor = WithYouAsset.mainColorDark.color
         }
         picker.dismiss(animated: true, completion: nil)
     }
@@ -198,9 +221,10 @@ extension ProfileSetViewController : UIImagePickerControllerDelegate, UINavigati
     
     // 이미지 취소 버튼의 액션 메서드
     @objc func cancelImage() {
-        profileImageView.image = UIImage()
+        profileImageView.image = nil
         cancelImageButton.isHidden = true
         selectImageButton.isHidden = false
+        checkButton.backgroundColor = WithYouAsset.subColor.color
     }
 }
 
