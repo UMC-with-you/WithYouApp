@@ -32,6 +32,9 @@ public final class DefaultLogUseCase : LogUseCase {
         repository.getAllLogs()
     }
     
+    /// 로그 추가하기
+    /// 로그 정보를 서버로 전달
+    /// 서버에서 URL 주면 해당 URL에 이미지 업로드
     public func addLog(title: String, startDate: String, endDate: String, image: Data?) -> Single<Int> {
         repository.addLog(title: title, startDate: startDate, endDate: endDate, image: image)
     }

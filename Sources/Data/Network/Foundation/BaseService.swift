@@ -10,19 +10,19 @@ import Alamofire
 import Foundation
 import RxSwift
 
-protocol NetworkService {
-    func request<T: Decodable>(_ responseDTO : T.Type, router: BaseRouter) -> Single<T>
-}
+//protocol NetworkService {
+//    func request<T: Decodable>(_ responseDTO : T.Type, router: BaseRouter) -> Single<T>
+//}
 
 public class BaseService {
     
     let AFManager: Session = {
-            var session = AF
-            let configuration = URLSessionConfiguration.af.default
-            let eventLogger = APIEventLogger()
-            session = Session(configuration: configuration, eventMonitors: [eventLogger])
-            return session
-        }()
+        var session = AF
+        let configuration = URLSessionConfiguration.af.default
+        let eventLogger = APIEventLogger()
+        session = Session(configuration: configuration, eventMonitors: [eventLogger])
+        return session
+    }()
     
     public init(){}
     
@@ -52,6 +52,16 @@ public class BaseService {
                 }
             }
             return Disposables.create {
+            }
+        }
+    }
+    
+    func requestS3<T>(_ responseDTO : T.Type, data: Data, router: BaseRouter) -> Single<T> {
+        return Single<T>.create { single in
+            self.AFManager.upload(router.parameter, with: router)
+            }
+            return Disposables.create {
+                
             }
         }
     }

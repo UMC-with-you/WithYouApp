@@ -20,6 +20,7 @@ final public class DefaultLogRepository : LogRepository {
         return service.request([Log].self, router: router)
     }
     
+    /// 로그 추가하기
     public func addLog(title: String, startDate: String, endDate: String, image: Data?) -> Single<Int> {
         let requestDTO = AddLogRequestDTO(title: title, startDate: startDate, endDate: endDate, localDate: Date().getCurrentDateToString())
         let router = LogRouter.addLog(logDTO: requestDTO, image: image)

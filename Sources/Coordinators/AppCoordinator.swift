@@ -59,8 +59,8 @@ class AppCoordinator : Coordinator {
         }
 
         container.register(LogRepository.self) {
-            //MockLogRepository() // Register DefaultLogRepository for LogRepository
-            DefaultLogRepository()
+            MockLogRepository() // Register DefaultLogRepository for LogRepository
+//            DefaultLogRepository()
         }
 
         container.register(MemberRepository.self) {
