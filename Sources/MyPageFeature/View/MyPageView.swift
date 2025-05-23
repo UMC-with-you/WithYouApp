@@ -23,43 +23,49 @@ class MyPageView: BaseUIView {
         return collectionView
     }()
     
-    let profileView = ProfileView(size: .my)
-    
+    let profileView = {
+        let profileView = ProfileView(size: .my)
+        profileView.profileImage.image = ProfileUserDefaultManager.profileImage
+        return profileView
+    }()
+        
     let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "여행초보"
         label.textColor = UIColor(red: 0.85, green: 0.7, blue: 0.28, alpha: 1)
-        label.font = UIFont(name: "Pretendard-SemiBold", size: 11)
+        label.font = UIFont(name: "Pretendard-SemiBold", size: 15)
         label.numberOfLines = 0
         label.textAlignment = .center
         label.layer.masksToBounds = true
         label.layer.borderWidth = 1
-        label.layer.cornerRadius = 10
+        label.layer.cornerRadius = 12
         label.layer.borderColor = UIColor(red: 0.85, green: 0.7, blue: 0.28, alpha: 1).cgColor
         return label
     }()
     
     let nickNameLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = WithYouAsset.logoColor.color
+        label.text = ProfileUserDefaultManager.userName
         label.numberOfLines = 0
         label.textAlignment = .center
-        label.font = UIFont(name: "Pretendard-Medium", size: 20)
+        label.font = UIFont(name: "Pretendard-Medium", size: 21)
         return label
     }()
     
     let editButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setTitle("프로필 수정", for: .normal)
-        button.setTitleColor(UIColor.gray, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 13)
+        button.setTitleColor(WithYouAsset.mypageTintColor.color, for: .normal)
+        button.titleLabel?.font = WithYouFontFamily.Pretendard.medium.font(size: 17)
         button.layer.masksToBounds = true
         button.layer.borderWidth = 1
-        button.layer.cornerRadius = 15
-        button.layer.borderColor = UIColor.gray.cgColor
+        button.layer.cornerRadius = 16
+        button.layer.borderColor = WithYouAsset.mypageTintColor.color.cgColor
         return button
     }()
     
+    /* SegmentControl로 변경 필요 */
     let scrapLabel: UILabel = {
         let label = UILabel()
         label.text = "SCRAP"
@@ -76,7 +82,7 @@ class MyPageView: BaseUIView {
     
     let myLabel: UILabel = {
         let label = UILabel()
-        label.text = "My"
+        label.text = "MY"
         label.textColor = .lightGray
         label.font = UIFont(name: "Pretendard-Medium", size: 18)
         return label
@@ -97,22 +103,22 @@ class MyPageView: BaseUIView {
         }
         
         titleLabel.snp.makeConstraints {
-            $0.top.equalTo(profileView.snp.top).offset(5)
-            $0.leading.equalTo(profileView.snp.trailing).offset(10)
-            $0.width.equalTo(55)
-            $0.height.equalTo(20)
+            $0.top.equalTo(profileView.snp.top).offset(2)
+            $0.leading.equalTo(profileView.snp.trailing).offset(13)
+            $0.width.equalTo(67)
+            $0.height.equalTo(25)
         }
         
         nickNameLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(5)
-            $0.leading.equalTo(titleLabel.snp.leading)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(3)
+            $0.leading.equalTo(titleLabel.snp.leading).offset(5)
         }
         
         editButton.snp.makeConstraints {
             $0.centerY.equalTo(profileView.snp.centerY)
             $0.trailing.equalToSuperview().offset(-15)
-            $0.width.equalTo(85)
-            $0.height.equalTo(30)
+            $0.width.equalTo(106)
+            $0.height.equalTo(34)
         }
         
         scrapLabel.snp.makeConstraints {
