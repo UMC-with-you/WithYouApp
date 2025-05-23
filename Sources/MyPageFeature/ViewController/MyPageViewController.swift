@@ -35,10 +35,23 @@ public class MyPageViewController: BaseViewController {
         
 //        viewModel.loadPosts()
 //        myPageView.moveEclipse(state: true)
+        super.viewWillAppear(animated)
+        setupSettingsButton()
     }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    func setupSettingsButton() {
+        let settingsImage = UIImage(systemName: "gearshape")
+        let settingsButton = UIBarButtonItem(image: settingsImage, style: .plain, target: self, action: #selector(settingsButtonTapped))
+        settingsButton.tintColor = WithYouAsset.logoColor.color
+        navigationItem.rightBarButtonItem = settingsButton
+    }
+
+    @objc func settingsButtonTapped() {
+        navigationController?.pushViewController(UIViewController(), animated: true)
     }
     
     // MARK: - Rx 연결
