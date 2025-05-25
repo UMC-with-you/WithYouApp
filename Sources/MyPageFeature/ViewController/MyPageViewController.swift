@@ -13,8 +13,8 @@ import RxCocoa
 import UIKit
 import SnapKit
 
-public protocol MyPageViewControllerDelgate {
-    
+public protocol MyPageViewControllerDelegate {
+    func navigateToSettings()
 }
 
 public class MyPageViewController: BaseViewController {
@@ -22,7 +22,7 @@ public class MyPageViewController: BaseViewController {
     private let viewModel: MyPageViewModel
     private var linePosition = BehaviorRelay<Bool>(value: true)
     
-    public var coordinator: MyPageViewControllerDelgate?
+    public var coordinator: MyPageViewControllerDelegate?
     
     // ViewModel
     public init(viewModel: MyPageViewModel) {
@@ -51,7 +51,7 @@ public class MyPageViewController: BaseViewController {
     }
 
     @objc func settingsButtonTapped() {
-        navigationController?.pushViewController(UIViewController(), animated: true)
+        self.coordinator?.navigateToSettings()
     }
     
     // MARK: - Rx 연결
