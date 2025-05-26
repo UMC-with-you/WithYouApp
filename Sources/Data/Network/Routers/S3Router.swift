@@ -10,14 +10,18 @@ import Alamofire
 import Foundation
 
 public enum S3Router {
-    case uploadS3(url: String, image: Data)
+    case uploadS3(url: String)
     case downloadS3(url: String)
 }
 
 extension S3Router: BaseRouter {
+    var parameter: RequestParams {
+        .none
+    }
+    
     var baseURL: String {
         switch self {
-        case .uploadS3(let url, _):
+        case .uploadS3(let url):
             return url
         case .downloadS3(let url):
             return url
@@ -36,14 +40,8 @@ extension S3Router: BaseRouter {
     var path: String {
         return ""
     }
-    
-    var parameter: RequestParams {
-        switch self {
-            
-        case .uploadS3(_ , let image):
-            return .image(image)
-        case .downloadS3:
-            return .none
-        }
+
+    var header: HeaderType {
+        return .image
     }
 }

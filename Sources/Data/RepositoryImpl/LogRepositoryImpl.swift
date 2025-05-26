@@ -21,10 +21,10 @@ final public class DefaultLogRepository : LogRepository {
     }
     
     /// 로그 추가하기
-    public func addLog(title: String, startDate: String, endDate: String, image: Data?) -> Single<Int> {
+    public func addLog(title: String, startDate: String, endDate: String) -> Single<String> {
         let requestDTO = AddLogRequestDTO(title: title, startDate: startDate, endDate: endDate, localDate: Date().getCurrentDateToString())
-        let router = LogRouter.addLog(logDTO: requestDTO, image: image)
-        return service.requestWithImage(LogIDResponseDTO.self, router: router).map{ $0.travelId }
+        let router = LogRouter.addLog(logDTO: requestDTO)
+        return service.request(AddLogResponseDTO.self, router: router).map{ $0.url }
     }
     
     public func deleteLog(travelId: Int) -> Single<Int> {

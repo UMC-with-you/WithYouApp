@@ -60,9 +60,8 @@ public class LogCollectionViewCell: UICollectionViewCell {
         self.date.text = log.getTravelPeriod()
         dDay.setTitle(dateController.days(from:log.startDate), for: .normal)
         
-        //self.backImage.kf.setImage(with: URL(string: log.imageUrl))
-        self.backImage.image = WithYouAsset.logModel1.image
-    
+        self.backImage.kf.setImage(with: URL(string: log.imageUrl), placeholder: WithYouAsset.logModel0.image)
+        
         setConst(isBigCell)
         setSize(isBigCell)
     }

@@ -56,13 +56,34 @@ public class BaseService {
         }
     }
     
-    func requestS3<T>(_ responseDTO : T.Type, data: Data, router: BaseRouter) -> Single<T> {
-        return Single<T>.create { single in
-            self.AFManager.upload(router.parameter, with: router)
+    
+    func uploadToS3(router: S3Router, image : Data) -> Single<Void> {
+        return Single<Void>.create { single in
+            self.AFManager.upload(image, with: router)
+                .response { response in
+                    switch response.result{
+                    case .success(_):
+                        single(.success(()))
+                    case .failure(let error):
+                        single(.failure(error))
+                    }
+                }
+            return Disposables.create()
+        }
+    }
+    
+    func downloadS3(router: S3Router) -> Single<Data>{
+        return Single<Data>.create { single in
+            self.AFManager.request(router).response{ response in
+                switch response.result {
+                case .success(let data):
+                    guard let imageData = data else { return }
+                    single(.success(imageData))
+                case .failure(let error):
+                    single(.failure(error))
+                }
             }
-            return Disposables.create {
-                
-            }
+            return Disposables.create()
         }
     }
 }

@@ -25,8 +25,8 @@ final public class MockLogRepository : LogRepository {
         return Single.just((logs))
     }
     
-    public func addLog(title: String, startDate: String, endDate: String, image: Data?) -> Single<Int> {
-        .just(0)
+    public func addLog(title: String, startDate: String, endDate: String) -> Single<String> {
+        .just("")
     }
     
     public func deleteLog(travelId: Int) -> Single<Int> {

@@ -13,7 +13,11 @@ public let dateController = DateController.shared
 open class DateController {
     public static let shared = DateController()
     
-    public let dateFormatter = DateFormatter()
+    public let dateFormatter = {
+        let formatter = DateFormatter()
+        formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+        return formatter
+    }()
     
     private init(){}
     
@@ -39,7 +43,11 @@ open class DateController {
     
     //dday계산 
     public func days(from date: String) -> String {
-        let date = Calendar.current.dateComponents([.day], from: dateController.strToDate(date), to: Date()).day! + 1
+        let calendar = Calendar.current
+        let startDate = calendar.startOfDay(for : dateController.strToDate(date))
+        let targetDate = calendar.startOfDay(for: Date.now)
+        
+        let date = Calendar.current.dateComponents([.day], from: startDate, to: targetDate).day!
         if date == 0 {
             return "D-Day"
         } else if date < 0 {
@@ -50,7 +58,9 @@ open class DateController {
     }
     
     func daysAsInt(from date: String)-> Int {
-        let date = Calendar.current.dateComponents([.day], from: dateController.strToDate(date), to: Date()).day! + 1
-        return date
-    }
+        let calendar = Calendar.current
+        let startDate = calendar.startOfDay(for : dateController.strToDate(date))
+        let targetDate = calendar.startOfDay(for: Date.now)
+        
+        return Calendar.current.dateComponents([.day], from: startDate, to: targetDate).day!    }
 }

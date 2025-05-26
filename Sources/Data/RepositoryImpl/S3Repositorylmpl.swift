@@ -16,12 +16,12 @@ final public class DefaultS3Repository: S3Repository {
     public init() {}
     
     public func uploadS3(url: String, image: Data) -> Single<Void> {
-        let router = S3Router.uploadS3(url: url, image: image)
-//        return service.request(Void.self, router: router)
+        let router = S3Router.uploadS3(url: url)
+        return service.uploadToS3(router: router, image: image)
     }
     
     public func downloadS3(url: String) -> Single<Data> {
         let router = S3Router.downloadS3(url: url)
-        return service.request(Data.self, router: router)
+        return service.downloadS3(router: router)
     }
 }
