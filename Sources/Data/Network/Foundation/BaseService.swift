@@ -56,15 +56,15 @@ public class BaseService {
         }
     }
     
-    func requestS3<T>(_ responseDTO : T.Type, data: Data, router: BaseRouter) -> Single<T> {
-        return Single<T>.create { single in
-            self.AFManager.upload(router.parameter, with: router)
-            }
-            return Disposables.create {
-                
-            }
-        }
-    }
+//    func requestS3<T>(_ responseDTO : T.Type, data: Data, router: BaseRouter) -> Single<T> {
+//        return Single<T>.create { single in
+//            self.AFManager.upload(router.parameter, with: router)
+//            }
+//            return Disposables.create {
+//                
+//            }
+//        }
+//    }
 }
 
 

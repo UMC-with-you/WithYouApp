@@ -37,6 +37,11 @@ public class HomeViewController: BaseViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         setActions()
+        
+        mainLogView.onSortTapped = { [weak self] in
+            self?.viewModel.toggleSort()
+            print("button Tapped")
+        }
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -104,6 +109,10 @@ public class HomeViewController: BaseViewController {
             }
         }
         .disposed(by: disposeBag)
+    }
+    
+    private func sortLogs() {
+        
     }
     
     // MARK: ViewController 셋팅

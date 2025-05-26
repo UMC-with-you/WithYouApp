@@ -39,6 +39,20 @@ extension Log {
     public func getTravelPeriod() -> String{
         return startDate + "~" + endDate.dropFirst(5)
     }
+    
+    /// 오늘 기준 startDate까지 남은 일수 (D-Day)
+    public func dDayValue() -> Int? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd" // 서버에서 받은 date format과 맞춰야 함
+        formatter.locale = Locale(identifier: "ko_KR")
+        
+        guard let start = formatter.date(from: self.startDate) else { return nil }
+        let today = Calendar.current.startOfDay(for: Date())
+        let target = Calendar.current.startOfDay(for: start)
+        
+        let components = Calendar.current.dateComponents([.day], from: today, to: target)
+        return components.day
+    }
 }
 
 
