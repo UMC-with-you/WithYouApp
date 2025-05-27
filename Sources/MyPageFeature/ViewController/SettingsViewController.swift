@@ -12,12 +12,9 @@ import UIKit
 public class SettingsViewController: BaseViewController {
     lazy var settingsView = SettingsView()
     
-    let sectionTitles = ["앱 정보", "이용 정보", "계정"]
-    let sectionItems = [
-        ["앱 버전 정보", "서비스 이용 약관", "개인정보 처리 방침"],
-        ["공지사항", "문의하기", "문의 내역 보기"],
-        ["로그아웃하기", "탈퇴하기"]
-    ]
+    let appInfoItems = ["앱 버전 정보", "서비스 이용 약관", "개인정보 처리 방침"]
+    let useInfoItems = ["공지사항", "문의하기", "문의 내역 보기"]
+    let accountInfoItems = ["로그아웃하기", "탈퇴하기"]
     
     public override func viewWillAppear(_ animated: Bool){
         super.viewWillAppear(animated)
@@ -26,8 +23,21 @@ public class SettingsViewController: BaseViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        settingsView.tableView.delegate = self
-        settingsView.tableView.dataSource = self
+        settingsViewSetup()
+        
+    }
+    private func settingsViewSetup() {
+        settingsView.appInfoTableView.delegate = self
+        settingsView.useInfoTableView.delegate = self
+        settingsView.accountInfoTableView.delegate = self
+        
+        settingsView.appInfoTableView.dataSource = self
+        settingsView.useInfoTableView.dataSource = self
+        settingsView.accountInfoTableView.dataSource = self
+        
+        settingsView.appInfoTableView.tag = 0
+        settingsView.useInfoTableView.tag = 1
+        settingsView.accountInfoTableView.tag = 2
     }
     
     public override func setUp() {
@@ -44,23 +54,70 @@ public class SettingsViewController: BaseViewController {
 
 extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
     // MARK: - UITableViewDataSource 관련
-    public func numberOfSections(in tableView: UITableView) -> Int {
-        return sectionTitles.count
-    }
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return sectionItems[section].count
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int   {
+        switch tableView.tag {
+        case 0: return appInfoItems.count
+        case 1: return useInfoItems.count
+        case 2: return accountInfoItems.count
+        default: return 0
+        }
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        cell.textLabel?.text = sectionItems[indexPath.section][indexPath.row]
-        cell.accessoryType = .disclosureIndicator
+        switch tableView.tag {
+            case 0: cell.textLabel?.text = appInfoItems[indexPath.row]
+            case 1: cell.textLabel?.text = useInfoItems[indexPath.row]
+            case 2: cell.textLabel?.text = accountInfoItems[indexPath.row]
+            default: break
+            }
         return cell
     }
     
     //MARK: - UITableViewDelegate 관련
-    public func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return sectionTitles[section]
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if tableView == settingsView.appInfoTableView {
+            print("tapped appInfo Table Cell")
+        }
+        else if tableView == settingsView.useInfoTableView {
+            print("tapped useInfo Table Cell")
+        }
+        else if tableView == settingsView.accountInfoTableView {
+            print("tapped accountInfo Table Cell")
+        }
+        
+        
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+//    
+//    public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+//        return 58
+//    }
+    
+    public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let containerView = UIView()
+         
+         let label = UILabel()
+         label.text = headerTitle(tableView)
+         label.font = WithYouFontFamily.Pretendard.semiBold.font(size: 18)
+         
+         containerView.addSubview(label)
+         
+         label.snp.makeConstraints { make in
+             make.leading.equalToSuperview().offset(15)
+             make.centerY.equalToSuperview()
+         }
+         
+         return containerView
+    }
+    
+    private func headerTitle(_ tableView: UITableView) -> String {
+        switch tableView.tag {
+            case 0: return "앱 정보"
+            case 1: return "이용 정보"
+            case 2: return "계정"
+            default: return ""
+        }
     }
     
     
