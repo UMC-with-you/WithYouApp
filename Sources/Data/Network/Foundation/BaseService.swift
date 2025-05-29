@@ -58,37 +58,35 @@ public class BaseService {
     
     func uploadToS3(router: S3Router, image : Data) -> Single<Void> {
         return Single<Void>.create { single in
-    }
-            self.AFManager.upload(image, with: router)
-                    switch response.result{
-                .response { response in
-                    case .success(_):
-                        single(.success(()))
-                    case .failure(let error):
-                        single(.failure(error))
-                }
-                    }
-            return Disposables.create()
-        }
-    }
-        }
-            return Disposables.create()
-            }
+            
+            self.AFManager.upload(image, with: router).response { response in
+                switch response.result {
+                   
+                case .success(_):
+                    single(.success(()))
+                case .failure(let error):
                     single(.failure(error))
                 }
-                case .failure(let error):
-                    single(.success(imageData))
-                    guard let imageData = data else { return }
-                case .success(let data):
-                switch response.result {
-            self.AFManager.request(router).response{ response in
+            }
+            return Disposables.create()
+        }
+    }
+    
+    func downloadS3(router: S3Router) -> Single<Data> {
         return Single<Data>.create { single in
-    func downloadS3(router: S3Router) -> Single<Data>{
-    
-    
+            self.AFManager.request(router).response{ response in
+                switch response.result {
+                case .success(let data):
+                    guard let imageData = data else { return }
+                    single(.success(imageData))
+                case .failure(let error):
+                    single(.failure(error))
+                }
+            }
+            return Disposables.create()
+        }
+    }
 }
-
-
 
 final class MyRequestInterceptor: RequestInterceptor {
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
