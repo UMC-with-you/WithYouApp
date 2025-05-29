@@ -67,10 +67,10 @@ public class LogCollectionViewCell: UICollectionViewCell {
     }
     
     private func setSize(_ isBigCell : Bool){
-        title.font = WithYouFontFamily.Pretendard.bold.font(size: isBigCell ? 22 : 16)
-        date.font = WithYouFontFamily.Pretendard.medium.font(size: isBigCell ? 15 : 12)
+        title.font = WithYouFontFamily.Pretendard.bold.font(size: isBigCell ? 21 : 16)
+        date.font = WithYouFontFamily.Pretendard.medium.font(size: isBigCell ? 14 : 12)
         //Only for big cell
-        dDay.titleLabel?.font = WithYouFontFamily.Pretendard.bold.font(size: 15)
+        dDay.titleLabel?.font = WithYouFontFamily.Pretendard.bold.font(size: 14)
     }
     
     private func setUp(){
@@ -91,13 +91,13 @@ public class LogCollectionViewCell: UICollectionViewCell {
         }
         
         title.snp.makeConstraints{
-            $0.leading.equalToSuperview().offset(isBigCell ? 20: 10)
+            $0.leading.equalToSuperview().offset(isBigCell ? 22: 10)
             $0.bottom.equalTo(date).offset(isBigCell ? -20 : -15)
         }
         
         date.snp.makeConstraints{
             $0.leading.equalTo(title)
-            $0.bottom.equalToSuperview().offset(isBigCell ? -20 : -10)
+            $0.bottom.equalToSuperview().offset(isBigCell ? -23 : -10)
         }
         
         if isBigCell {
