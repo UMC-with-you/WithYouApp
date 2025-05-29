@@ -93,9 +93,9 @@ class HomeLogView : BaseUIView{
         
         sortIcon.snp.makeConstraints{
             $0.top.equalTo(ing.snp.top)
-            $0.height.equalTo(23)
-            $0.width.equalTo(26)
-            $0.trailing.equalToSuperview().offset(-16)
+            $0.height.equalTo(24)
+            $0.width.equalTo(24)
+            $0.trailing.equalToSuperview().offset(-20)
         }
     }
     
