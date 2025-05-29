@@ -39,7 +39,7 @@ class HomeLogView : BaseUIView{
     let upcoming = {
         let label = UILabel()
         label.text = "UPCOMING"
-        label.font = WithYouFontFamily.Pretendard.regular.font(size: 18)
+        label.font = WithYouFontFamily.Pretendard.regular.font(size: 19)
         label.textColor = .black
         return label
     }()
@@ -47,7 +47,7 @@ class HomeLogView : BaseUIView{
     let ing = {
         let label = UILabel()
         label.text = "ING"
-        label.font = WithYouFontFamily.Pretendard.regular.font(size: 18)
+        label.font = WithYouFontFamily.Pretendard.regular.font(size: 19)
         label.textColor = .black
         return label
     }()
