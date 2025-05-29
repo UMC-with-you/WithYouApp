@@ -37,7 +37,7 @@ public struct Log : Codable, Identifiable {
 
 extension Log {
     public func getTravelPeriod() -> String{
-        return startDate + "~" + endDate.dropFirst(5)
+        return startDate + "~" + endDate
     }
     
     /// 오늘 기준 startDate까지 남은 일수 (D-Day)
