@@ -90,7 +90,7 @@ public final class HomeLogViewModel {
     
     private func classifyLog(_ newLogs : [Log]){
         self.ingLogs = newLogs.filter{ $0.status == "ONGOING" }
-        self.upcommingLogs = newLogs.filter{ $0.status == "UPCOMING" }
+        self.upcommingLogs = newLogs.filter{ $0.status == "BEFORE" }
         self.eclipsePosition.accept(ingLogs.isEmpty ? false : true)
         self.logs.onNext( !ingLogs.isEmpty ? ingLogs : upcommingLogs )
         self.isLogEmpty.accept(false)

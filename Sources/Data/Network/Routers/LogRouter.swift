@@ -11,7 +11,7 @@ import Foundation
 
 public enum LogRouter  {
     case getAllLog
-    case addLog(logDTO: AddLogRequestDTO, image : Data?)
+    case addLog(logDTO: AddLogRequestDTO)
     case deleteLog(travelId : Int)
     case editLog(travelId : Int, editRequest : AddLogRequestDTO, image: Data?)
     case joinLog(inviteCodeDTO : JoinLogRequestDTO)
@@ -63,8 +63,9 @@ extension LogRouter : BaseRouter {
     var parameter: RequestParams {
         switch self{
         case .getAllLog:
-            return .query(["localDate" : "2024-05-28"])
-            
+            return .query(["localDate" : Date.now.getCurrentDateToString()])
+        case .addLog(let dto):
+            return .body(dto)   
         case .joinLog(let dto):
             return .body(dto)
             
@@ -75,7 +76,7 @@ extension LogRouter : BaseRouter {
     
     var header: HeaderType {
         switch self{
-        case .addLog,.editLog:
+        case .editLog:
             return .multiPart
             
         default:
@@ -85,19 +86,6 @@ extension LogRouter : BaseRouter {
     
     var multipart: MultipartFormData{
         switch self{
-        case .addLog(let logDTO, let image):
-            let multiPart = MultipartFormData(boundary:"<calculated when request is sent>")
-            
-            if let requestData = try? JSONEncoder().encode(logDTO) {
-                multiPart.append(requestData, withName: "request", mimeType: "application/json")
-            }
-
-            if let imageData = image {
-                multiPart.append(imageData, withName: "bannerImage", fileName: "LogBannerImage.jpeg", mimeType: "image/jpeg")
-            }
-            
-            return multiPart
-            
         case .editLog(_,let editRequest, let image):
             let multiPart = MultipartFormData(boundary:"<calculated when request is sent>")
             

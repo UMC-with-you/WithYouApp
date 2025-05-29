@@ -15,6 +15,8 @@ public final class CreateLogViewModel {
     
     let logUseCase : LogUseCase
     
+    let disposeBag = DisposeBag()
+    
     var textFieldObservable = BehaviorRelay<String>(value: "")
     
     var isDataFilled = BehaviorRelay(value: false)
@@ -43,14 +45,14 @@ public final class CreateLogViewModel {
             let endDate = toDate!
             let image = image!
             logUseCase.addLog(title: title,
-                              startDate: startDate.toString(),
-                              endDate: startDate.toString(),
+                              startDate: startDate.toStringForServer(),
+                              endDate: endDate.toStringForServer(),
                               image: image)
             .subscribe { _ in
                 print("Create Succeed")
             } onFailure: { error in
                 print("Error")
-            }.dispose()
+            }.disposed(by: disposeBag)
 
         }
     }

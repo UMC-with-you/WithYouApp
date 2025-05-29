@@ -47,6 +47,8 @@ extension LoginCoordinator : LoginDelegate {
 //    }
     
     public func moveToProfileSetting() {
+        /// TODO: 추후 RefreshToken으로 재인증 작업 후 활성화 해야함
+        //UserDefaultsManager.isLoggined = true
         let appCoordinator = self.parentCoordiantor as! AppCoordinator
         
         let profileSettingCoordinator = ProfileSettingCoordinator(navigationController: self.navigationController)

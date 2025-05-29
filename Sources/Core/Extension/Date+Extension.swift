@@ -26,4 +26,11 @@ extension Date {
         formatter.dateFormat = "yyyy.MM.dd"
         return formatter.string(from: self)
     }
+    
+    // 서버에서는 yyyy-MM-dd 형식으로 전달
+    public func toStringForServer() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.string(from: self)
+    }
 }
