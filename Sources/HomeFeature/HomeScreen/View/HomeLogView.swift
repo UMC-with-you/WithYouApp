@@ -13,6 +13,8 @@ import SnapKit
 
 class HomeLogView : BaseUIView{
     
+    var onSortTapped: (() -> Void)?
+    
     var logCollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -37,7 +39,7 @@ class HomeLogView : BaseUIView{
     let upcoming = {
         let label = UILabel()
         label.text = "UPCOMING"
-        label.font = WithYouFontFamily.Pretendard.regular.font(size: 18)
+        label.font = WithYouFontFamily.Pretendard.regular.font(size: 19)
         label.textColor = .black
         return label
     }()
@@ -45,7 +47,7 @@ class HomeLogView : BaseUIView{
     let ing = {
         let label = UILabel()
         label.text = "ING"
-        label.font = WithYouFontFamily.Pretendard.regular.font(size: 18)
+        label.font = WithYouFontFamily.Pretendard.regular.font(size: 19)
         label.textColor = .black
         return label
     }()
@@ -62,6 +64,8 @@ class HomeLogView : BaseUIView{
         [logCollectionView,eclipse,upcoming,ing,sortIcon].forEach{
             self.addSubview($0)
         }
+        
+        configureSortIconTap()
     }
     
     override func initLayout() {
@@ -78,7 +82,7 @@ class HomeLogView : BaseUIView{
         
         upcoming.snp.makeConstraints{
             $0.top.equalTo(ing.snp.top)
-            $0.leading.equalTo(ing.snp.trailing).offset(50)
+            $0.leading.equalTo(ing.snp.trailing).offset(36)
         }
         
         eclipse.snp.makeConstraints{
@@ -89,8 +93,8 @@ class HomeLogView : BaseUIView{
         
         sortIcon.snp.makeConstraints{
             $0.top.equalTo(ing.snp.top)
-            $0.height.equalTo(23)
-            $0.width.equalTo(26)
+            $0.height.equalTo(24)
+            $0.width.equalTo(24)
             $0.trailing.equalToSuperview().offset(-20)
         }
     }
@@ -100,5 +104,15 @@ class HomeLogView : BaseUIView{
         self.eclipse.snp.makeConstraints{
             self.eclipseConstraint = $0.centerX.equalTo(state ? ing.snp.centerX : upcoming.snp.centerX).constraint
         }
+    }
+    
+    private func configureSortIconTap() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(sortIconTapped))
+        sortIcon.isUserInteractionEnabled = true
+        sortIcon.addGestureRecognizer(tapGesture)
+    }
+
+    @objc private func sortIconTapped(){
+        onSortTapped?()
     }
 }

@@ -57,6 +57,9 @@ extension BaseRouter {
             //request.setValue("application/json", forHTTPHeaderField: Constants.ContentType)
             request.setValue("Bearer " + SecureDataManager.shared.getData(label: .accessToken), forHTTPHeaderField: Constants.Authorization)
             return request
+        case .image:
+            request.setValue("image/jpeg", forHTTPHeaderField: Constants.ContentType)
+            return request
         }
     }
      
@@ -79,6 +82,8 @@ extension BaseRouter {
             request.httpBody = body
         case .bodyFromDictionary(let parameter):
             request.httpBody = try JSONSerialization.data(withJSONObject: parameter, options: [])
+        case .image(let data):
+            request.httpBody = data
         case .none:
             break
         }

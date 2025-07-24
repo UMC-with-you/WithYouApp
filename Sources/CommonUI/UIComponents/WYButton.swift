@@ -9,7 +9,7 @@ public class WYButton : UIButton{
         self.setTitle(text, for: .normal)
         self.setTitleColor(.white, for: .normal)
         self.titleLabel?.font = WithYouFontFamily.Pretendard.semiBold.font(size: 16)
-        self.backgroundColor = WithYouAsset.subColor.color
+        self.backgroundColor = WithYouAsset.subColor.color.withAlphaComponent(0.4)
         self.layer.cornerRadius = 20
     }
     

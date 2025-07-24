@@ -86,6 +86,10 @@ class AppCoordinator : Coordinator {
         container.register(SecureDataRepository.self) {
             DefaultSecureDataRepository() // Register DefaultSecureDataRepository for SecureDataRepository
         }
+        
+        container.register(S3Repository.self) {
+            DefaultS3Repository()
+        }
 
         // Register Use Cases (Concrete implementations with "Default" prefix in their initializers)
         container.register(AuthUseCase.self) {
@@ -96,7 +100,8 @@ class AppCoordinator : Coordinator {
 
         container.register(LogUseCase.self) {
             let repository = container.resolve(LogRepository.self)!
-            return DefaultLogUseCase(repository: repository)
+            let s3Respository = container.resolve(S3Repository.self)!
+            return DefaultLogUseCase(repository: repository, s3Repository: s3Respository)
         }
 
         container.register(MemberUseCase.self) {

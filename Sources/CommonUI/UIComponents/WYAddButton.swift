@@ -9,7 +9,7 @@
 import  UIKit
 
 public enum SizeOption : Int{
-    case big = 50
+    case big = 42
     case small = 27
 }
 

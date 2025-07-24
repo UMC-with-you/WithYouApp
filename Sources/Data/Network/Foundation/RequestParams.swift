@@ -12,5 +12,6 @@ enum RequestParams {
     case body(_ parameter: Encodable)
     case bodyFromDictionary(_ parameter : Dictionary<String, Any>)
     case query(_ parameter: Dictionary<String, Any>)
+    case image(_ parameter: Data)
     case none
 }

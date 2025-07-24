@@ -17,6 +17,9 @@ public final class HomeLogViewModel {
     private var ingLogs : [Log] = []
     private var upcommingLogs : [Log] = []
     
+    private var isAscending: Bool = true
+    private var isIngTabSelected: Bool = true
+    
     // Relays
     var eclipsePosition : PublishRelay<Bool> = PublishRelay()
     var isLogEmpty : BehaviorRelay<Bool> = BehaviorRelay(value: true)
@@ -30,6 +33,14 @@ public final class HomeLogViewModel {
     }
     
     // MARK: Functions
+    private func sortLogs(_ logs: [Log]) -> [Log] {
+        return logs.sorted { log1, log2 in
+            let d1 = log1.dDayValue() ?? 0
+            let d2 = log2.dDayValue() ?? 0
+            return isAscending ? d1 < d2 : d1 > d2
+        }
+    }
+    
     public func ingTapped(){
         self.eclipsePosition.accept(true)
         self.logs.onNext(ingLogs)
@@ -38,6 +49,18 @@ public final class HomeLogViewModel {
     public func upcomingTapped(){
         self.eclipsePosition.accept(false)
         self.logs.onNext(upcommingLogs)
+    }
+    
+    
+    
+    public func toggleSort() {
+        isAscending.toggle()
+        
+        if isIngTabSelected {
+            logs.onNext(sortLogs(ingLogs))
+        } else {
+            logs.onNext(sortLogs(upcommingLogs))
+        }
     }
     
     public func loadLogs(){
@@ -67,7 +90,7 @@ public final class HomeLogViewModel {
     
     private func classifyLog(_ newLogs : [Log]){
         self.ingLogs = newLogs.filter{ $0.status == "ONGOING" }
-        self.upcommingLogs = newLogs.filter{ $0.status == "UPCOMING" }
+        self.upcommingLogs = newLogs.filter{ $0.status == "BEFORE" }
         self.eclipsePosition.accept(ingLogs.isEmpty ? false : true)
         self.logs.onNext( !ingLogs.isEmpty ? ingLogs : upcommingLogs )
         self.isLogEmpty.accept(false)
