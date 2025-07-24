@@ -56,12 +56,12 @@ class MyPageView: BaseUIView {
     let editButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setTitle("프로필 수정", for: .normal)
-        button.setTitleColor(WithYouAsset.mypageTintColor.color, for: .normal)
+        button.setTitleColor(WithYouAsset.myPageTintColor.color, for: .normal)
         button.titleLabel?.font = WithYouFontFamily.Pretendard.medium.font(size: 17)
         button.layer.masksToBounds = true
         button.layer.borderWidth = 1
         button.layer.cornerRadius = 16
-        button.layer.borderColor = WithYouAsset.mypageTintColor.color.cgColor
+        button.layer.borderColor = WithYouAsset.myPageTintColor.color.cgColor
         return button
     }()
     

@@ -66,11 +66,11 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         switch tableView.tag {
-            case 0: cell.textLabel?.text = appInfoItems[indexPath.row]
-            case 1: cell.textLabel?.text = useInfoItems[indexPath.row]
-            case 2: cell.textLabel?.text = accountInfoItems[indexPath.row]
-            default: break
-            }
+        case 0: cell.textLabel?.text = appInfoItems[indexPath.row]
+        case 1: cell.textLabel?.text = useInfoItems[indexPath.row]
+        case 2: cell.textLabel?.text = accountInfoItems[indexPath.row]
+        default: break
+        }
         return cell
     }
     
@@ -83,42 +83,26 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
             print("tapped useInfo Table Cell")
         }
         else if tableView == settingsView.accountInfoTableView {
-            print("tapped accountInfo Table Cell")
+            let selectedItem = accountInfoItems[indexPath.row]
+            if selectedItem == "로그아웃하기" {
+                let alertVC = LogoutAlertViewController()
+                alertVC.modalPresentationStyle = .overFullScreen
+                alertVC.modalTransitionStyle = .crossDissolve
+                alertVC.onLogoutConfirm = {
+                    // 로그아웃 로직 실행
+                    print("✅ 로그아웃 완료")
+                    // 예: UserManager.shared.logout()
+                }
+                present(alertVC, animated: true, completion: nil)
+            }
         }
         
         
         tableView.deselectRow(at: indexPath, animated: true)
     }
-//    
-//    public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-//        return 58
-//    }
-    
-    public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let containerView = UIView()
-         
-         let label = UILabel()
-         label.text = headerTitle(tableView)
-         label.font = WithYouFontFamily.Pretendard.semiBold.font(size: 18)
-         
-         containerView.addSubview(label)
-         
-         label.snp.makeConstraints { make in
-             make.leading.equalToSuperview().offset(15)
-             make.centerY.equalToSuperview()
-         }
-         
-         return containerView
-    }
-    
-    private func headerTitle(_ tableView: UITableView) -> String {
-        switch tableView.tag {
-            case 0: return "앱 정보"
-            case 1: return "이용 정보"
-            case 2: return "계정"
-            default: return ""
-        }
-    }
-    
+    //
+    //    public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    //        return 58
+    //    }
     
 }
