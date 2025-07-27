@@ -13,7 +13,7 @@ public class LoginCoordinator : Coordinator {
     private var navigationController: UINavigationController
     
     public var childCoordinators: [Coordinator] = []
-    public var parentCoordiantor: Coordinator?
+    public var parentCoordinator: Coordinator?
     
     public init(navigationController : UINavigationController) {
         self.navigationController = navigationController
@@ -36,10 +36,10 @@ public class LoginCoordinator : Coordinator {
 
 extension LoginCoordinator : LoginDelegate {
 //    public func moveToTabbar() {
-//        let appCoordinator = self.parentCoordiantor as! AppCoordinator
+//        let appCoordinator = self.parentCoordinator as! AppCoordinator
 //        appCoordinator.startTabbarScene()
-//        self.parentCoordiantor?.childDidFinish(self)
-//        
+//        self.parentCoordinator?.childDidFinish(self)
+//
 //        //자동 Login 설정
 //        UserDefaultsManager.isLoggined = true
 //        //LoginView 제거해주기
@@ -49,14 +49,14 @@ extension LoginCoordinator : LoginDelegate {
     public func moveToProfileSetting() {
         /// TODO: 추후 RefreshToken으로 재인증 작업 후 활성화 해야함
         //UserDefaultsManager.isLoggined = true
-        let appCoordinator = self.parentCoordiantor as! AppCoordinator
+        let appCoordinator = self.parentCoordinator as! AppCoordinator
         
         let profileSettingCoordinator = ProfileSettingCoordinator(navigationController: self.navigationController)
-        profileSettingCoordinator.parentCoordiantor = appCoordinator
+        profileSettingCoordinator.parentCoordinator = appCoordinator
         appCoordinator.childCoordinators.append(profileSettingCoordinator)
         profileSettingCoordinator.start()
         
-        self.parentCoordiantor?.childDidFinish(self)
+        self.parentCoordinator?.childDidFinish(self)
     }
 }
 

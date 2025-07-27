@@ -14,7 +14,7 @@ import UIKit
 public class TabbarCoordinator : Coordinator {
     
     public var childCoordinators: [Coordinator] = []
-    public var parentCoordiantor: Coordinator?
+    public var parentCoordinator: Coordinator?
     
     private var navigationController : UINavigationController
     private var tabBarController: UITabBarController
@@ -71,7 +71,7 @@ public class TabbarCoordinator : Coordinator {
     //HomeCoordinator 생성
     private func createHomeCoordinator(with controller : UINavigationController) {
         let homeCoordinator = HomeCoordinator(navigationController: controller)
-        homeCoordinator.parentCoordiantor = self
+        homeCoordinator.parentCoordinator = self
         homeCoordinator.start()
         
         self.childCoordinators.append(homeCoordinator)
@@ -80,7 +80,7 @@ public class TabbarCoordinator : Coordinator {
     //TravelCoordinator 생성
     private func createTravelCoordinator(with controller : UINavigationController) {
         let travelCoordinator = TravelLogCoordinator(navigationController: controller)
-        travelCoordinator.parentCoordiantor = self
+        travelCoordinator.parentCoordinator = self
         travelCoordinator.start()
         
         self.childCoordinators.append(travelCoordinator)
@@ -89,7 +89,7 @@ public class TabbarCoordinator : Coordinator {
     //MyPageCoordinator 생성
     private func createMyPageCoordinator(with controller : UINavigationController) {
         let myPageCoordinator = MyPageCoordinator(navigationController: controller)
-        myPageCoordinator.parentCoordiantor = self
+        myPageCoordinator.parentCoordinator = self
         myPageCoordinator.start()
         
         self.childCoordinators.append(myPageCoordinator)

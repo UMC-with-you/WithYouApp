@@ -13,7 +13,7 @@ import UIKit
 public final class DetailTravelLogCoordinator : Coordinator {
     
     public var childCoordinators: [Coordinator] = []
-    public var parentCoordiantor: Coordinator?
+    public var parentCoordinator: Coordinator?
     
     private var navigationController : UINavigationController
     

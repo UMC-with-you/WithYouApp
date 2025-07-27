@@ -14,7 +14,7 @@ public final class HomeCoordinator : Coordinator {
     private var navigationController: UINavigationController
     
     public var childCoordinators: [Coordinator] = []
-    public var parentCoordiantor: Coordinator?
+    public var parentCoordinator: Coordinator?
     
     private var homeViewController : HomeViewController?
     
@@ -61,14 +61,14 @@ extension HomeCoordinator : HomeViewControllerDelgate {
     //여행 전 TravelLog 화면 이동
     public func navigateToBeforeTravelView(log: Log) {
         let beforeTravelCoordinator = BeforeTravelCoordiantor(navigationController: self.navigationController, log: log)
-        beforeTravelCoordinator.parentCoordiantor = self
+        beforeTravelCoordinator.parentCoordinator = self
         beforeTravelCoordinator.start()
         self.childCoordinators.append(beforeTravelCoordinator)
     }
     
     public func navigateToOnGoingTravelView(log: Log) {
         let onGoingTravelCoordinator = OnGoingTravelCoordinator(navigationController: self.navigationController, log: log)
-        onGoingTravelCoordinator.parentCoordiantor = self
+        onGoingTravelCoordinator.parentCoordinator = self
         onGoingTravelCoordinator.start()
         self.childCoordinators.append(onGoingTravelCoordinator)
     }

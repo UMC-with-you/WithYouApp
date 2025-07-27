@@ -10,7 +10,7 @@ import UIKit
 
 final public class ProfileSettingCoordinator: Coordinator {
     public var childCoordinators: [Coordinator] = []
-    public var parentCoordiantor: Coordinator?
+    public var parentCoordinator: Coordinator?
     
     private let navigationController: UINavigationController
     
@@ -44,7 +44,7 @@ final public class ProfileSettingCoordinator: Coordinator {
 
     public func finishProfileSetting() {
         // tabbar로 이동
-        let appCoordinator = self.parentCoordiantor as! AppCoordinator
+        let appCoordinator = self.parentCoordinator as! AppCoordinator
         appCoordinator.startTabbarScene()
         appCoordinator.childDidFinish(self)
 //        self.navigationController.viewControllers.removeFirst()

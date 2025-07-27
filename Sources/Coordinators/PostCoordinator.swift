@@ -13,7 +13,7 @@ import PhotosUI
 final public class PostCoordinator : Coordinator {
     
     public var childCoordinators: [Coordinator] = []
-    public var parentCoordiantor: Coordinator?
+    public var parentCoordinator: Coordinator?
     
     private var navigationController : UINavigationController
     

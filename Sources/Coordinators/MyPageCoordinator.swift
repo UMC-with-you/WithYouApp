@@ -17,7 +17,7 @@ public final class MyPageCoordinator : Coordinator {
     private var navigationController : UINavigationController
     
     public var childCoordinators: [Coordinator] = []
-    public var parentCoordiantor: Coordinator?
+    public var parentCoordinator: Coordinator?
     
     private var myPageViewController : MyPageViewController?
     

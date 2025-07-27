@@ -13,7 +13,7 @@ final public class OnGoingTravelCoordinator : Coordinator {
     private var navigationController: UINavigationController
     
     public var childCoordinators: [Coordinator] = []
-    public var parentCoordiantor: Coordinator?
+    public var parentCoordinator: Coordinator?
     
     private let log : Log
     

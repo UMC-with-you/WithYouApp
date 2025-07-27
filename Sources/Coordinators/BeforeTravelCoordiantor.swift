@@ -14,7 +14,7 @@ final public class BeforeTravelCoordiantor : Coordinator {
     private var navigationController: UINavigationController
     
     public var childCoordinators: [Coordinator] = []
-    public var parentCoordiantor: Coordinator?
+    public var parentCoordinator: Coordinator?
     
     private let log : Log
     
@@ -36,7 +36,7 @@ final public class BeforeTravelCoordiantor : Coordinator {
 
 extension BeforeTravelCoordiantor {
     public func dismissView() {
-        parentCoordiantor?.childDidFinish(self)
+        parentCoordinator?.childDidFinish(self)
     }
 }
 
@@ -45,7 +45,7 @@ extension BeforeTravelCoordiantor : BeforeTravelLogViewControllerDelgate {
     public func openSideMenu(travelers : [Traveler]) {
         let sideBarCoordinator = BeforeTravelSideBarCoordinator(navigationController: navigationController, log: log, travelers: travelers)
         
-        sideBarCoordinator.parentCoordiantor = self
+        sideBarCoordinator.parentCoordinator = self
         childCoordinators.append(sideBarCoordinator)
         sideBarCoordinator.start()
     }

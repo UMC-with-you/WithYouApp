@@ -14,7 +14,7 @@ final public class BeforeTravelSideBarCoordinator : Coordinator {
     private var navigationController: UINavigationController
     
     public var childCoordinators: [Coordinator] = []
-    weak public var parentCoordiantor: Coordinator?
+    weak public var parentCoordinator: Coordinator?
     
     private let log : Log
     private let travelers : [Traveler]
@@ -39,7 +39,7 @@ final public class BeforeTravelSideBarCoordinator : Coordinator {
 
 extension BeforeTravelSideBarCoordinator : BeforeTravelSideBarDelegate{
     public func dissmissView(){
-        parentCoordiantor?.childDidFinish(self)
+        parentCoordinator?.childDidFinish(self)
         self.navigationController.dismiss(animated: true)
     }
     

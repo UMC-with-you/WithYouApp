@@ -11,7 +11,7 @@ import UIKit
 
 class AppCoordinator : Coordinator {
     var childCoordinators: [Coordinator] = []
-    var parentCoordiantor: Coordinator?
+    var parentCoordinator: Coordinator?
     
     private var navigationController : UINavigationController
    
@@ -34,7 +34,7 @@ class AppCoordinator : Coordinator {
     public func startTabbarScene(){
         navigationController.isNavigationBarHidden = true
         let tabCoordinator = TabbarCoordinator(navigationController: navigationController)
-        tabCoordinator.parentCoordiantor = self
+        tabCoordinator.parentCoordinator = self
         tabCoordinator.start()
         self.childCoordinators.append(tabCoordinator)
     }
@@ -42,7 +42,7 @@ class AppCoordinator : Coordinator {
     
     public func startLoginScene(){
         let loginCoordinator = LoginCoordinator(navigationController: self.navigationController)
-        loginCoordinator.parentCoordiantor = self
+        loginCoordinator.parentCoordinator = self
         loginCoordinator.start()
         
         self.childCoordinators.append(loginCoordinator)
