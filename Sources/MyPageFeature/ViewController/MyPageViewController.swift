@@ -13,8 +13,8 @@ import RxCocoa
 import UIKit
 import SnapKit
 
-public protocol MyPageViewControllerDelgate {
-    
+public protocol MyPageViewControllerDelegate {
+    func navigateToSettings()
 }
 
 public class MyPageViewController: BaseViewController {
@@ -22,7 +22,7 @@ public class MyPageViewController: BaseViewController {
     private let viewModel: MyPageViewModel
     private var linePosition = BehaviorRelay<Bool>(value: true)
     
-    public var coordinator: MyPageViewControllerDelgate?
+    public var coordinator: MyPageViewControllerDelegate?
     
     // ViewModel
     public init(viewModel: MyPageViewModel) {
@@ -35,10 +35,23 @@ public class MyPageViewController: BaseViewController {
         
 //        viewModel.loadPosts()
 //        myPageView.moveEclipse(state: true)
+        super.viewWillAppear(animated)
+        setupSettingsButton()
     }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    func setupSettingsButton() {
+        let settingsImage = UIImage(systemName: "gearshape")
+        let settingsButton = UIBarButtonItem(image: settingsImage, style: .plain, target: self, action: #selector(settingsButtonTapped))
+        settingsButton.tintColor = WithYouAsset.logoColor.color
+        navigationItem.rightBarButtonItem = settingsButton
+    }
+
+    @objc func settingsButtonTapped() {
+        self.coordinator?.navigateToSettings()
     }
     
     // MARK: - Rx 연결

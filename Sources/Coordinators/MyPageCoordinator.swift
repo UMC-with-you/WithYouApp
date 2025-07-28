@@ -34,6 +34,9 @@ public final class MyPageCoordinator : Coordinator {
     }
 }
 
-extension MyPageCoordinator: MyPageViewControllerDelgate {
-    
+extension MyPageCoordinator: MyPageViewControllerDelegate {
+    public func navigateToSettings() {
+        let settingsVC = SettingsViewController()
+        navigationController.pushViewController(settingsVC, animated: false)
+    }
 }
